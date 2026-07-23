@@ -6,30 +6,62 @@ document.addEventListener('DOMContentLoaded', function() {
     // ==================== 
     // 动态内容渲染
     // ====================
+    async function fetchJson(url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to load ' + url);
+        return response.json();
+    }
+
     async function loadDynamicContent() {
         try {
             const response = await fetch('/api/content');
             if (!response.ok) throw new Error('Failed to load content');
             const data = await response.json();
-            renderHeroSlides(data.config.slides);
-            renderServices(data.config.services);
-            renderAbout(data.config.about);
-            renderCountries(data.countries);
-            renderProjects(data.projects);
-            renderArticles(data.articles);
-            renderCases(data.cases);
-            renderCertificates(data.certificates);
+            renderAll(data);
         } catch (error) {
-            console.warn('动态内容加载失败，使用默认内容:', error);
-            renderHeroSlides(defaultSlides);
-            renderServices(defaultServices);
-            renderAbout(defaultAbout);
-            renderCountries(defaultCountries);
-            renderProjects(defaultProjects);
-            renderArticles(defaultArticles);
-            renderCases(defaultCases);
-            renderCertificates(defaultCertificates);
+            console.warn('动态内容加载失败，尝试静态数据文件:', error);
+            try {
+                const cacheBuster = '?_=' + Date.now();
+                const [config, countries, projects, articles, cases, certificates] = await Promise.all([
+                    fetchJson('data/config.json' + cacheBuster).catch(() => null),
+                    fetchJson('data/countries.json' + cacheBuster).catch(() => null),
+                    fetchJson('data/projects.json' + cacheBuster).catch(() => null),
+                    fetchJson('data/articles.json' + cacheBuster).catch(() => null),
+                    fetchJson('data/cases.json' + cacheBuster).catch(() => null),
+                    fetchJson('data/certificates.json' + cacheBuster).catch(() => null)
+                ]);
+                if (config || countries || projects || articles || cases || certificates) {
+                    renderAll({ config, countries, projects, articles, cases, certificates });
+                } else {
+                    throw new Error('静态数据文件也加载失败');
+                }
+            } catch (staticError) {
+                console.warn('静态数据文件加载失败，使用默认内容:', staticError);
+                renderDefaults();
+            }
         }
+    }
+
+    function renderAll(data) {
+        renderHeroSlides(data.config && data.config.slides);
+        renderServices(data.config && data.config.services);
+        renderAbout(data.config && data.config.about);
+        renderCountries(data.countries);
+        renderProjects(data.projects);
+        renderArticles(data.articles);
+        renderCases(data.cases);
+        renderCertificates(data.certificates);
+    }
+
+    function renderDefaults() {
+        renderHeroSlides(defaultSlides);
+        renderServices(defaultServices);
+        renderAbout(defaultAbout);
+        renderCountries(defaultCountries);
+        renderProjects(defaultProjects);
+        renderArticles(defaultArticles);
+        renderCases(defaultCases);
+        renderCertificates(defaultCertificates);
     }
 
     // 默认轮播图数据
