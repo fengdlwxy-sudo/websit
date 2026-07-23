@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 强制浏览器不缓存 HTML，避免下拉菜单更新后仍显示旧内容 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>移民项目 - 汇程移民</title>
+    <meta name="description" content="汇程移民提供全球移民项目，涵盖投资移民、创业移民、技术移民。">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .page-banner { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; padding: 80px 0 60px; text-align: center; }
+        .page-banner-title { font-size: 40px; font-weight: 700; margin-bottom: 12px; }
+        .page-banner-subtitle { font-size: 16px; opacity: 0.85; }
+        .filter-section { padding: 35px 0 20px; background: var(--bg-light); border-bottom: 1px solid var(--border); }
+        .filter-group { margin-bottom: 15px; }
+        .filter-label { font-size: 14px; color: var(--text-light); margin-bottom: 10px; font-weight: 500; }
+        .filter-tabs { display: flex; flex-wrap: wrap; gap: 10px; }
+        .filter-tab { padding: 8px 18px; border-radius: 20px; background: white; border: 1px solid var(--border); color: var(--text); font-size: 14px; cursor: pointer; transition: all .2s; text-decoration: none; }
+        .filter-tab:hover, .filter-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+        .projects-section { padding: 50px 0 70px; }
+        .projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .project-card { background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: all .3s; border: 1px solid var(--border); }
+        .project-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+        .project-card-image { height: 160px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); display: flex; align-items: center; justify-content: center; position: relative; }
+        .project-card-image img { width: 70px; height: 70px; object-fit: contain; border-radius: 50%; box-shadow: 0 4px 15px rgba(0,0,0,0.2); background: white; }
+        .project-card-category { position: absolute; top: 12px; left: 12px; padding: 4px 12px; background: var(--accent); color: white; border-radius: 20px; font-size: 12px; }
+        .project-card-body { padding: 22px; }
+        .project-card-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+        .project-card-price { font-size: 15px; color: var(--primary); font-weight: 600; margin-bottom: 12px; }
+        .project-card-summary { font-size: 14px; color: var(--text-light); line-height: 1.6; margin-bottom: 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .project-card-btn { display: inline-block; padding: 10px 22px; background: var(--primary); color: white; border-radius: var(--radius); text-decoration: none; font-size: 14px; transition: background .2s; }
+        .project-card-btn:hover { background: var(--primary-dark); }
+        .loading, .empty, .error { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        @media (max-width: 992px) { .projects-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .projects-grid { grid-template-columns: 1fr; } .page-banner-title { font-size: 30px; } }
+    </style>
+
+</head>
+<body>
+    <!-- 顶部联系栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>欢迎访问汇程移民官方网站！</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline-label">免费咨询热线</span>
+                <a href="tel:136-5185-2270" class="hotline-num">136-5185-2270</a>
+                <span class="hotline-sep">|</span>
+                <a href="tel:199-0172-6016" class="hotline-num">199-0172-6016</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主导航 -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <img src="assets/images/logo-full-color.png" alt="汇程移民" class="logo-img">
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="#home" class="active">首页</a></li>
+                    <li class="has-dropdown">
+                        <a href="#projects">移民项目</a>
+                        <div class="dropdown">
+                            <a href="projects.html?category=investment">投资移民</a>
+                            <a href="projects.html?category=business">创业移民</a>
+                            <a href="projects.html?category=skilled">技术移民</a>
+                            <a href="projects.html?countryId=gr">购房移民</a>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="#countries">移民国家</a>
+                        <div class="dropdown">
+                            <a href="projects.html?countryId=gr">希腊</a>
+                            <a href="projects.html?countryId=us">美国</a>
+                            <a href="projects.html?countryId=sg">新加坡</a>
+                            <a href="projects.html?countryId=jp">日本</a>
+                            <a href="projects.html?countryId=nz">新西兰</a>
+                            <a href="projects.html?countryId=hk">中国香港</a>
+                            <a href="projects.html?countryId=pt">葡萄牙</a>
+                            <a href="projects.html?countryId=mt">马耳他</a>
+                        </div>
+                    </li>
+                    <li><a href="#services">服务业务</a></li>
+                    <li><a href="#news">移民攻略</a></li>
+                    <li><a href="#cases">成功案例</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                </ul>
+            </nav>
+            <a href="#contact" class="btn btn-header">免费评估</a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="container">
+            <h1 class="page-banner-title">移民项目</h1>
+            <p class="page-banner-subtitle">全球优质移民项目，为您定制专属身份规划方案</p>
+        </div>
+    </section>
+
+    <section class="filter-section">
+        <div class="container">
+            <div class="filter-group">
+                <div class="filter-label">按国家筛选</div>
+                <div class="filter-tabs" id="countryFilters">
+                    <a href="projects.html" class="filter-tab active" data-id="">全部</a>
+                </div>
+            </div>
+            <div class="filter-group">
+                <div class="filter-label">按类型筛选</div>
+                <div class="filter-tabs" id="categoryFilters">
+                    <a href="projects.html" class="filter-tab active" data-id="">全部</a>
+                    <a href="?category=investment" class="filter-tab" data-id="investment">投资移民</a>
+                    <a href="?category=business" class="filter-tab" data-id="business">创业移民</a>
+                    <a href="?category=skilled" class="filter-tab" data-id="skilled">技术移民</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="projects-section">
+        <div class="container">
+            <div id="projectsLoading" class="loading">正在加载项目...</div>
+            <div id="projectsGrid" class="projects-grid" style="display:none;"></div>
+            <div id="projectsEmpty" class="empty" style="display:none;">暂无相关项目</div>
+        </div>
+    </section>
+
+<!-- 页脚 -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/images/logo-full-white.png" alt="汇程移民" class="footer-logo">
+                    <p>汇程移民，您值得信赖的全球身份规划专家。专业提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式服务。</p>
+                    <div class="footer-hotline">
+                        <p>免费咨询热线</p>
+                        <a href="tel:136-5185-2270">136-5185-2270</a>
+                        <span>|</span>
+                        <a href="tel:199-0172-6016">199-0172-6016</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>移民项目</h4>
+                    <ul>
+                        <li><a href="#">投资移民</a></li>
+                        <li><a href="#">创业移民</a></li>
+                        <li><a href="#">技术移民</a></li>
+                        <li><a href="#">购房移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>热门国家</h4>
+                    <ul>
+                        <li><a href="#">希腊移民</a></li>
+                        <li><a href="#">美国移民</a></li>
+                        <li><a href="#">新加坡移民</a></li>
+                        <li><a href="#">日本移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司简介</a></li>
+                        <li><a href="#">荣誉证书</a></li>
+                        <li><a href="#">专家团队</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-qrcode-col">
+                    <h4>关注我们</h4>
+                    <div class="footer-qrcode">
+                        <div class="footer-qrcode-item">
+                            <img src="assets/images/qrcode/wechat-qr1.jpg" class="footer-qrcode-img" alt="扫码关注汇程移民公众号">
+                            <div class="footer-qrcode-item-title">扫码关注</div>
+                            <div class="footer-qrcode-item-desc">汇程移民</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 汇程移民 版权所有 | 本站信息仅供参考，具体政策以官方公布为准</p>
+                <a href="./admin/index.html" class="admin-entry">Enter the backend</a>
+            </div>
+        </div>
+    </footer>
+<!-- 侧边悬浮工具 -->
+    <div class="side-tools">
+        <a href="tel:136-5185-2270" class="side-tool tel-tool" title="电话咨询">
+            <span>📞</span>
+            <div class="side-tool-tip">
+                <p>免费咨询热线</p>
+                <strong>136-5185-2270</strong>
+            </div>
+        </a>
+        <a href="#contact" class="side-tool" title="在线咨询">
+            <span>💬</span>
+        </a>
+        <a href="#contact" class="side-tool" title="免费评估">
+            <span>📝</span>
+        </a>
+        <button class="side-tool back-to-top" id="backToTop" title="返回顶部">
+            <span>⬆️</span>
+        </button>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h3 id="modalTitle">温馨提示</h3>
+            <p id="modalText">感谢您的关注，我们的移民顾问将尽快与您联系！</p>
+            <button class="btn btn-primary" id="modalConfirm">确定</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        const categoryMap = {"investment":"投资移民","business":"创业移民","skilled":"技术移民"};
+
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name) || '';
+        }
+
+        async function loadFilters() {
+            try {
+                const res = await fetch('/api/countries');
+                const result = await res.json();
+                const countries = result.data || [];
+                const container = document.getElementById('countryFilters');
+                const currentCountry = getParam('countryId');
+                countries.forEach(c => {
+                    const a = document.createElement('a');
+                    a.href = '?countryId=' + encodeURIComponent(c.id);
+                    a.className = 'filter-tab' + (c.id === currentCountry ? ' active' : '');
+                    a.textContent = c.name;
+                    container.appendChild(a);
+                });
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadProjects() {
+            const grid = document.getElementById('projectsGrid');
+            const loading = document.getElementById('projectsLoading');
+            const empty = document.getElementById('projectsEmpty');
+            const countryId = getParam('countryId');
+            const category = getParam('category');
+
+            try {
+                const params = new URLSearchParams();
+                if (countryId) params.append('countryId', countryId);
+                if (category) params.append('category', category);
+                const res = await fetch('/api/projects?' + params.toString());
+                const result = await res.json();
+                const projects = result.data || [];
+
+                loading.style.display = 'none';
+                if (projects.length === 0) {
+                    empty.style.display = 'block';
+                    return;
+                }
+
+                grid.innerHTML = projects.map(p => {
+                    const isPhoto = p.image && !p.image.endsWith('.svg');
+                    const bgStyle = isPhoto ? `style="background: url('${p.image}') center/cover"` : '';
+                    const flagHtml = isPhoto ? '' : `<img src="${p.image || 'assets/images/flags/gr.svg'}" alt="${p.title}">`;
+                    return `
+                    <div class="project-card">
+                        <div class="project-card-image" ${bgStyle}>
+                            <span class="project-card-category">${categoryMap[p.category] || '移民项目'}</span>
+                            ${flagHtml}
+                        </div>
+                        <div class="project-card-body">
+                            <h3 class="project-card-title">${p.title}</h3>
+                            <div class="project-card-price">${p.price || '咨询顾问'}</div>
+                            <p class="project-card-summary">${p.summary || ''}</p>
+                            <a href="project-detail.html?id=${p.id}" class="project-card-btn">查看详情</a>
+                        </div>
+                    </div>`;
+                }).join('');
+                grid.style.display = 'grid';
+            } catch (err) {
+                loading.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadFilters();
+            loadProjects();
+
+            const currentCategory = getParam('category');
+            document.querySelectorAll('#categoryFilters .filter-tab').forEach(tab => {
+                tab.classList.toggle('active', tab.dataset.id === currentCategory);
+            });
+        });
+    </script>
+</body>
+</html>

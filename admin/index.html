@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>汇程移民 - 后台管理系统</title>
+    <link rel="icon" href="/assets/images/favicon.png">
+    <link rel="stylesheet" href="admin.css">
+    <link rel="stylesheet" href="/node_modules/cropperjs/dist/cropper.min.css">
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div class="login-page" id="loginPage">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>汇程移民</h1>
+                <p>后台管理系统</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <div class="form-group">
+                    <label>账号</label>
+                    <input type="text" id="loginUsername" placeholder="请输入账号" required>
+                </div>
+                <div class="form-group">
+                    <label>密码</label>
+                    <input type="password" id="loginPassword" placeholder="请输入密码" required>
+                </div>
+                <div class="form-error" id="loginError"></div>
+                <button type="submit" class="btn btn-primary btn-block">登 录</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 管理后台 -->
+    <div class="admin-layout" id="adminLayout" style="display: none;">
+        <!-- 侧边栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>汇程移民后台</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-page="dashboard">
+                    <span class="icon">📊</span>
+                    <span>数据概览</span>
+                </a>
+                <a href="#news" class="nav-item" data-page="news">
+                    <span class="icon">📰</span>
+                    <span>首页新闻推荐</span>
+                </a>
+                <a href="#countries" class="nav-item" data-page="countries">
+                    <span class="icon">🌍</span>
+                    <span>国家管理</span>
+                </a>
+                <a href="#projects" class="nav-item" data-page="projects">
+                    <span class="icon">📋</span>
+                    <span>项目管理</span>
+                </a>
+                <a href="#articles" class="nav-item" data-page="articles">
+                    <span class="icon">📝</span>
+                    <span>文章管理</span>
+                </a>
+                <a href="#categories" class="nav-item" data-page="categories">
+                    <span class="icon">📂</span>
+                    <span>分类管理</span>
+                </a>
+                <a href="#cases" class="nav-item" data-page="cases">
+                    <span class="icon">🏆</span>
+                    <span>成功案例</span>
+                </a>
+                <a href="#certificates" class="nav-item" data-page="certificates">
+                    <span class="icon">🥇</span>
+                    <span>荣誉证书</span>
+                </a>
+                <a href="#banners" class="nav-item" data-page="banners">
+                    <span class="icon">🖼️</span>
+                    <span>轮播管理</span>
+                </a>
+                <a href="#images" class="nav-item" data-page="images">
+                    <span class="icon">📁</span>
+                    <span>图片管理</span>
+                </a>
+                <a href="#settings" class="nav-item" data-page="settings">
+                    <span class="icon">⚙️</span>
+                    <span>站点设置</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <a href="/" target="_blank" class="footer-link">查看网站 →</a>
+                <button class="footer-link" id="logoutBtn">退出登录</button>
+            </div>
+        </aside>
+
+        <!-- 主体内容 -->
+        <main class="main-content">
+            <header class="content-header">
+                <h1 id="pageTitle">数据概览</h1>
+                <div class="user-info">
+                    <span>👤 管理员</span>
+                </div>
+            </header>
+
+            <!-- 数据概览 -->
+            <section class="page" id="page-dashboard">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📰</div>
+                        <div class="stat-content">
+                            <strong id="statNews">0</strong>
+                            <span>新闻文章</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🏆</div>
+                        <div class="stat-content">
+                            <strong id="statCases">0</strong>
+                            <span>成功案例</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🥇</div>
+                        <div class="stat-content">
+                            <strong id="statCerts">0</strong>
+                            <span>荣誉证书</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📁</div>
+                        <div class="stat-content">
+                            <strong id="statImages">0</strong>
+                            <span>已传图片</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🌍</div>
+                        <div class="stat-content">
+                            <strong id="statCountries">0</strong>
+                            <span>国家数量</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <strong id="statProjects">0</strong>
+                            <span>项目数量</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-content">
+                            <strong id="statArticles">0</strong>
+                            <span>文章数量</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <h2>快速操作</h2>
+                    <div class="quick-actions">
+                        <a href="#news" class="quick-action" data-page-link="news">📝 添加首页新闻</a>
+                        <a href="#cases" class="quick-action" data-page-link="cases">🎯 添加案例</a>
+                        <a href="#banners" class="quick-action" data-page-link="banners">🖼️ 管理轮播</a>
+                        <a href="#images" class="quick-action" data-page-link="images">📤 上传图片</a>
+                    </div>
+                </div>
+                <div class="dashboard-actions" style="margin-top:20px;">
+                    <h2>前台内容 ↔ 后台管理 对应关系</h2>
+                    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:12px;font-size:13px;color:var(--text-light);">
+                        <div>🏠 网站标题/热线/SEO → <strong>站点设置</strong></div>
+                        <div>🖼️ 首页轮播图 → <strong>轮播管理</strong></div>
+                        <div>🌐 全球移民/国家区块 → <strong>国家管理</strong></div>
+                        <div>📋 移民项目 → <strong>项目管理</strong></div>
+                        <div>📰 首页新闻卡片 → <strong>首页新闻推荐</strong></div>
+                        <div>📝 文章详情页内容 → <strong>文章管理</strong></div>
+                        <div>🏆 成功案例 → <strong>成功案例</strong></div>
+                        <div>🥇 荣誉证书 → <strong>荣誉证书</strong></div>
+                        <div>🛠️ 服务业务 → <strong>站点设置</strong></div>
+                        <div>ℹ️ 关于我们 → <strong>站点设置</strong></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 新闻管理 -->
+            <section class="page" id="page-news" style="display: none;">
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="addNewsBtn">+ 新增首页新闻</button>
+                    <a href="#articles" class="quick-action" data-page-link="articles" style="margin-left:auto;">📝 去文章库管理正文</a>
+                </div>
+                <div class="alert alert-info" style="margin-bottom:15px;padding:12px 16px;background:#e6f7f7;border-left:4px solid var(--primary);border-radius:6px;color:var(--text);">
+                    <strong>说明：</strong>这里管理的是首页「移民攻略」区块展示的推荐卡片。如需管理文章的详细内容，请使用「文章管理」。
+                </div>
+                <div class="data-list" id="newsList"></div>
+            </section>
+
+            <!-- 案例管理 -->
+            <section class="page" id="page-cases" style="display: none;">
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="addCaseBtn">+ 新增案例</button>
+                </div>
+                <div class="data-list" id="casesList"></div>
+            </section>
+
+            <!-- 证书管理 -->
+            <section class="page" id="page-certificates" style="display: none;">
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="addCertBtn">+ 新增证书</button>
+                </div>
+                <div class="data-list" id="certsList"></div>
+            </section>
+
+            <!-- 轮播管理 -->
+            <section class="page" id="page-banners" style="display: none;">
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="addBannerBtn">+ 新增轮播</button>
+                </div>
+                <div class="data-list" id="bannersList"></div>
+            </section>
+
+            <!-- 图片管理 -->
+            <section class="page" id="page-images" style="display: none;">
+                <div class="page-actions">
+                    <label class="btn btn-primary" for="imageUpload">📤 上传图片</label>
+                    <input type="file" id="imageUpload" accept="image/*" multiple style="display: none;">
+                </div>
+                <div class="image-grid" id="imageGrid"></div>
+            </section>
+
+            <!-- 站点设置 -->
+            <section class="page" id="page-settings" style="display: none;">
+                <div class="settings-form" id="settingsForm">
+                    <h2>站点基本信息</h2>
+                    <div class="form-group">
+                        <label>网站名称</label>
+                        <input type="text" id="siteName">
+                    </div>
+                    <div class="form-group">
+                        <label>网站标题</label>
+                        <input type="text" id="siteTitle">
+                    </div>
+                    <div class="form-group">
+                        <label>网站描述</label>
+                        <textarea id="siteDescription" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>关键词</label>
+                        <input type="text" id="siteKeywords">
+                    </div>
+                    <h2 style="margin-top: 30px;">咨询热线</h2>
+                    <div class="form-group">
+                        <label>咨询标签</label>
+                        <input type="text" id="hotlineLabel">
+                    </div>
+                    <div class="form-group">
+                        <label>咨询热线 1</label>
+                        <input type="text" id="hotline1">
+                    </div>
+                    <div class="form-group">
+                        <label>咨询热线 2</label>
+                        <input type="text" id="hotline2">
+                    </div>
+
+                    <h2 style="margin-top: 30px;">服务业务区块</h2>
+                    <div class="form-group">
+                        <label>区块标题</label>
+                        <input type="text" id="servicesTitle">
+                    </div>
+                    <div class="form-group">
+                        <label>区块副标题</label>
+                        <input type="text" id="servicesSubtitle">
+                    </div>
+                    <div class="form-group">
+                        <label>更多链接</label>
+                        <input type="text" id="servicesMoreLink">
+                    </div>
+                    <div class="form-group">
+                        <label>服务项目 JSON (格式: [{"id":"svc-1","icon":"🆔","title":"标题","desc":"描述"},...])</label>
+                        <textarea id="servicesJson" rows="8" style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+
+                    <h2 style="margin-top: 30px;">关于我们区块</h2>
+                    <div class="form-group">
+                        <label>标题</label>
+                        <input type="text" id="aboutTitle">
+                    </div>
+                    <div class="form-group">
+                        <label>段落 JSON (格式: ["段落1","段落2"])</label>
+                        <textarea id="aboutParagraphsJson" rows="6" style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>统计数据 JSON (格式: [{"value":"500+","label":"移民项目"},...])</label>
+                        <textarea id="aboutStatsJson" rows="6" style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>右侧图片（上传后将替换色块）</label>
+                        <div class="image-upload-wrap">
+                            <div class="image-preview" id="aboutImagePreview" style="width:200px;height:120px;border:1px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f9f9f9;margin-bottom:8px;overflow:hidden;">
+                                <span style="color:#999;">未上传图片</span>
+                            </div>
+                            <label class="btn btn-sm btn-primary" for="aboutImageUpload">选择图片</label>
+                            <input type="file" id="aboutImageUpload" accept="image/*" style="display:none;">
+                            <input type="hidden" id="aboutImage">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>右侧图标 (emoji，未上传图片时显示)</label>
+                        <input type="text" id="aboutImageIcon">
+                    </div>
+
+                    <button class="btn btn-primary" id="saveSettingsBtn">保存设置</button>
+                </div>
+            </section>
+
+            <!-- 国家管理 -->
+            <section class="page" id="page-countries" style="display: none;">
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="addCountryBtn">+ 添加国家</button>
+                </div>
+                <div class="data-list" id="countriesList"></div>
+            </section>
+
+            <!-- 项目管理 -->
+            <section class="page" id="page-projects" style="display: none;">
+                <div class="page-actions">
+                    <select id="projectCountryFilter" style="margin-right:10px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;">
+                        <option value="">全部国家</option>
+                    </select>
+                    <select id="projectCategoryFilter" style="margin-right:10px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;">
+                        <option value="">全部分类</option>
+                        <option value="investment">投资移民</option>
+                        <option value="business">创业移民</option>
+                        <option value="skilled">技术移民</option>
+                    </select>
+                    <button class="btn btn-primary" id="addProjectBtn">+ 添加项目</button>
+                </div>
+                <div class="data-list" id="projectsList"></div>
+            </section>
+
+            <!-- 文章管理 -->
+            <section class="page" id="page-articles" style="display: none;">
+                <div class="page-actions">
+                    <select id="articleCategoryFilter" style="margin-right:10px;padding:8px 12px;border:1px solid var(--border);border-radius:8px;">
+                        <option value="">全部分类</option>
+                    </select>
+                    <button class="btn btn-primary" id="addArticleBtn">+ 添加文章</button>
+                </div>
+                <div class="data-list" id="articlesList"></div>
+            </section>
+
+            <!-- 分类管理 -->
+            <section class="page" id="page-categories" style="display: none;">
+                <div class="settings-form" id="categoriesForm">
+                    <h2>项目分类</h2>
+                    <div class="form-group">
+                        <label>项目分类 JSON (格式: [{"id":"id","name":"名称","sortOrder":0},...])</label>
+                        <textarea id="projectCategoriesJson" rows="8" style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+                    <h2 style="margin-top: 20px;">文章分类</h2>
+                    <div class="form-group">
+                        <label>文章分类 JSON (格式: [{"id":"id","name":"名称","sortOrder":0},...])</label>
+                        <textarea id="articleCategoriesJson" rows="8" style="font-family: monospace; font-size: 13px;"></textarea>
+                    </div>
+                    <button class="btn btn-primary" id="saveCategoriesBtn">保存分类</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 编辑弹窗 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">编辑</h3>
+                <button class="modal-close" id="modalCloseBtn">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-default" id="modalCancelBtn">取消</button>
+                <button class="btn btn-primary" id="modalSaveBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 图片库选择弹窗（独立 modal，避免覆盖编辑器 DOM） -->
+    <div class="modal" id="imageLibraryModal" style="display:none;">
+        <div class="modal-content" style="max-width:900px;">
+            <div class="modal-header">
+                <h3>从图片库选择（点击图片即可填入）</h3>
+                <button class="modal-close" onclick="closeImageLibrary()">&times;</button>
+            </div>
+            <div class="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- 图片裁剪弹窗 -->
+    <div class="image-cropper-modal" id="imageCropperModal" style="display:none;">
+        <div class="image-cropper-content">
+            <div class="cropper-header">
+                <h3>图片裁剪与尺寸设置</h3>
+                <button class="modal-close" onclick="closeImageCropper()">&times;</button>
+            </div>
+            <div class="cropper-body">
+                <div class="cropper-preview-wrap">
+                    <img id="cropperImage" src="" alt="待裁剪图片">
+                </div>
+                <div class="cropper-sidebar">
+                    <div class="cropper-control-group">
+                        <label>输出宽度 (px)</label>
+                        <input type="number" id="cropperWidth" placeholder="原始宽度" min="1">
+                    </div>
+                    <div class="cropper-control-group">
+                        <label>输出高度 (px)</label>
+                        <input type="number" id="cropperHeight" placeholder="原始高度" min="1">
+                    </div>
+                    <div class="cropper-control-group">
+                        <label>裁剪比例</label>
+                        <select id="cropperAspectRatio">
+                            <option value="NaN">自由裁剪</option>
+                            <option value="1">1:1 正方形</option>
+                            <option value="1.7778">16:9 宽屏</option>
+                            <option value="1.3333">4:3 常规</option>
+                            <option value="0.75">3:4 竖版</option>
+                            <option value="0.5625">9:16 竖屏</option>
+                        </select>
+                    </div>
+                    <div class="cropper-control-group">
+                        <label>图片压缩质量</label>
+                        <div style="display:flex;align-items:center;gap:8px;">
+                            <input type="range" id="cropperQuality" min="0.1" max="1" step="0.1" value="0.8" style="flex:1;">
+                            <span style="font-size:12px;color:#666;min-width:30px;" id="cropperQualityVal">0.8</span>
+                        </div>
+                    </div>
+                    <div class="cropper-control-group">
+                        <label>输出格式</label>
+                        <select id="cropperFormat">
+                            <option value="image/jpeg">JPEG（体积小）</option>
+                            <option value="image/png">PNG（支持透明）</option>
+                            <option value="image/webp">WebP（高压缩率）</option>
+                        </select>
+                    </div>
+                    <div class="cropper-tips">
+                        <p>操作提示：</p>
+                        <ul>
+                            <li>拖动选框调整裁剪区域</li>
+                            <li>滚动鼠标滚轮缩放图片</li>
+                            <li>宽高留空则按裁剪区域原始尺寸输出</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="cropper-footer">
+                <button class="btn btn-default" onclick="closeImageCropper()">取消</button>
+                <button class="btn btn-primary" id="cropperConfirmBtn">确认上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 提示框 -->
+    <div class="toast" id="toast"></div>
+
+    <script src="/node_modules/cropperjs/dist/cropper.min.js"></script>
+    <script src="admin.js"></script>
+</body>
+</html>

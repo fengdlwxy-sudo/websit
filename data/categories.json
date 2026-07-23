@@ -1,0 +1,16 @@
+{
+  "projectCategories": [
+    { "id": "investment", "name": "投资移民", "sortOrder": 1 },
+    { "id": "business", "name": "创业移民", "sortOrder": 2 },
+    { "id": "skilled", "name": "技术移民", "sortOrder": 3 }
+  ],
+  "articleCategories": [
+    { "id": "latest", "name": "最新文章", "sortOrder": 1 },
+    { "id": "news", "name": "移民资讯", "sortOrder": 2 },
+    { "id": "policy", "name": "移民政策", "sortOrder": 3 },
+    { "id": "property", "name": "海外置业", "sortOrder": 4 },
+    { "id": "education", "name": "教育", "sortOrder": 5 },
+    { "id": "life", "name": "生活", "sortOrder": 6 },
+    { "id": "invest", "name": "海外投资", "sortOrder": 7 }
+  ]
+}

@@ -1,0 +1,156 @@
+{
+  "items": [
+    {
+      "id": "gr",
+      "name": "希腊",
+      "nameEn": "Greece",
+      "code": "GR",
+      "flag": "assets/images/flags/gr.svg",
+      "description": "希腊共和国位于欧洲东南部巴尔干半岛南端，全国总面积131957平方公里。25万欧元起购房移民，三代移民，永久产权世代传承。",
+      "priceRange": "约220万人民币",
+      "meta": {
+        "capital": "雅典",
+        "language": "希腊语",
+        "currency": "欧元",
+        "schengen": true
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/dda13a89-07ca-457a-b38f-6d98cee48487.jpg"
+    },
+    {
+      "id": "us",
+      "name": "美国",
+      "nameEn": "USA",
+      "code": "US",
+      "flag": "assets/images/flags/us.svg",
+      "description": "美利坚合众国是由华盛顿哥伦比亚特区、50个州和众多海外领土组成的联邦共和立宪制国家。EB-5投资移民、EB-1A杰出人才移民等多元途径。",
+      "priceRange": "约7万-390万人民币",
+      "meta": {
+        "capital": "华盛顿",
+        "language": "英语",
+        "currency": "美元",
+        "schengen": false
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/1c32cbf5-e0f1-4536-a002-86a69f78b2b9.jpg"
+    },
+    {
+      "id": "sg",
+      "name": "新加坡",
+      "nameEn": "Singapore",
+      "code": "SG",
+      "flag": "assets/images/flags/sg.svg",
+      "description": "新加坡共和国是东南亚岛国，政治体制实行议会制共和制。GIP全球投资者计划、自雇移民EP、家族办公室等多种身份规划方案。",
+      "priceRange": "约1250万人民币",
+      "meta": {
+        "capital": "新加坡",
+        "language": "英语、华语、马来语、泰米尔语",
+        "currency": "新加坡元",
+        "schengen": false
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/932c2f80-5202-4a01-8aed-96b470eca820.jpg"
+    },
+    {
+      "id": "jp",
+      "name": "日本",
+      "nameEn": "Japan",
+      "code": "JP",
+      "flag": "assets/images/flags/jp.svg",
+      "description": "日本位于东亚，国名意为「日出之国」，领土由北海道、本州、四国、九州四大岛及7200多个小岛组成。高级经营管理者签证、经营管理签证等。",
+      "priceRange": "约300万人民币",
+      "meta": {
+        "capital": "东京",
+        "language": "日语",
+        "currency": "日元",
+        "schengen": false
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/11804411-a420-4c83-9b4a-dcb7d1af9fad.jpg"
+    },
+    {
+      "id": "nz",
+      "name": "新西兰",
+      "nameEn": "New Zealand",
+      "code": "NZ",
+      "flag": "assets/images/flags/nz.svg",
+      "description": "新西兰是一个资本主义国家，政治体制实行君主立宪制混合英国式议会民主制，现为英联邦成员国之一。普通投资移民、普通创业移民等。",
+      "priceRange": "约50-1500万人民币",
+      "meta": {
+        "capital": "惠灵顿",
+        "language": "英语、毛利语",
+        "currency": "新西兰元",
+        "schengen": false
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/aa9b40fd-fed7-4cdb-909b-6e18747655cc.jpg"
+    },
+    {
+      "id": "hk",
+      "name": "中国香港",
+      "nameEn": "Hong Kong, China",
+      "code": "HK",
+      "flag": "assets/images/flags/hk.svg",
+      "description": "中国香港特别行政区，国际金融、贸易和航运中心。优秀人才入境计划、高端人才通行证计划、输入内地人才计划等多种人才入境途径。",
+      "priceRange": "约6万人民币",
+      "meta": {
+        "capital": "香港",
+        "language": "中文、英文",
+        "currency": "港币",
+        "schengen": false
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2021/1/11/f3de8563-bdba-4aec-8cfe-958b614f5ccb.png"
+    },
+    {
+      "id": "pt",
+      "name": "葡萄牙",
+      "nameEn": "Portugal",
+      "code": "PT",
+      "flag": "assets/images/flags/pt.svg",
+      "description": "葡萄牙共和国位于欧洲西南部，欧盟成员国、申根成员国。非盈利性居留（D7签证）等身份规划项目，是进入欧洲生活的优质跳板。",
+      "priceRange": "约432万人民币",
+      "meta": {
+        "capital": "里斯本",
+        "language": "葡萄牙语",
+        "currency": "欧元",
+        "schengen": true
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/51e24ea7-c615-4c6a-8a7f-1ca78baa9fc7.jpg"
+    },
+    {
+      "id": "mt",
+      "name": "马耳他",
+      "nameEn": "Malta",
+      "code": "MT",
+      "flag": "assets/images/flags/mt.svg",
+      "description": "马耳他是全球唯一四位一体国（欧盟、申根、英联邦、欧元区），高度发达的资本主义国家。马耳他永居计划，一人投资，四代拿欧洲永居。",
+      "priceRange": "约320万-900万人民币",
+      "meta": {
+        "capital": "瓦莱塔",
+        "language": "马耳他语、英语",
+        "currency": "欧元",
+        "schengen": true
+      },
+      "status": "published",
+      "createdAt": "2026-07-22",
+      "updatedAt": "2026-07-22",
+      "coverImage": "https://img1.yiminbang.com/2018/8/23/deb6404d-12e7-4f98-8b59-a896c095098e.jpg"
+    }
+  ]
+}

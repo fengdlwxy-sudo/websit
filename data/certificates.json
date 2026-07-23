@@ -1,0 +1,16 @@
+{
+  "items": [
+    { "id": "cert-1", "icon": "🏆", "image": "", "title": "诚信专业服务机构" },
+    { "id": "cert-2", "icon": "🤝", "image": "", "title": "行业协会会员合作机构" },
+    { "id": "cert-3", "icon": "🥇", "image": "", "title": "2019家族办公室杰出海外服务大奖" },
+    { "id": "cert-4", "icon": "⭐", "image": "", "title": "2024年度行业诚信示范机构荣誉奖" },
+    { "id": "cert-5", "icon": "🌟", "image": "", "title": "2019全球资产配置身份规划引领奖" },
+    { "id": "cert-6", "icon": "🏅", "image": "", "title": "2018欧洲投资移民卓越服务机构" },
+    { "id": "cert-7", "icon": "🎖️", "image": "", "title": "2018诚信服务移民机构" },
+    { "id": "cert-8", "icon": "💎", "image": "", "title": "2017年度综合实力移民品牌" },
+    { "id": "cert-9", "icon": "🏛️", "image": "", "title": "2017美国投资移民卓越服务机构" },
+    { "id": "cert-10", "icon": "📜", "image": "", "title": "2016值得公众信赖的海外投资机构" },
+    { "id": "cert-11", "icon": "🏷️", "image": "", "title": "2016中国品牌知名度移民机构" },
+    { "id": "cert-12", "icon": "✨", "image": "", "title": "2016诚信品牌移民服务机构" }
+  ]
+}

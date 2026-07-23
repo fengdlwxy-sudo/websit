@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 强制浏览器不缓存 HTML，避免下拉菜单更新后仍显示旧内容 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>移民攻略 - 汇程移民</title>
+    <meta name="description" content="汇程移民攻略，涵盖移民资讯、移民政策、海外置业、教育规划、海外生活、海外投资等专业内容，助您全面了解海外移民。">
+    <meta name="keywords" content="移民攻略,移民资讯,移民政策,海外置业,教育规划,海外投资,汇程移民">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* ==================== 
+           页面 Banner
+           ==================== */
+        .page-banner {
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+            color: white;
+            padding: 80px 0 60px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .page-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }
+        .page-banner::after {
+            content: '';
+            position: absolute;
+            bottom: -40%;
+            left: -5%;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.03);
+        }
+        .page-banner-title {
+            font-size: 40px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            position: relative;
+            z-index: 1;
+        }
+        .page-banner-subtitle {
+            font-size: 16px;
+            opacity: 0.85;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ==================== 
+           分类标签
+           ==================== */
+        .category-tabs-wrapper {
+            padding: 40px 0 0;
+        }
+        .category-tabs {
+            display: flex;
+            gap: 0;
+            margin-bottom: 0;
+            border-bottom: 2px solid var(--border);
+            flex-wrap: wrap;
+        }
+        .cat-tab {
+            padding: 14px 28px;
+            background: none;
+            border: none;
+            font-size: 15px;
+            color: var(--text-light);
+            cursor: pointer;
+            position: relative;
+            font-weight: 500;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        .cat-tab:hover {
+            color: var(--primary);
+        }
+        .cat-tab.active {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        .cat-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 2px 2px 0 0;
+        }
+
+        /* ==================== 
+           内容区域
+           ==================== */
+        .news-section {
+            padding: 50px 0 80px;
+            min-height: 400px;
+        }
+        .loading-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+        .loading-state .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 15px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: var(--text-muted);
+            font-size: 15px;
+        }
+        .empty-state .empty-icon {
+            font-size: 64px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        /* ==================== 
+           推荐文章
+           ==================== */
+        .featured-section {
+            margin-bottom: 40px;
+        }
+        .featured-card {
+            display: grid;
+            grid-template-columns: 420px 1fr;
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+        }
+        .featured-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+        }
+        .featured-img {
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 80px;
+            position: relative;
+        }
+        .featured-img-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 6px 14px;
+            background: var(--accent);
+            color: white;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .featured-info {
+            padding: 35px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .featured-info .cat-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 15px;
+            width: fit-content;
+        }
+        .featured-info h2 {
+            font-size: 24px;
+            color: var(--text);
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+        .featured-info p {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .featured-info .featured-meta {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .featured-info .read-more {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 14px;
+            margin-top: auto;
+        }
+        .featured-info .read-more:hover {
+            color: var(--primary-dark);
+        }
+
+        /* ==================== 
+           文章列表
+           ==================== */
+        .article-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .article-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+        .article-card-img {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+        }
+        .article-card-body {
+            padding: 22px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .article-card-body .cat-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 12px;
+            width: fit-content;
+        }
+        .article-card-body h3 {
+            font-size: 17px;
+            color: var(--text);
+            margin-bottom: 10px;
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .article-card-body p {
+            font-size: 13px;
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 15px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .article-card-body .card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-muted);
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        .article-card-body .read-more-link {
+            color: var(--primary);
+            font-weight: 500;
+            font-size: 13px;
+        }
+        .article-card-body .read-more-link:hover {
+            color: var(--primary-dark);
+        }
+
+        /* ==================== 
+           分页
+           ==================== */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 40px;
+        }
+        .page-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--text);
+            cursor: pointer;
+            font-size: 14px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .page-btn.active {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+        .page-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        /* ==================== 
+           响应式
+           ==================== */
+        @media (max-width: 992px) {
+            .page-banner {
+                padding: 60px 0 40px;
+            }
+            .page-banner-title {
+                font-size: 32px;
+            }
+            .featured-card {
+                grid-template-columns: 1fr;
+            }
+            .featured-img {
+                height: 200px;
+            }
+            .featured-info {
+                padding: 25px;
+            }
+            .article-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .cat-tab {
+                padding: 12px 18px;
+                font-size: 14px;
+            }
+        }
+        @media (max-width: 768px) {
+            .page-banner-title {
+                font-size: 26px;
+            }
+            .page-banner-subtitle {
+                font-size: 14px;
+            }
+            .article-grid {
+                grid-template-columns: 1fr;
+            }
+            .category-tabs {
+                gap: 0;
+                flex-wrap: wrap;
+            }
+            .cat-tab {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            .featured-img {
+                height: 160px;
+                font-size: 56px;
+            }
+            .featured-info h2 {
+                font-size: 20px;
+            }
+        }
+    </style>
+
+</head>
+<body>
+    <!-- 顶部联系栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>欢迎访问汇程移民官方网站！</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline-label">免费咨询热线</span>
+                <a href="tel:136-5185-2270" class="hotline-num">136-5185-2270</a>
+                <span class="hotline-sep">|</span>
+                <a href="tel:199-0172-6016" class="hotline-num">199-0172-6016</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主导航 -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <img src="assets/images/logo-full-color.png" alt="汇程移民" class="logo-img">
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="/">首页</a></li>
+                    <li class="has-dropdown">
+                        <a href="#projects">移民项目</a>
+                        <div class="dropdown">
+                            <a href="projects.html?category=investment">投资移民</a>
+                            <a href="projects.html?category=business">创业移民</a>
+                            <a href="projects.html?category=skilled">技术移民</a>
+                            <a href="projects.html?countryId=gr">购房移民</a>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="#countries">移民国家</a>
+                        <div class="dropdown">
+                            <a href="projects.html?countryId=gr">希腊</a>
+                            <a href="projects.html?countryId=us">美国</a>
+                            <a href="projects.html?countryId=sg">新加坡</a>
+                            <a href="projects.html?countryId=jp">日本</a>
+                            <a href="projects.html?countryId=nz">新西兰</a>
+                            <a href="projects.html?countryId=hk">中国香港</a>
+                            <a href="projects.html?countryId=pt">葡萄牙</a>
+                            <a href="projects.html?countryId=mt">马耳他</a>
+                        </div>
+                    </li>
+                    <li><a href="/#services">服务业务</a></li>
+                    <li><a href="news.html" class="active">移民攻略</a></li>
+                    <li><a href="/#cases">成功案例</a></li>
+                    <li><a href="/#about">关于我们</a></li>
+                </ul>
+            </nav>
+            <a href="/#contact" class="btn btn-header">免费评估</a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- 页面 Banner -->
+    <section class="page-banner">
+        <div class="container">
+            <h1 class="page-banner-title">移民攻略</h1>
+            <p class="page-banner-subtitle">汇集移民资讯、政策解读、海外置业、教育规划等专业内容</p>
+        </div>
+    </section>
+
+    <!-- 分类标签 -->
+    <section class="category-tabs-wrapper">
+        <div class="container">
+            <div class="category-tabs" id="categoryTabs">
+                <button class="cat-tab active" data-category="">全部</button>
+                <button class="cat-tab" data-category="latest">最新文章</button>
+                <button class="cat-tab" data-category="news">移民资讯</button>
+                <button class="cat-tab" data-category="policy">移民政策</button>
+                <button class="cat-tab" data-category="property">海外置业</button>
+                <button class="cat-tab" data-category="education">教育</button>
+                <button class="cat-tab" data-category="life">生活</button>
+                <button class="cat-tab" data-category="invest">海外投资</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 内容区域 -->
+    <section class="news-section">
+        <div class="container">
+            <!-- 加载状态 -->
+            <div class="loading-state" id="loadingState">
+                <div class="spinner"></div>
+                <p>正在加载文章...</p>
+            </div>
+            <!-- 内容容器 -->
+            <div id="newsContent" style="display:none;">
+                <!-- 推荐文章 -->
+                <div class="featured-section" id="featuredSection"></div>
+                <!-- 文章列表 -->
+                <div class="article-grid" id="articleGrid"></div>
+                <!-- 分页 -->
+                <div class="pagination" id="pagination"></div>
+            </div>
+            <!-- 空状态 -->
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div class="empty-icon">📄</div>
+                <p>暂无相关文章</p>
+            </div>
+            <!-- 错误状态 -->
+            <div class="empty-state" id="errorState" style="display:none;">
+                <div class="empty-icon">⚠️</div>
+                <p id="errorText">加载失败，请稍后重试</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/images/logo-full-white.png" alt="汇程移民" class="footer-logo">
+                    <p>汇程移民，您值得信赖的全球身份规划专家。专业提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式服务。</p>
+                    <div class="footer-hotline">
+                        <p>免费咨询热线</p>
+                        <a href="tel:136-5185-2270">136-5185-2270</a>
+                        <span>|</span>
+                        <a href="tel:199-0172-6016">199-0172-6016</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>移民项目</h4>
+                    <ul>
+                        <li><a href="#">投资移民</a></li>
+                        <li><a href="#">创业移民</a></li>
+                        <li><a href="#">技术移民</a></li>
+                        <li><a href="#">购房移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>热门国家</h4>
+                    <ul>
+                        <li><a href="#">希腊移民</a></li>
+                        <li><a href="#">美国移民</a></li>
+                        <li><a href="#">新加坡移民</a></li>
+                        <li><a href="#">日本移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司简介</a></li>
+                        <li><a href="#">荣誉证书</a></li>
+                        <li><a href="#">专家团队</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-qrcode-col">
+                    <h4>关注我们</h4>
+                    <div class="footer-qrcode">
+                        <div class="footer-qrcode-item">
+                            <img src="assets/images/qrcode/wechat-qr1.jpg" class="footer-qrcode-img" alt="扫码关注汇程移民公众号">
+                            <div class="footer-qrcode-item-title">扫码关注</div>
+                            <div class="footer-qrcode-item-desc">汇程移民</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 汇程移民 版权所有 | 本站信息仅供参考，具体政策以官方公布为准</p>
+                <a href="./admin/index.html" class="admin-entry">Enter the backend</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 侧边悬浮工具 -->
+    <div class="side-tools">
+        <a href="tel:136-5185-2270" class="side-tool tel-tool" title="电话咨询">
+            <span>&#x1F4DE;</span>
+            <div class="side-tool-tip">
+                <p>免费咨询热线</p>
+                <strong>136-5185-2270</strong>
+            </div>
+        </a>
+        <a href="/#contact" class="side-tool" title="在线咨询">
+            <span>&#x1F4AC;</span>
+        </a>
+        <a href="/#contact" class="side-tool" title="免费评估">
+            <span>&#x1F4DD;</span>
+        </a>
+        <button class="side-tool back-to-top" id="backToTop" title="返回顶部">
+            <span>&#x2B06;&#xFE0F;</span>
+        </button>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // 分类映射
+            var CATEGORY_LABELS = {
+                'latest': '最新文章',
+                'news': '移民资讯',
+                'policy': '移民政策',
+                'property': '海外置业',
+                'education': '教育',
+                'life': '生活',
+                'invest': '海外投资'
+            };
+
+            // 分类颜色
+            var CATEGORY_GRADIENTS = {
+                'latest': 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)',
+                'news': 'linear-gradient(135deg, #1E3A5F 0%, #2E5C8A 100%)',
+                'policy': 'linear-gradient(135deg, #6B4C9A 0%, #9B6BCC 100%)',
+                'property': 'linear-gradient(135deg, #C41E3A 0%, #FF6B6B 100%)',
+                'education': 'linear-gradient(135deg, #0D7C66 0%, #16C47F 100%)',
+                'life': 'linear-gradient(135deg, #E85D75 0%, #FF9A8B 100%)',
+                'invest': 'linear-gradient(135deg, #2E5C8A 0%, #4A90D9 100%)'
+            };
+
+            var CATEGORY_ICONS = {
+                'latest': '\u{1F4F0}',
+                'news': '\u{1F4E1}',
+                'policy': '\u{1F4DC}',
+                'property': '\u{1F3E0}',
+                'education': '\u{1F393}',
+                'life': '\u{1F30D}',
+                'invest': '\u{1F4C8}'
+            };
+
+            var currentCategory = '';
+            var currentPage = 1;
+            var pageSize = 9;
+            var allItems = [];
+            var featuredArticle = null;
+
+            // 从URL读取分类参数
+            function getUrlCategory() {
+                var params = new URLSearchParams(window.location.search);
+                return params.get('category') || '';
+            }
+
+            function getUrlPage() {
+                var params = new URLSearchParams(window.location.search);
+                return parseInt(params.get('page')) || 1;
+            }
+
+            function updateUrl(category, page) {
+                var params = new URLSearchParams();
+                if (category) params.set('category', category);
+                if (page && page > 1) params.set('page', page);
+                var url = window.location.pathname;
+                if (params.toString()) url += '?' + params.toString();
+                window.history.replaceState({}, '', url);
+            }
+
+            // 格式化日期
+            function formatDate(dateStr) {
+                if (!dateStr) return '';
+                var parts = dateStr.split('-');
+                if (parts.length === 3) {
+                    return parts[0] + '\u5E74' + parseInt(parts[1]) + '\u6708' + parseInt(parts[2]) + '\u65E5';
+                }
+                return dateStr;
+            }
+
+            function escapeHtml(text) {
+                if (typeof text !== 'string') return '';
+                var div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+
+            // 渲染推荐文章
+            function renderFeatured(article) {
+                var container = document.getElementById('featuredSection');
+                if (!article) {
+                    container.innerHTML = '';
+                    return;
+                }
+                var cat = article.category || '';
+                var grad = CATEGORY_GRADIENTS[cat] || CATEGORY_GRADIENTS['latest'];
+                var icon = CATEGORY_ICONS[cat] || '\u{1F4F0}';
+                var label = CATEGORY_LABELS[cat] || cat;
+
+                container.innerHTML =
+                    '<a href="article-detail.html?id=' + escapeHtml(article.id) + '" class="featured-card">' +
+                        '<div class="featured-img" style="' + (article.image && (article.image.startsWith('/') || article.image.startsWith('http')) ? 'background: url(\'' + article.image + '\') center/cover' : 'background: ' + grad) + ';">' +
+                            '<span>' + icon + '</span>' +
+                            '<div class="featured-img-badge">\u{1F31F} 精选文章</div>' +
+                        '</div>' +
+                        '<div class="featured-info">' +
+                            '<span class="cat-badge">' + escapeHtml(label) + '</span>' +
+                            '<h2>' + escapeHtml(article.title) + '</h2>' +
+                            '<p>' + escapeHtml(article.summary || '') + '</p>' +
+                            '<div class="featured-meta">' +
+                                '<span>\u{1F4C5} ' + formatDate(article.createdAt) + '</span>' +
+                            '</div>' +
+                            '<span class="read-more">\u9605\u8BFB\u5168\u6587 \u2192</span>' +
+                        '</div>' +
+                    '</a>';
+            }
+
+            // 渲染文章列表
+            function renderArticles(items) {
+                var grid = document.getElementById('articleGrid');
+                if (items.length === 0) {
+                    grid.innerHTML = '';
+                    return;
+                }
+                grid.innerHTML = items.map(function(item) {
+                    var cat = item.category || '';
+                    var grad = CATEGORY_GRADIENTS[cat] || CATEGORY_GRADIENTS['latest'];
+                    var icon = CATEGORY_ICONS[cat] || '\u{1F4F0}';
+                    var label = CATEGORY_LABELS[cat] || cat;
+                    return (
+                        '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="article-card">' +
+                            '<div class="article-card-img" style="' + (item.image && (item.image.startsWith('/') || item.image.startsWith('http')) ? 'background: url(\'' + item.image + '\') center/cover' : 'background: ' + grad) + ';">' +
+                                '<span>' + icon + '</span>' +
+                            '</div>' +
+                            '<div class="article-card-body">' +
+                                '<span class="cat-badge">' + escapeHtml(label) + '</span>' +
+                                '<h3>' + escapeHtml(item.title) + '</h3>' +
+                                '<p>' + escapeHtml(item.summary || '') + '</p>' +
+                                '<div class="card-footer">' +
+                                    '<span>\u{1F4C5} ' + formatDate(item.createdAt) + '</span>' +
+                                    '<span class="read-more-link">\u9605\u8BFB\u5168\u6587 \u2192</span>' +
+                                '</div>' +
+                            '</div>' +
+                        '</a>'
+                    );
+                }).join('');
+            }
+
+            // 渲染分页
+            function renderPagination(total, current) {
+                var container = document.getElementById('pagination');
+                var totalPages = Math.ceil(total / pageSize);
+                if (totalPages <= 1) {
+                    container.innerHTML = '';
+                    return;
+                }
+                var html = '';
+                html += '<button class="page-btn" ' + (current <= 1 ? 'disabled' : '') + ' data-page="' + (current - 1) + '">\u2039</button>';
+                for (var i = 1; i <= totalPages; i++) {
+                    html += '<button class="page-btn' + (i === current ? ' active' : '') + '" data-page="' + i + '">' + i + '</button>';
+                }
+                html += '<button class="page-btn" ' + (current >= totalPages ? 'disabled' : '') + ' data-page="' + (current + 1) + '">\u203A</button>';
+                container.innerHTML = html;
+
+                container.querySelectorAll('.page-btn').forEach(function(btn) {
+                    btn.addEventListener('click', function() {
+                        var page = parseInt(this.dataset.page);
+                        if (!isNaN(page) && page !== currentPage && page >= 1 && page <= totalPages) {
+                            currentPage = page;
+                            updateUrl(currentCategory, currentPage);
+                            showPage();
+                            window.scrollTo({ top: 300, behavior: 'smooth' });
+                        }
+                    });
+                });
+            }
+
+            function showPage() {
+                var start = (currentPage - 1) * pageSize;
+                var pageItems = allItems.slice(start, start + pageSize);
+                renderArticles(pageItems);
+                renderPagination(allItems.length, currentPage);
+            }
+
+            function showLoading() {
+                document.getElementById('loadingState').style.display = 'block';
+                document.getElementById('newsContent').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+            }
+
+            function showContent() {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('newsContent').style.display = 'block';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'none';
+            }
+
+            function showEmpty() {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('newsContent').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'block';
+                document.getElementById('errorState').style.display = 'none';
+            }
+
+            function showError(msg) {
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('newsContent').style.display = 'none';
+                document.getElementById('emptyState').style.display = 'none';
+                document.getElementById('errorState').style.display = 'block';
+                document.getElementById('errorText').textContent = msg || '加载失败，请稍后重试';
+            }
+
+            // 加载数据
+            async function loadArticles(category) {
+                showLoading();
+                try {
+                    var url = '/api/articles';
+                    if (category) url += '?category=' + encodeURIComponent(category);
+                    var response = await fetch(url);
+                    if (!response.ok) throw new Error('Failed to fetch articles');
+                    var result = await response.json();
+                    if (!result.success) throw new Error(result.message || '加载失败');
+
+                    var data = result.data;
+                    // 兼容 featured 为数组或单对象，规范化后只取第一条作为置顶推荐
+                    var rawFeatured = data.featured;
+                    if (Array.isArray(rawFeatured)) {
+                        featuredArticle = rawFeatured.filter(Boolean)[0] || null;
+                    } else if (rawFeatured) {
+                        featuredArticle = rawFeatured;
+                    } else {
+                        featuredArticle = null;
+                    }
+                    allItems = data.items || [];
+
+                    // 如果选了分类，推荐文章也过滤同分类
+                    if (category && featuredArticle && featuredArticle.category !== category) {
+                        featuredArticle = null;
+                    }
+
+                    if (featuredArticle || allItems.length > 0) {
+                        showContent();
+                        renderFeatured(featuredArticle);
+                        currentPage = getUrlPage();
+                        var totalPages = Math.ceil(allItems.length / pageSize);
+                        if (currentPage > totalPages) {
+                            currentPage = 1;
+                            updateUrl(currentCategory, 1);
+                        }
+                        if (currentPage < 1) currentPage = 1;
+                        showPage();
+                    } else {
+                        showEmpty();
+                    }
+                } catch (error) {
+                    console.error('加载文章失败:', error);
+                    showError(error.message || '加载失败，请稍后重试');
+                }
+            }
+
+            // 分类标签点击
+            function initCategoryTabs() {
+                var tabsContainer = document.getElementById('categoryTabs');
+                if (!tabsContainer) return;
+                tabsContainer.addEventListener('click', function(e) {
+                    var tab = e.target.closest('.cat-tab');
+                    if (!tab) return;
+                    var category = tab.dataset.category || '';
+                    if (category === currentCategory) return;
+
+                    // 更新激活状态
+                    tabsContainer.querySelectorAll('.cat-tab').forEach(function(t) {
+                        t.classList.remove('active');
+                    });
+                    tab.classList.add('active');
+
+                    // 加载对应分类
+                    currentCategory = category;
+                    currentPage = 1;
+                    updateUrl(currentCategory, currentPage);
+                    loadArticles(currentCategory);
+                });
+            }
+
+            // 移动端菜单
+            function initMobileMenu() {
+                var toggle = document.getElementById('mobileMenuToggle');
+                var nav = document.getElementById('mainNav');
+                if (toggle && nav) {
+                    toggle.addEventListener('click', function() {
+                        this.classList.toggle('active');
+                        nav.classList.toggle('mobile-open');
+                    });
+                }
+            }
+
+            // 头部滚动效果
+            function initHeaderScroll() {
+                var header = document.getElementById('mainHeader');
+                var backToTop = document.getElementById('backToTop');
+                window.addEventListener('scroll', function() {
+                    if (header) {
+                        header.classList.toggle('scrolled', window.scrollY > 50);
+                    }
+                    if (backToTop) {
+                        backToTop.classList.toggle('visible', window.scrollY > 400);
+                    }
+                }, { passive: true });
+            }
+
+            // 返回顶部
+            function initBackToTop() {
+                var btn = document.getElementById('backToTop');
+                if (btn) {
+                    btn.addEventListener('click', function() {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                }
+            }
+
+            // 初始化
+            function init() {
+                currentCategory = getUrlCategory();
+                currentPage = getUrlPage();
+
+                // 设置激活的分类标签
+                var tabs = document.querySelectorAll('.cat-tab');
+                tabs.forEach(function(tab) {
+                    if (tab.dataset.category === currentCategory) {
+                        tab.classList.add('active');
+                    } else {
+                        tab.classList.remove('active');
+                    }
+                });
+
+                initCategoryTabs();
+                initMobileMenu();
+                initHeaderScroll();
+                initBackToTop();
+                loadArticles(currentCategory);
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+{
+  "featured": {
+    "id": "featured-1",
+    "title": "�߿����Ǻ�����Ϊ��Ҫ��һ��·��������Ψһ��",
+    "summary": "����ժҪ",
+    "image": "/assets/images/uploads/test-featured.jpg",
+    "icon": "??",
+    "gradient": "linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)",
+    "link": "article-detail.html?id=a-001",
+    "date": "2026-07-15"
+  },
+  "items": [
+    {
+      "id": "mrx5d8s3-9607p1",
+      "title": "安省移民大改革正式落地！EOI评分标准首次公开",
+      "tag": "NEW",
+      "date": "2026-07-23",
+      "link": "article-detail.html?id=mrvpth7m-rtwlee"
+    },
+    {
+      "id": "news-1",
+      "title": "除了高考，孩子还有别的出路吗？",
+      "tag": "NEW",
+      "date": "2026-07-15",
+      "link": "article-detail.html?id=a-002"
+    },
+    {
+      "id": "news-2",
+      "title": "这个国家出手了！31页通函严堵漏洞！",
+      "tag": "NEW",
+      "date": "2026-07-15",
+      "link": "article-detail.html?id=a-003"
+    },
+    {
+      "id": "news-3",
+      "title": "「外国人限购令」，黄了！",
+      "tag": "NEW",
+      "date": "2026-07-15",
+      "link": "article-detail.html?id=a-004"
+    },
+    {
+      "id": "news-4",
+      "title": "这三种定义都分不清，还想办理海外身份？",
+      "tag": "NEW",
+      "date": "2026-07-15",
+      "link": "article-detail.html?id=a-005"
+    },
+    {
+      "id": "news-5",
+      "title": "全球最大跨境财富管理中心易主！超越瑞士的是它！",
+      "tag": "资讯",
+      "date": "2026-07-15",
+      "link": "article-detail.html?id=a-006"
+    },
+    {
+      "id": "news-6",
+      "title": "澄清！美国I-485新政策的真正意图其实是...",
+      "tag": "政策",
+      "date": "2026-07-10",
+      "link": "article-detail.html?id=a-007"
+    }
+  ]
+}

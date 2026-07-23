@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+node_modules - 副本/
+
+# Runtime files
+server.log
+server.pid
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Workbuddy memory / config
+.workbuddy/
+
+# Temporary / backup files
+*.b64
+*.backup
+*.bak
+*.tmp
+*.log
+proof-*.png
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor files
+.vscode/
+.idea/
+*.sublime-*

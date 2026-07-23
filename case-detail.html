@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">成功案例详情 - 汇程移民</title>
+    <meta name="description" content="汇程移民成功案例详情，真实客户移民故事分享。">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .breadcrumb-wrapper { background: var(--bg-light); padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-light); }
+        .breadcrumb a { color: var(--text-light); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--primary); }
+        .breadcrumb .current { color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 400px; }
+        .detail-section { padding: 50px 0 70px; }
+        .detail-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+        .detail-hero { border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 30px; position: relative; }
+        .detail-hero-img { width: 100%; height: 360px; object-fit: cover; display: block; }
+        .detail-hero-gradient { width: 100%; height: 360px; display: flex; align-items: center; justify-content: center; font-size: 80px; }
+        .detail-hero-overlay { position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.7)); padding: 30px 35px 25px; }
+        .detail-hero-tags { display: flex; gap: 8px; margin-bottom: 10px; }
+        .detail-hero-tags span { display: inline-block; padding: 4px 12px; background: var(--accent); color: white; border-radius: 20px; font-size: 12px; }
+        .detail-hero-title { font-size: 26px; font-weight: 700; color: white; line-height: 1.4; margin: 0; }
+        .detail-hero-date { font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 8px; }
+        .detail-content { background: white; border-radius: var(--radius-lg); padding: 35px; border: 1px solid var(--border); line-height: 1.8; color: var(--text); }
+        .detail-content h2 { font-size: 24px; color: var(--primary-dark); margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 2px solid var(--bg-light); }
+        .detail-content h3 { font-size: 18px; color: var(--primary); margin: 25px 0 12px; }
+        .detail-content ul, .detail-content ol { margin: 15px 0; padding-left: 25px; }
+        .detail-content li { margin-bottom: 8px; }
+        .detail-content p { margin-bottom: 15px; }
+        .detail-content strong { color: var(--primary-dark); }
+        .detail-content img { max-width: 100%; border-radius: 8px; margin: 15px 0; }
+        .sidebar { position: sticky; top: 100px; }
+        .sidebar-card { background: white; border-radius: var(--radius-lg); padding: 25px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+        .sidebar-title { font-size: 18px; font-weight: 600; color: var(--primary-dark); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--bg-light); }
+        .sidebar-case { padding: 12px 0; border-bottom: 1px dashed var(--border); }
+        .sidebar-case:last-child { border-bottom: none; }
+        .sidebar-case a { color: var(--text); text-decoration: none; font-size: 14px; line-height: 1.6; display: block; }
+        .sidebar-case a:hover { color: var(--primary); }
+        .sidebar-case .case-date { font-size: 12px; color: var(--text-light); margin-top: 4px; }
+        .cta-box { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; border-radius: var(--radius-lg); padding: 0; text-align: center; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 122, 138, 0.20); }
+        .cta-box-header { padding: 22px 22px 14px; }
+        .cta-box-header h4 { font-size: 19px; margin-bottom: 6px; font-weight: 700; }
+        .cta-box-header p { font-size: 12.5px; opacity: 0.9; line-height: 1.6; margin-bottom: 0; }
+        .cta-phones { display: flex; flex-direction: column; gap: 8px; padding: 0 18px; }
+        .cta-phones a { display: flex; align-items: center; justify-content: center; gap: 6px; color: white; font-size: 15px; font-weight: 700; text-decoration: none; padding: 11px 10px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.10); border-radius: 8px; transition: all 0.2s; letter-spacing: 0.3px; }
+        .cta-phones a:hover { background: rgba(255,255,255,0.30); transform: translateY(-1px); }
+        .cta-divider { display: flex; align-items: center; gap: 10px; margin: 18px 22px 12px; font-size: 12px; opacity: 0.85; }
+        .cta-divider::before, .cta-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.25); }
+        .cta-qrcode { padding: 0 22px 18px; }
+        .cta-qrcode-img { width: 130px; height: 130px; margin: 0 auto 10px; background: white; border-radius: 10px; padding: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+        .cta-qrcode-img img { display: block; width: 100%; height: 100%; object-fit: contain; }
+        .cta-qrcode-tip { font-size: 13px; margin-bottom: 4px; }
+        .cta-qrcode-sub { font-size: 11.5px; opacity: 0.85; line-height: 1.5; }
+        .loading, .empty, .error { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        @media (max-width: 992px) { .detail-layout { grid-template-columns: 1fr; } .detail-hero-img, .detail-hero-gradient { height: 240px; } }
+        @media (max-width: 576px) { .detail-hero-overlay { padding: 20px 20px 15px; } .detail-hero-title { font-size: 18px; } .detail-content { padding: 20px; } }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>欢迎访问汇程移民官方网站！</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline-label">免费咨询热线</span>
+                <a href="tel:136-5185-2270" class="hotline-num">136-5185-2270</a>
+                <span class="hotline-sep">|</span>
+                <a href="tel:199-0172-6016" class="hotline-num">199-0172-6016</a>
+            </div>
+        </div>
+    </div>
+
+    <header class="main-header" id="mainHeader">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <img src="assets/images/logo-full-color.png" alt="汇程移民" class="logo-img">
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="index.html">首页</a></li>
+                    <li class="has-dropdown">
+                        <a href="projects.html">移民项目</a>
+                        <div class="dropdown">
+                            <a href="projects.html?category=investment">投资移民</a>
+                            <a href="projects.html?category=business">创业移民</a>
+                            <a href="projects.html?category=skilled">技术移民</a>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="index.html#countries">移民国家</a>
+                        <div class="dropdown">
+                            <a href="projects.html?countryId=gr">希腊</a>
+                            <a href="projects.html?countryId=us">美国</a>
+                            <a href="projects.html?countryId=sg">新加坡</a>
+                            <a href="projects.html?countryId=jp">日本</a>
+                            <a href="projects.html?countryId=nz">新西兰</a>
+                            <a href="projects.html?countryId=pt">葡萄牙</a>
+                        </div>
+                    </li>
+                    <li><a href="index.html#services">服务业务</a></li>
+                    <li><a href="news.html">移民攻略</a></li>
+                    <li><a href="index.html#cases">成功案例</a></li>
+                    <li><a href="index.html#about">关于我们</a></li>
+                </ul>
+            </nav>
+            <a href="index.html#contact" class="btn btn-header">免费评估</a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="breadcrumb-wrapper">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">首页</a>
+                <span class="sep">›</span>
+                <a href="index.html#cases">成功案例</a>
+                <span class="sep">›</span>
+                <span class="current" id="breadcrumbTitle">案例详情</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="detail-section">
+        <div class="container">
+            <div id="detailLoading" class="loading">正在加载案例详情...</div>
+            <div id="detailContent" style="display:none;">
+                <div class="detail-hero" id="detailHero">
+                    <div class="detail-hero-gradient" id="heroGradient" style="display:none;"></div>
+                    <img class="detail-hero-img" id="heroImage" src="" alt="" style="display:none;">
+                    <div class="detail-hero-overlay">
+                        <div class="detail-hero-tags" id="heroTags"></div>
+                        <h1 class="detail-hero-title" id="caseTitle">案例标题</h1>
+                        <div class="detail-hero-date" id="caseDate"></div>
+                    </div>
+                </div>
+                <div class="detail-layout">
+                    <div class="detail-content" id="caseBody"></div>
+                    <aside class="sidebar">
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">其他成功案例</h4>
+                            <div id="otherCases"></div>
+                        </div>
+                        <div class="cta-box">
+                            <div class="cta-box-header">
+                                <h4>获取专属方案</h4>
+                                <p>汇程移民专业顾问为您一对一解答</p>
+                            </div>
+                            <div class="cta-phones">
+                                <a href="tel:136-5185-2270"><span>📞</span>136-5185-2270</a>
+                                <a href="tel:199-0172-6016"><span>📱</span>199-0172-6016</a>
+                            </div>
+                            <div class="cta-divider">或 添加微信咨询</div>
+                            <div class="cta-qrcode">
+                                <div class="cta-qrcode-img">
+                                    <img src="assets/images/qrcode/wechat-qr1.jpg" alt="汇程移民微信二维码">
+                                </div>
+                                <div class="cta-qrcode-tip">📷 扫一扫添加微信</div>
+                                <div class="cta-qrcode-sub">7×24 小时在线 · 1 对 1 答疑</div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+            <div id="detailError" class="error" style="display:none;">案例加载失败，请返回<a href="index.html#cases">成功案例</a></div>
+        </div>
+    </section>
+
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/images/logo-full-white.png" alt="汇程移民" class="footer-logo">
+                    <p>汇程移民，您值得信赖的全球身份规划专家。专业提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式服务。</p>
+                    <div class="footer-hotline">
+                        <p>免费咨询热线</p>
+                        <a href="tel:136-5185-2270">136-5185-2270</a>
+                        <span>|</span>
+                        <a href="tel:199-0172-6016">199-0172-6016</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>移民项目</h4>
+                    <ul>
+                        <li><a href="projects.html?category=investment">投资移民</a></li>
+                        <li><a href="projects.html?category=business">创业移民</a></li>
+                        <li><a href="projects.html?category=skilled">技术移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>热门国家</h4>
+                    <ul>
+                        <li><a href="projects.html?countryId=gr">希腊移民</a></li>
+                        <li><a href="projects.html?countryId=us">美国移民</a></li>
+                        <li><a href="projects.html?countryId=sg">新加坡移民</a></li>
+                        <li><a href="projects.html?countryId=jp">日本移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="index.html#about">公司简介</a></li>
+                        <li><a href="index.html#certificates">荣誉证书</a></li>
+                        <li><a href="index.html#contact">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-qrcode-col">
+                    <h4>关注我们</h4>
+                    <div class="footer-qrcode">
+                        <div class="footer-qrcode-item">
+                            <img src="assets/images/qrcode/wechat-qr1.jpg" class="footer-qrcode-img" alt="扫码关注汇程移民公众号">
+                            <div class="footer-qrcode-item-title">扫码关注</div>
+                            <div class="footer-qrcode-item-desc">汇程移民</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 汇程移民 版权所有 | 本站信息仅供参考，具体政策以官方公布为准</p>
+                <a href="./admin/index.html" class="admin-entry">Enter the backend</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="side-tools">
+        <a href="tel:136-5185-2270" class="side-tool tel-tool" title="电话咨询">
+            <span>📞</span>
+            <div class="side-tool-tip">
+                <p>免费咨询热线</p>
+                <strong>136-5185-2270</strong>
+            </div>
+        </a>
+        <a href="index.html#contact" class="side-tool" title="在线咨询">
+            <span>💬</span>
+        </a>
+        <a href="index.html#contact" class="side-tool" title="免费评估">
+            <span>📝</span>
+        </a>
+        <button class="side-tool back-to-top" id="backToTop" title="返回顶部">
+            <span>⬆️</span>
+        </button>
+    </div>
+
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h3 id="modalTitle">温馨提示</h3>
+            <p id="modalText">感谢您的关注，我们的移民顾问将尽快与您联系！</p>
+            <button class="btn btn-primary" id="modalConfirm">确定</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name) || '';
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        async function loadCase() {
+            const id = getParam('id');
+            if (!id) {
+                document.getElementById('detailLoading').style.display = 'none';
+                document.getElementById('detailError').style.display = 'block';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/cases/' + encodeURIComponent(id));
+                if (!res.ok) throw new Error('Case not found');
+                const result = await res.json();
+                const c = result.data;
+
+                document.getElementById('pageTitle').textContent = c.title + ' - 汇程移民';
+                document.getElementById('breadcrumbTitle').textContent = c.title;
+                document.getElementById('caseTitle').textContent = c.title;
+                document.getElementById('caseDate').textContent = c.date ? '发布日期：' + c.date : '';
+                document.getElementById('caseBody').innerHTML = c.content || '<p>暂无详细内容</p>';
+
+                // Hero image or gradient
+                const heroImage = document.getElementById('heroImage');
+                const heroGradient = document.getElementById('heroGradient');
+                if (c.image) {
+                    heroImage.style.display = 'block';
+                    heroImage.src = c.image;
+                    heroImage.alt = c.title;
+                    heroGradient.style.display = 'none';
+                } else {
+                    heroGradient.style.display = 'flex';
+                    heroGradient.style.background = c.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)';
+                    heroGradient.textContent = c.icon || '📌';
+                    heroImage.style.display = 'none';
+                }
+
+                // Tags
+                const tagsEl = document.getElementById('heroTags');
+                if (c.tags && c.tags.length) {
+                    tagsEl.innerHTML = c.tags.map(t => '<span>' + escapeHtml(t) + '</span>').join('');
+                }
+
+                document.getElementById('detailLoading').style.display = 'none';
+                document.getElementById('detailContent').style.display = 'block';
+
+                loadOtherCases(id);
+            } catch (err) {
+                document.getElementById('detailLoading').style.display = 'none';
+                document.getElementById('detailError').style.display = 'block';
+            }
+        }
+
+        async function loadOtherCases(excludeId) {
+            try {
+                const res = await fetch('/api/cases');
+                const result = await res.json();
+                const cases = (result.items || []).filter(c => c.id !== excludeId).slice(0, 5);
+                if (cases.length === 0) return;
+
+                document.getElementById('otherCases').innerHTML = cases.map(c => `
+                    <div class="sidebar-case">
+                        <a href="case-detail.html?id=${c.id}">${escapeHtml(c.title)}</a>
+                        <div class="case-date">${c.date || ''}</div>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadCase);
+    </script>
+</body>
+</html>

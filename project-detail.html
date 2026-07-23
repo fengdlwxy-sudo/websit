@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 强制浏览器不缓存 HTML，避免下拉菜单更新后仍显示旧内容 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title id="pageTitle">项目详情 - 汇程移民</title>
+    <meta name="description" content="汇程移民项目详情，了解移民条件、优势、办理流程。">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .breadcrumb-wrapper { background: var(--bg-light); padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-light); }
+        .breadcrumb a { color: var(--text-light); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--primary); }
+        .breadcrumb .current { color: var(--text); font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 400px; }
+        .detail-section { padding: 50px 0 70px; }
+        .detail-layout { display: grid; grid-template-columns: 1fr 340px; gap: 40px; align-items: start; }
+        .detail-hero { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; border-radius: var(--radius-lg); padding: 40px; margin-bottom: 30px; position: relative; overflow: hidden; }
+        .detail-hero::before { content: ''; position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; border-radius: 50%; background: rgba(255,255,255,0.08); }
+        .detail-hero-badge { display: inline-block; padding: 5px 14px; background: var(--accent); border-radius: 20px; font-size: 13px; margin-bottom: 15px; }
+        .detail-hero-title { font-size: 32px; font-weight: 700; margin-bottom: 12px; }
+        .detail-hero-price { font-size: 18px; opacity: 0.9; }
+        .detail-hero-flag { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); width: 100px; height: 100px; object-fit: contain; border-radius: 50%; background: white; box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .detail-content { background: white; border-radius: var(--radius-lg); padding: 35px; border: 1px solid var(--border); line-height: 1.8; color: var(--text); }
+        .detail-content h2 { font-size: 24px; color: var(--primary-dark); margin: 30px 0 15px; padding-bottom: 10px; border-bottom: 2px solid var(--bg-light); }
+        .detail-content h3 { font-size: 18px; color: var(--primary); margin: 25px 0 12px; }
+        .detail-content ul, .detail-content ol { margin: 15px 0; padding-left: 25px; }
+        .detail-content li { margin-bottom: 8px; }
+        .detail-content p { margin-bottom: 15px; }
+        .detail-content strong { color: var(--primary-dark); }
+        .sidebar { position: sticky; top: 100px; }
+        .sidebar-card { background: white; border-radius: var(--radius-lg); padding: 25px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 4px 15px rgba(0,0,0,0.04); }
+        .sidebar-title { font-size: 18px; font-weight: 600; color: var(--primary-dark); margin-bottom: 18px; padding-bottom: 12px; border-bottom: 2px solid var(--bg-light); }
+        .sidebar-list { list-style: none; padding: 0; margin: 0; }
+        .sidebar-list li { padding: 10px 0; border-bottom: 1px dashed var(--border); font-size: 14px; color: var(--text); display: flex; align-items: flex-start; gap: 8px; }
+        .sidebar-list li::before { content: '✓'; color: var(--primary); font-weight: bold; }
+        .cta-box { background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white; border-radius: var(--radius-lg); padding: 0; text-align: center; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 122, 138, 0.20); }
+        .cta-box-header { padding: 22px 22px 14px; }
+        .cta-box-header h4 { font-size: 19px; margin-bottom: 6px; font-weight: 700; }
+        .cta-box-header p { font-size: 12.5px; opacity: 0.9; line-height: 1.6; margin-bottom: 0; }
+        .cta-phones { display: flex; flex-direction: column; gap: 8px; padding: 0 18px; }
+        .cta-phones a { display: flex; align-items: center; justify-content: center; gap: 6px; color: white; font-size: 15px; font-weight: 700; text-decoration: none; padding: 11px 10px; background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.10); border-radius: 8px; transition: all 0.2s; letter-spacing: 0.3px; }
+        .cta-phones a:hover { background: rgba(255,255,255,0.30); transform: translateY(-1px); }
+        .cta-divider { display: flex; align-items: center; gap: 10px; margin: 18px 22px 12px; font-size: 12px; opacity: 0.85; }
+        .cta-divider::before, .cta-divider::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.25); }
+        .cta-qrcode { padding: 0 22px 18px; }
+        .cta-qrcode-img { width: 130px; height: 130px; margin: 0 auto 10px; background: white; border-radius: 10px; padding: 8px; box-shadow: 0 6px 18px rgba(0,0,0,0.15); }
+        .cta-qrcode-img img { display: block; width: 100%; height: 100%; object-fit: contain; }
+        .cta-qrcode-tip { font-size: 13px; margin-bottom: 4px; }
+        .cta-qrcode-sub { font-size: 11.5px; opacity: 0.85; line-height: 1.5; }
+        .related-section { padding: 0 0 60px; }
+        .related-title { font-size: 24px; color: var(--primary-dark); margin-bottom: 25px; }
+        .related-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .related-card { background: white; border-radius: var(--radius); padding: 20px; border: 1px solid var(--border); transition: all .2s; }
+        .related-card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
+        .related-card a { color: var(--text); text-decoration: none; font-weight: 600; }
+        .related-card a:hover { color: var(--primary); }
+        .loading, .empty, .error { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        @media (max-width: 992px) { .detail-layout { grid-template-columns: 1fr; } .detail-hero-flag { display: none; } .related-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .detail-hero { padding: 25px; } .detail-hero-title { font-size: 24px; } .related-grid { grid-template-columns: 1fr; } }
+    </style>
+
+</head>
+<body>
+    <!-- 顶部联系栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>欢迎访问汇程移民官方网站！</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline-label">免费咨询热线</span>
+                <a href="tel:136-5185-2270" class="hotline-num">136-5185-2270</a>
+                <span class="hotline-sep">|</span>
+                <a href="tel:199-0172-6016" class="hotline-num">199-0172-6016</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主导航 -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <img src="assets/images/logo-full-color.png" alt="汇程移民" class="logo-img">
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="#home" class="active">首页</a></li>
+                    <li class="has-dropdown">
+                        <a href="#projects">移民项目</a>
+                        <div class="dropdown">
+                            <a href="projects.html?category=investment">投资移民</a>
+                            <a href="projects.html?category=business">创业移民</a>
+                            <a href="projects.html?category=skilled">技术移民</a>
+                            <a href="projects.html?countryId=gr">购房移民</a>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="#countries">移民国家</a>
+                        <div class="dropdown">
+                            <a href="projects.html?countryId=gr">希腊</a>
+                            <a href="projects.html?countryId=us">美国</a>
+                            <a href="projects.html?countryId=sg">新加坡</a>
+                            <a href="projects.html?countryId=jp">日本</a>
+                            <a href="projects.html?countryId=nz">新西兰</a>
+                            <a href="projects.html?countryId=hk">中国香港</a>
+                            <a href="projects.html?countryId=pt">葡萄牙</a>
+                            <a href="projects.html?countryId=mt">马耳他</a>
+                        </div>
+                    </li>
+                    <li><a href="#services">服务业务</a></li>
+                    <li><a href="#news">移民攻略</a></li>
+                    <li><a href="#cases">成功案例</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                </ul>
+            </nav>
+            <a href="#contact" class="btn btn-header">免费评估</a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <div class="breadcrumb-wrapper">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="index.html">首页</a>
+                <span class="sep">›</span>
+                <a href="projects.html">移民项目</a>
+                <span class="sep">›</span>
+                <span class="current" id="breadcrumbTitle">项目详情</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="detail-section">
+        <div class="container">
+            <div id="detailLoading" class="loading">正在加载项目详情...</div>
+            <div id="detailContent" style="display:none;">
+                <div class="detail-hero">
+                    <span class="detail-hero-badge" id="projectCategory">投资移民</span>
+                    <h1 class="detail-hero-title" id="projectTitle">项目名称</h1>
+                    <div class="detail-hero-price" id="projectPrice">投资金额</div>
+                    <img id="projectFlag" src="" alt="" class="detail-hero-flag">
+                </div>
+                <div class="detail-layout">
+                    <div class="detail-content" id="projectBody"></div>
+                    <aside class="sidebar">
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">项目优势</h4>
+                            <ul class="sidebar-list" id="projectAdvantages"></ul>
+                        </div>
+                        <div class="sidebar-card">
+                            <h4 class="sidebar-title">申请条件</h4>
+                            <ul class="sidebar-list" id="projectRequirements"></ul>
+                        </div>
+                        <div class="cta-box">
+                            <div class="cta-box-header">
+                                <h4>获取专属方案</h4>
+                                <p>汇程移民专业顾问为您一对一解答</p>
+                            </div>
+                            <div class="cta-phones">
+                                <a href="tel:136-5185-2270"><span>📞</span>136-5185-2270</a>
+                                <a href="tel:199-0172-6016"><span>📱</span>199-0172-6016</a>
+                            </div>
+                            <div class="cta-divider">或 添加微信咨询</div>
+                            <div class="cta-qrcode">
+                                <div class="cta-qrcode-img">
+                                    <img src="assets/images/qrcode/wechat-qr1.jpg" alt="汇程移民微信二维码">
+                                </div>
+                                <div class="cta-qrcode-tip">📷 扫一扫添加微信</div>
+                                <div class="cta-qrcode-sub">7×24 小时在线 · 1 对 1 答疑</div>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+            <div id="detailError" class="error" style="display:none;">项目加载失败，请返回<a href="projects.html">项目列表</a></div>
+        </div>
+    </section>
+
+    <section class="related-section" id="relatedSection" style="display:none;">
+        <div class="container">
+            <h2 class="related-title">相关项目</h2>
+            <div class="related-grid" id="relatedGrid"></div>
+        </div>
+    </section>
+
+<!-- 页脚 -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/images/logo-full-white.png" alt="汇程移民" class="footer-logo">
+                    <p>汇程移民，您值得信赖的全球身份规划专家。专业提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式服务。</p>
+                    <div class="footer-hotline">
+                        <p>免费咨询热线</p>
+                        <a href="tel:136-5185-2270">136-5185-2270</a>
+                        <span>|</span>
+                        <a href="tel:199-0172-6016">199-0172-6016</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>移民项目</h4>
+                    <ul>
+                        <li><a href="#">投资移民</a></li>
+                        <li><a href="#">创业移民</a></li>
+                        <li><a href="#">技术移民</a></li>
+                        <li><a href="#">购房移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>热门国家</h4>
+                    <ul>
+                        <li><a href="#">希腊移民</a></li>
+                        <li><a href="#">美国移民</a></li>
+                        <li><a href="#">新加坡移民</a></li>
+                        <li><a href="#">日本移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司简介</a></li>
+                        <li><a href="#">荣誉证书</a></li>
+                        <li><a href="#">专家团队</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-qrcode-col">
+                    <h4>关注我们</h4>
+                    <div class="footer-qrcode">
+                        <div class="footer-qrcode-item">
+                            <img src="assets/images/qrcode/wechat-qr1.jpg" class="footer-qrcode-img" alt="扫码关注汇程移民公众号">
+                            <div class="footer-qrcode-item-title">扫码关注</div>
+                            <div class="footer-qrcode-item-desc">汇程移民</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 汇程移民 版权所有 | 本站信息仅供参考，具体政策以官方公布为准</p>
+                <a href="./admin/index.html" class="admin-entry">Enter the backend</a>
+            </div>
+        </div>
+    </footer>
+<!-- 侧边悬浮工具 -->
+    <div class="side-tools">
+        <a href="tel:136-5185-2270" class="side-tool tel-tool" title="电话咨询">
+            <span>📞</span>
+            <div class="side-tool-tip">
+                <p>免费咨询热线</p>
+                <strong>136-5185-2270</strong>
+            </div>
+        </a>
+        <a href="#contact" class="side-tool" title="在线咨询">
+            <span>💬</span>
+        </a>
+        <a href="#contact" class="side-tool" title="免费评估">
+            <span>📝</span>
+        </a>
+        <button class="side-tool back-to-top" id="backToTop" title="返回顶部">
+            <span>⬆️</span>
+        </button>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h3 id="modalTitle">温馨提示</h3>
+            <p id="modalText">感谢您的关注，我们的移民顾问将尽快与您联系！</p>
+            <button class="btn btn-primary" id="modalConfirm">确定</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+    <script>
+        const categoryMap = {"investment":"投资移民","business":"创业移民","skilled":"技术移民"};
+
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name) || '';
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        async function loadProject() {
+            const id = getParam('id');
+            if (!id) {
+                document.getElementById('detailLoading').style.display = 'none';
+                document.getElementById('detailError').style.display = 'block';
+                return;
+            }
+
+            try {
+                const res = await fetch('/api/projects/' + encodeURIComponent(id));
+                if (!res.ok) throw new Error('Project not found');
+                const result = await res.json();
+                const p = result.data;
+
+                document.getElementById('pageTitle').textContent = p.title + ' - 汇程移民';
+                document.getElementById('breadcrumbTitle').textContent = p.title;
+                document.getElementById('projectCategory').textContent = categoryMap[p.category] || '移民项目';
+                document.getElementById('projectTitle').textContent = p.title;
+                document.getElementById('projectPrice').textContent = '投资金额：' + (p.price || '咨询顾问');
+                const isPhoto = p.image && !p.image.endsWith('.svg');
+                const flagEl = document.getElementById('projectFlag');
+                if (isPhoto) {
+                    flagEl.style.display = 'none';
+                    flagEl.parentElement.style.background = `url('${p.image}') center/cover`;
+                } else {
+                    flagEl.style.display = '';
+                    flagEl.parentElement.style.background = '';
+                    flagEl.src = p.image || 'assets/images/flags/gr.svg';
+                    flagEl.alt = p.title;
+                }
+                document.getElementById('projectBody').innerHTML = p.content || '<p>暂无详细介绍</p>';
+
+                const advList = document.getElementById('projectAdvantages');
+                advList.innerHTML = (p.advantages && p.advantages.length ? p.advantages : ['专业顾问一对一服务', '量身定制移民方案']).map(a => '<li>' + escapeHtml(a) + '</li>').join('');
+
+                const reqList = document.getElementById('projectRequirements');
+                reqList.innerHTML = (p.requirements && p.requirements.length ? p.requirements : ['请咨询顾问了解详细条件']).map(r => '<li>' + escapeHtml(r) + '</li>').join('');
+
+                document.getElementById('detailLoading').style.display = 'none';
+                document.getElementById('detailContent').style.display = 'block';
+
+                loadRelated(p.countryId, p.id);
+            } catch (err) {
+                document.getElementById('detailLoading').style.display = 'none';
+                document.getElementById('detailError').style.display = 'block';
+            }
+        }
+
+        async function loadRelated(countryId, excludeId) {
+            try {
+                const res = await fetch('/api/projects?countryId=' + encodeURIComponent(countryId));
+                const result = await res.json();
+                const projects = (result.data || []).filter(p => p.id !== excludeId).slice(0, 3);
+                if (projects.length === 0) return;
+
+                document.getElementById('relatedSection').style.display = 'block';
+                document.getElementById('relatedGrid').innerHTML = projects.map(p => `
+                    <div class="related-card">
+                        <a href="project-detail.html?id=${p.id}">${p.title}</a>
+                        <p style="margin-top:8px;font-size:13px;color:var(--text-light);line-height:1.5;">${p.summary || ''}</p>
+                    </div>
+                `).join('');
+            } catch (e) { console.error(e); }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadProject);
+    </script>
+</body>
+</html>

@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 强制浏览器不缓存 HTML，避免下拉菜单更新后仍显示旧内容 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>汇程移民-全球身份规划平台|专注海外投资移民、技术移民、创业移民</title>
+    <meta name="description" content="汇程移民专业提供全球移民服务，涵盖投资移民、技术移民、创业移民、海外房产、资产配置等，助力您实现全球身份规划与财富增值。">
+    <meta name="keywords" content="汇程移民,投资移民,技术移民,创业移民,希腊移民,美国移民,新加坡移民,日本移民,香港移民">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+    <!-- 顶部联系栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>欢迎访问汇程移民官方网站！</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline-label">免费咨询热线</span>
+                <a href="tel:136-5185-2270" class="hotline-num">136-5185-2270</a>
+                <span class="hotline-sep">|</span>
+                <a href="tel:199-0172-6016" class="hotline-num">199-0172-6016</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主导航 -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <img src="assets/images/logo-full-color.png" alt="汇程移民" class="logo-img">
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="#home" class="active">首页</a></li>
+                    <li class="has-dropdown">
+                        <a href="#projects">移民项目</a>
+                        <div class="dropdown">
+                            <a href="projects.html?category=investment">投资移民</a>
+                            <a href="projects.html?category=business">创业移民</a>
+                            <a href="projects.html?category=skilled">技术移民</a>
+                            <a href="projects.html?countryId=gr">购房移民</a>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="#countriesQuick">移民国家</a>
+                        <div class="dropdown">
+                            <a href="projects.html?countryId=gr">希腊</a>
+                            <a href="projects.html?countryId=us">美国</a>
+                            <a href="projects.html?countryId=sg">新加坡</a>
+                            <a href="projects.html?countryId=jp">日本</a>
+                            <a href="projects.html?countryId=nz">新西兰</a>
+                            <a href="projects.html?countryId=hk">中国香港</a>
+                            <a href="projects.html?countryId=pt">葡萄牙</a>
+                            <a href="projects.html?countryId=mt">马耳他</a>
+                        </div>
+                    </li>
+                    <li><a href="#services">服务业务</a></li>
+                    <li><a href="#news">移民攻略</a></li>
+                    <li><a href="#cases">成功案例</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                </ul>
+            </nav>
+            <a href="#contact" class="btn btn-header">免费评估</a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Banner区域 -->
+    <section class="hero" id="home">
+        <div class="hero-slider" id="heroSlider">
+            <!-- 动态加载轮播图 -->
+        </div>
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+
+    <!-- 全球移民国家 -->
+    <section class="section section-countries-quick" id="countriesQuick">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title"><span class="title-icon">🌐</span> 全球移民</h2>
+            </div>
+            <div class="country-quick-grid" id="countriesQuickGrid">
+                <!-- 动态加载国家快捷入口 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 服务业务 -->
+    <section class="section section-services" id="services">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title" id="servicesTitle">服务业务</h2>
+                    <p class="section-subtitle" id="servicesSubtitle">始于身份、成于规划、优于业务</p>
+                </div>
+                <a href="#" class="link-more" id="servicesMoreLink">服务解析 ></a>
+            </div>
+            <div class="services-grid" id="servicesGrid">
+                <!-- JS 动态填充 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 移民项目 -->
+    <section class="section section-projects" id="projects">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">移民项目</h2>
+                    <p class="section-subtitle">汇程移民优势项目，覆盖全球500多个项目</p>
+                </div>
+                <a href="#" class="link-more">更多 ></a>
+            </div>
+            <div class="project-tabs" id="projectTabs">
+                <button class="tab-btn active" data-tab="invest">投资移民</button>
+                <button class="tab-btn" data-tab="startup">创业移民</button>
+                <button class="tab-btn" data-tab="skilled">技术移民</button>
+            </div>
+            <div class="project-panels">
+                <div class="project-panel active" id="invest">
+                    <div class="project-grid">
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #00A8B5 0%, #007A8A 100%);">
+                                <span class="project-country">🇬🇷 希腊</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>希腊购房移民</h3>
+                                <p>25万欧元起，三代移民，永久产权世代传承</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #1E3A5F 0%, #2E5C8A 100%);">
+                                <span class="project-country">🇺🇸 美国</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>美国EB5投资移民</h3>
+                                <p>80万美元移民美国，无语言学历要求</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #C41E3A 0%, #FF6B6B 100%);">
+                                <span class="project-country">🇸🇬 新加坡</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>新加坡GIP全球投资者计划</h3>
+                                <p>高福利、优质教育、低征税、避税天堂</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #6B4C9A 0%, #9B6BCC 100%);">
+                                <span class="project-country">🇲🇹 马耳他</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>马耳他永居计划</h3>
+                                <p>全球唯一四位一体国，一人投资，四代拿欧洲永居</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-panel" id="startup">
+                    <div class="project-grid">
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #BC002D 0%, #E85D75 100%);">
+                                <span class="project-country">🇯🇵 日本</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>日本高级经营管理者签证</h3>
+                                <p>入籍要求低，无明确居住要求</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #C41E3A 0%, #FF6B6B 100%);">
+                                <span class="project-country">🇸🇬 新加坡</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>新加坡自雇移民EP</h3>
+                                <p>创业门槛低，快速获得新加坡身份</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #012169 0%, #2E5C8A 100%);">
+                                <span class="project-country">🇳🇿 新西兰</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>新西兰创业移民</h3>
+                                <p>投资环境优越，创业成功即可转永居</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #006600 0%, #FF0000 100%);">
+                                <span class="project-country">🇵🇹 葡萄牙</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>葡萄牙基金移民</h3>
+                                <p>50万欧元基金投资，5年可入籍欧盟</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+                <div class="project-panel" id="skilled">
+                    <div class="project-grid">
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #CF142B 0%, #00247D 100%);">
+                                <span class="project-country">🇭🇰 中国香港</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>香港优秀人才入境计划</h3>
+                                <p>无需投资、申请快速简单、花费少、条件宽松</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #1E3A5F 0%, #2E5C8A 100%);">
+                                <span class="project-country">🇺🇸 美国</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>美国EB-1A移民</h3>
+                                <p>周期短，无排期，费用低</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #1E3A5F 0%, #3C3B6E 100%);">
+                                <span class="project-country">🇺🇸 美国</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>美国NIW国家利益豁免移民</h3>
+                                <p>一步到位拿美国永久绿卡</p>
+                            </div>
+                        </a>
+                        <a href="#" class="project-card">
+                            <div class="project-img" style="background: linear-gradient(135deg, #FF0000 0%, #FFFFFF 100%);">
+                                <span class="project-country">🇨🇦 加拿大</span>
+                            </div>
+                            <div class="project-info">
+                                <h3>加拿大联邦技术移民</h3>
+                                <p>无资产要求，快速通道EE，移民加拿大捷径</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 移民攻略 -->
+    <section class="section section-news" id="news">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">移民攻略</h2>
+                </div>
+                <a href="#" class="link-more">全部 ></a>
+            </div>
+            <div class="news-tabs" id="newsTabs">
+                <a href="news.html" class="tab-btn active">最新文章</a>
+                <a href="news.html?category=news" class="tab-btn">移民资讯</a>
+                <a href="news.html?category=policy" class="tab-btn">移民政策</a>
+                <a href="news.html?category=property" class="tab-btn">海外置业</a>
+                <a href="news.html?category=education" class="tab-btn">教育</a>
+            </div>
+            <div class="news-content" id="newsContent">
+                <!-- 动态加载新闻内容 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 成功案例 -->
+    <section class="section section-cases" id="cases">
+        <div class="container">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title">成功案例</h2>
+                    <p class="section-subtitle">每一位客户都是我们用心服务的结果，办理成功率高达97.6%</p>
+                </div>
+                <a href="#" class="link-more">更多案例 ></a>
+            </div>
+            <div class="cases-grid" id="casesGrid">
+                <!-- 动态加载成功案例 -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 荣誉证书 -->
+    <section class="section section-certificates" id="certificates">
+        <div class="container">
+            <div class="section-header center">
+                <h2 class="section-title">荣誉证书</h2>
+                <a href="#" class="link-more">全面了解 ></a>
+            </div>
+            <div class="certificates-slider" id="certSlider">
+                <div class="certificates-track" id="certificatesTrack">
+                    <!-- 动态加载荣誉证书 -->
+                </div>
+                <div class="slider-arrows">
+                    <button class="arrow prev" id="certPrev">‹</button>
+                    <button class="arrow next" id="certNext">›</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DIY定制 + 联系 -->
+    <section class="section section-contact" id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-form-box">
+                    <h2>移民DIY定制</h2>
+                    <p class="contact-subtitle">说走就走，为您定制DIY方案</p>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-group">
+                            <label>您的姓名：</label>
+                            <input type="text" placeholder="请输入您的姓名" required>
+                        </div>
+                        <div class="form-group">
+                            <label>您的电话：</label>
+                            <input type="tel" placeholder="请输入您的电话" required>
+                        </div>
+                        <div class="form-group">
+                            <label>意向国家：</label>
+                            <select>
+                                <option value="">请选择</option>
+                                <option>希腊</option>
+                                <option>美国</option>
+                                <option>新加坡</option>
+                                <option>日本</option>
+                                <option>新西兰</option>
+                                <option>葡萄牙</option>
+                                <option>马耳他</option>
+                                <option>中国香港</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">获取私人定制方案</button>
+                    </form>
+                </div>
+                <div class="contact-features">
+                    <div class="feature-item">
+                        <div class="feature-icon">🔍</div>
+                        <div>
+                            <h3>费用透明，流程透明</h3>
+                            <p>全程公开透明，无隐藏费用</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">👨‍💼</div>
+                        <div>
+                            <h3>管家式服务</h3>
+                            <p>专属顾问全程跟进，省心省力</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">🛡️</div>
+                        <div>
+                            <h3>安全保障</h3>
+                            <p>严格合规，保护客户隐私与资产安全</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">👤</div>
+                        <div>
+                            <h3>专属顾问一对一</h3>
+                            <p>量身定制最适合您的移民方案</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">⏰</div>
+                        <div>
+                            <h3>7×24小时全方案跟进</h3>
+                            <p>随时响应，让您的移民之路更顺畅</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我们 -->
+    <section class="section section-about" id="about">
+        <div class="container">
+            <div class="about-grid">
+                <div class="about-content">
+                    <h2 id="aboutTitle">关于汇程移民</h2>
+                    <div id="aboutParagraphs">
+                        <p>汇程移民是一家专注于全球身份规划与海外资产配置的专业移民服务机构。我们汇聚全球移民专家、律师、税务师、投资顾问，为客户提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式解决方案。</p>
+                        <p>多年来，汇程移民始终秉承"诚信、专业、高效、贴心"的服务理念，已成功帮助数千组家庭实现移民梦想。我们的服务覆盖全球50多个国家和地区，办理成功率高达97.6%。</p>
+                    </div>
+                    <div class="about-stats" id="aboutStats">
+                        <div class="stat-item"><strong>500+</strong><span>移民项目</span></div>
+                        <div class="stat-item"><strong>50+</strong><span>覆盖国家</span></div>
+                        <div class="stat-item"><strong>97.6%</strong><span>办理成功率</span></div>
+                        <div class="stat-item"><strong>10年+</strong><span>行业经验</span></div>
+                    </div>
+                </div>
+                <div class="about-img" style="background: linear-gradient(135deg, #007A8A 0%, #00A8B5 100%);">
+                    <span id="aboutImageIcon">🏢</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/images/logo-full-white.png" alt="汇程移民" class="footer-logo">
+                    <p>汇程移民，您值得信赖的全球身份规划专家。专业提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式服务。</p>
+                    <div class="footer-hotline">
+                        <p>免费咨询热线</p>
+                        <a href="tel:136-5185-2270">136-5185-2270</a>
+                        <span>|</span>
+                        <a href="tel:199-0172-6016">199-0172-6016</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>移民项目</h4>
+                    <ul>
+                        <li><a href="#">投资移民</a></li>
+                        <li><a href="#">创业移民</a></li>
+                        <li><a href="#">技术移民</a></li>
+                        <li><a href="#">购房移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>热门国家</h4>
+                    <ul>
+                        <li><a href="#">希腊移民</a></li>
+                        <li><a href="#">美国移民</a></li>
+                        <li><a href="#">新加坡移民</a></li>
+                        <li><a href="#">日本移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司简介</a></li>
+                        <li><a href="#">荣誉证书</a></li>
+                        <li><a href="#">专家团队</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-qrcode-col">
+                    <h4>关注我们</h4>
+                    <div class="footer-qrcode">
+                        <div class="footer-qrcode-item">
+                            <img src="assets/images/qrcode/wechat-qr1.jpg" class="footer-qrcode-img" alt="扫码关注汇程移民公众号">
+                            <div class="footer-qrcode-item-title">扫码关注</div>
+                            <div class="footer-qrcode-item-desc">汇程移民</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 汇程移民 版权所有 | 本站信息仅供参考，具体政策以官方公布为准</p>
+                <a href="./admin/index.html" class="admin-entry">Enter the backend</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 侧边悬浮工具 -->
+    <div class="side-tools">
+        <a href="tel:136-5185-2270" class="side-tool tel-tool" title="电话咨询">
+            <span>📞</span>
+            <div class="side-tool-tip">
+                <p>免费咨询热线</p>
+                <strong>136-5185-2270</strong>
+            </div>
+        </a>
+        <a href="#contact" class="side-tool" title="在线咨询">
+            <span>💬</span>
+        </a>
+        <a href="#contact" class="side-tool" title="免费评估">
+            <span>📝</span>
+        </a>
+        <button class="side-tool back-to-top" id="backToTop" title="返回顶部">
+            <span>⬆️</span>
+        </button>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h3 id="modalTitle">温馨提示</h3>
+            <p id="modalText">感谢您的关注，我们的移民顾问将尽快与您联系！</p>
+            <button class="btn btn-primary" id="modalConfirm">确定</button>
+        </div>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
