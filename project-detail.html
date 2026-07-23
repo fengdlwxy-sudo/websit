@@ -292,6 +292,48 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
+        async function loadProjectsStatically() {
+            try {
+                const data = await window.hcLoadStaticData();
+                return data && data.projects ? data.projects.items || [] : null;
+            } catch (e) {
+                console.error('静态项目数据加载失败:', e);
+                return null;
+            }
+        }
+
+        function renderProject(p) {
+            document.getElementById('pageTitle').textContent = p.title + ' - 汇程移民';
+            document.getElementById('breadcrumbTitle').textContent = p.title;
+            document.getElementById('projectCategory').textContent = categoryMap[p.category] || '移民项目';
+            document.getElementById('projectTitle').textContent = p.title;
+            document.getElementById('projectPrice').textContent = '投资金额：' + (p.price || '咨询顾问');
+            const imagePath = window.hcResolveAssetPath ? window.hcResolveAssetPath(p.image) : p.image;
+            const isPhoto = imagePath && !imagePath.endsWith('.svg');
+            const flagEl = document.getElementById('projectFlag');
+            if (isPhoto) {
+                flagEl.style.display = 'none';
+                flagEl.parentElement.style.background = `url('${imagePath}') center/cover`;
+            } else {
+                flagEl.style.display = '';
+                flagEl.parentElement.style.background = '';
+                flagEl.src = imagePath || 'assets/images/flags/gr.svg';
+                flagEl.alt = p.title;
+            }
+            document.getElementById('projectBody').innerHTML = p.content || '<p>暂无详细介绍</p>';
+
+            const advList = document.getElementById('projectAdvantages');
+            advList.innerHTML = (p.advantages && p.advantages.length ? p.advantages : ['专业顾问一对一服务', '量身定制移民方案']).map(a => '<li>' + escapeHtml(a) + '</li>').join('');
+
+            const reqList = document.getElementById('projectRequirements');
+            reqList.innerHTML = (p.requirements && p.requirements.length ? p.requirements : ['请咨询顾问了解详细条件']).map(r => '<li>' + escapeHtml(r) + '</li>').join('');
+
+            document.getElementById('detailLoading').style.display = 'none';
+            document.getElementById('detailContent').style.display = 'block';
+
+            loadRelated(p.countryId, p.id);
+        }
+
         async function loadProject() {
             const id = getParam('id');
             if (!id) {
@@ -304,57 +346,40 @@
                 const res = await fetch('/api/projects/' + encodeURIComponent(id));
                 if (!res.ok) throw new Error('Project not found');
                 const result = await res.json();
-                const p = result.data;
-
-                document.getElementById('pageTitle').textContent = p.title + ' - 汇程移民';
-                document.getElementById('breadcrumbTitle').textContent = p.title;
-                document.getElementById('projectCategory').textContent = categoryMap[p.category] || '移民项目';
-                document.getElementById('projectTitle').textContent = p.title;
-                document.getElementById('projectPrice').textContent = '投资金额：' + (p.price || '咨询顾问');
-                const isPhoto = p.image && !p.image.endsWith('.svg');
-                const flagEl = document.getElementById('projectFlag');
-                if (isPhoto) {
-                    flagEl.style.display = 'none';
-                    flagEl.parentElement.style.background = `url('${p.image}') center/cover`;
-                } else {
-                    flagEl.style.display = '';
-                    flagEl.parentElement.style.background = '';
-                    flagEl.src = p.image || 'assets/images/flags/gr.svg';
-                    flagEl.alt = p.title;
-                }
-                document.getElementById('projectBody').innerHTML = p.content || '<p>暂无详细介绍</p>';
-
-                const advList = document.getElementById('projectAdvantages');
-                advList.innerHTML = (p.advantages && p.advantages.length ? p.advantages : ['专业顾问一对一服务', '量身定制移民方案']).map(a => '<li>' + escapeHtml(a) + '</li>').join('');
-
-                const reqList = document.getElementById('projectRequirements');
-                reqList.innerHTML = (p.requirements && p.requirements.length ? p.requirements : ['请咨询顾问了解详细条件']).map(r => '<li>' + escapeHtml(r) + '</li>').join('');
-
-                document.getElementById('detailLoading').style.display = 'none';
-                document.getElementById('detailContent').style.display = 'block';
-
-                loadRelated(p.countryId, p.id);
+                renderProject(result.data);
             } catch (err) {
-                document.getElementById('detailLoading').style.display = 'none';
-                document.getElementById('detailError').style.display = 'block';
+                console.warn('API 项目加载失败，尝试静态数据:', err);
+                const projects = await loadProjectsStatically();
+                const p = projects ? projects.find(p => p.id === id) : null;
+                if (p) {
+                    renderProject(p);
+                } else {
+                    document.getElementById('detailLoading').style.display = 'none';
+                    document.getElementById('detailError').style.display = 'block';
+                }
             }
         }
 
         async function loadRelated(countryId, excludeId) {
+            let projects = [];
             try {
                 const res = await fetch('/api/projects?countryId=' + encodeURIComponent(countryId));
                 const result = await res.json();
-                const projects = (result.data || []).filter(p => p.id !== excludeId).slice(0, 3);
-                if (projects.length === 0) return;
+                projects = result.data || [];
+            } catch (e) {
+                console.warn('API 相关项目加载失败，尝试静态数据:', e);
+                projects = await loadProjectsStatically() || [];
+            }
+            projects = projects.filter(p => p.id !== excludeId && p.countryId === countryId).slice(0, 3);
+            if (projects.length === 0) return;
 
-                document.getElementById('relatedSection').style.display = 'block';
-                document.getElementById('relatedGrid').innerHTML = projects.map(p => `
-                    <div class="related-card">
-                        <a href="project-detail.html?id=${p.id}">${p.title}</a>
-                        <p style="margin-top:8px;font-size:13px;color:var(--text-light);line-height:1.5;">${p.summary || ''}</p>
-                    </div>
-                `).join('');
-            } catch (e) { console.error(e); }
+            document.getElementById('relatedSection').style.display = 'block';
+            document.getElementById('relatedGrid').innerHTML = projects.map(p => `
+                <div class="related-card">
+                    <a href="project-detail.html?id=${p.id}">${p.title}</a>
+                    <p style="margin-top:8px;font-size:13px;color:var(--text-light);line-height:1.5;">${p.summary || ''}</p>
+                </div>
+            `).join('');
         }
 
         document.addEventListener('DOMContentLoaded', loadProject);

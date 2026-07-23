@@ -233,21 +233,45 @@
             return new URLSearchParams(window.location.search).get(name) || '';
         }
 
+        async function loadCountriesStatically() {
+            try {
+                const data = await window.hcLoadStaticData();
+                return data && data.countries ? data.countries.items || [] : null;
+            } catch (e) {
+                console.error('静态国家数据加载失败:', e);
+                return null;
+            }
+        }
+
+        async function loadProjectsStatically() {
+            try {
+                const data = await window.hcLoadStaticData();
+                return data && data.projects ? data.projects.items || [] : null;
+            } catch (e) {
+                console.error('静态项目数据加载失败:', e);
+                return null;
+            }
+        }
+
         async function loadFilters() {
+            let countries = [];
             try {
                 const res = await fetch('/api/countries');
                 const result = await res.json();
-                const countries = result.data || [];
-                const container = document.getElementById('countryFilters');
-                const currentCountry = getParam('countryId');
-                countries.forEach(c => {
-                    const a = document.createElement('a');
-                    a.href = '?countryId=' + encodeURIComponent(c.id);
-                    a.className = 'filter-tab' + (c.id === currentCountry ? ' active' : '');
-                    a.textContent = c.name;
-                    container.appendChild(a);
-                });
-            } catch (e) { console.error(e); }
+                countries = result.data || [];
+            } catch (e) {
+                console.warn('API 国家筛选加载失败，尝试静态数据:', e);
+                countries = await loadCountriesStatically() || [];
+            }
+            const container = document.getElementById('countryFilters');
+            const currentCountry = getParam('countryId');
+            countries.forEach(c => {
+                const a = document.createElement('a');
+                a.href = '?countryId=' + encodeURIComponent(c.id);
+                a.className = 'filter-tab' + (c.id === currentCountry ? ' active' : '');
+                a.textContent = c.name;
+                container.appendChild(a);
+            });
         }
 
         async function loadProjects() {
@@ -257,42 +281,50 @@
             const countryId = getParam('countryId');
             const category = getParam('category');
 
+            let projects = [];
             try {
                 const params = new URLSearchParams();
                 if (countryId) params.append('countryId', countryId);
                 if (category) params.append('category', category);
                 const res = await fetch('/api/projects?' + params.toString());
                 const result = await res.json();
-                const projects = result.data || [];
-
-                loading.style.display = 'none';
-                if (projects.length === 0) {
-                    empty.style.display = 'block';
-                    return;
-                }
-
-                grid.innerHTML = projects.map(p => {
-                    const isPhoto = p.image && !p.image.endsWith('.svg');
-                    const bgStyle = isPhoto ? `style="background: url('${p.image}') center/cover"` : '';
-                    const flagHtml = isPhoto ? '' : `<img src="${p.image || 'assets/images/flags/gr.svg'}" alt="${p.title}">`;
-                    return `
-                    <div class="project-card">
-                        <div class="project-card-image" ${bgStyle}>
-                            <span class="project-card-category">${categoryMap[p.category] || '移民项目'}</span>
-                            ${flagHtml}
-                        </div>
-                        <div class="project-card-body">
-                            <h3 class="project-card-title">${p.title}</h3>
-                            <div class="project-card-price">${p.price || '咨询顾问'}</div>
-                            <p class="project-card-summary">${p.summary || ''}</p>
-                            <a href="project-detail.html?id=${p.id}" class="project-card-btn">查看详情</a>
-                        </div>
-                    </div>`;
-                }).join('');
-                grid.style.display = 'grid';
+                projects = result.data || [];
             } catch (err) {
-                loading.innerHTML = '<div class="error">加载失败，请刷新重试</div>';
+                console.warn('API 项目列表加载失败，尝试静态数据:', err);
+                const allProjects = await loadProjectsStatically() || [];
+                projects = allProjects.filter(p => {
+                    if (countryId && p.countryId !== countryId) return false;
+                    if (category && p.category !== category) return false;
+                    return true;
+                });
             }
+
+            loading.style.display = 'none';
+            if (projects.length === 0) {
+                empty.style.display = 'block';
+                return;
+            }
+
+            grid.innerHTML = projects.map(p => {
+                const imagePath = window.hcResolveAssetPath ? window.hcResolveAssetPath(p.image) : p.image;
+                const isPhoto = imagePath && !imagePath.endsWith('.svg');
+                const bgStyle = isPhoto ? `style="background: url('${imagePath}') center/cover"` : '';
+                const flagHtml = isPhoto ? '' : `<img src="${imagePath || 'assets/images/flags/gr.svg'}" alt="${p.title}">`;
+                return `
+                <div class="project-card">
+                    <div class="project-card-image" ${bgStyle}>
+                        <span class="project-card-category">${categoryMap[p.category] || '移民项目'}</span>
+                        ${flagHtml}
+                    </div>
+                    <div class="project-card-body">
+                        <h3 class="project-card-title">${p.title}</h3>
+                        <div class="project-card-price">${p.price || '咨询顾问'}</div>
+                        <p class="project-card-summary">${p.summary || ''}</p>
+                        <a href="project-detail.html?id=${p.id}" class="project-card-btn">查看详情</a>
+                    </div>
+                </div>`;
+            }).join('');
+            grid.style.display = 'grid';
         }
 
         document.addEventListener('DOMContentLoaded', () => {

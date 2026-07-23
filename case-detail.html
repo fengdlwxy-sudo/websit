@@ -266,6 +266,51 @@
             return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
+        async function loadCasesStatically() {
+            try {
+                const data = await window.hcLoadStaticData();
+                return data && data.cases ? data.cases.items || [] : null;
+            } catch (e) {
+                console.error('静态案例数据加载失败:', e);
+                return null;
+            }
+        }
+
+        function renderCase(c) {
+            document.getElementById('pageTitle').textContent = c.title + ' - 汇程移民';
+            document.getElementById('breadcrumbTitle').textContent = c.title;
+            document.getElementById('caseTitle').textContent = c.title;
+            document.getElementById('caseDate').textContent = c.date ? '发布日期：' + c.date : '';
+            document.getElementById('caseBody').innerHTML = c.content || '<p>暂无详细内容</p>';
+
+            // Hero image or gradient
+            const heroImage = document.getElementById('heroImage');
+            const heroGradient = document.getElementById('heroGradient');
+            const imagePath = window.hcResolveAssetPath ? window.hcResolveAssetPath(c.image) : c.image;
+            if (imagePath) {
+                heroImage.style.display = 'block';
+                heroImage.src = imagePath;
+                heroImage.alt = c.title;
+                heroGradient.style.display = 'none';
+            } else {
+                heroGradient.style.display = 'flex';
+                heroGradient.style.background = c.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)';
+                heroGradient.textContent = c.icon || '📌';
+                heroImage.style.display = 'none';
+            }
+
+            // Tags
+            const tagsEl = document.getElementById('heroTags');
+            if (c.tags && c.tags.length) {
+                tagsEl.innerHTML = c.tags.map(t => '<span>' + escapeHtml(t) + '</span>').join('');
+            }
+
+            document.getElementById('detailLoading').style.display = 'none';
+            document.getElementById('detailContent').style.display = 'block';
+
+            loadOtherCases(c.id);
+        }
+
         async function loadCase() {
             const id = getParam('id');
             if (!id) {
@@ -278,59 +323,39 @@
                 const res = await fetch('/api/cases/' + encodeURIComponent(id));
                 if (!res.ok) throw new Error('Case not found');
                 const result = await res.json();
-                const c = result.data;
-
-                document.getElementById('pageTitle').textContent = c.title + ' - 汇程移民';
-                document.getElementById('breadcrumbTitle').textContent = c.title;
-                document.getElementById('caseTitle').textContent = c.title;
-                document.getElementById('caseDate').textContent = c.date ? '发布日期：' + c.date : '';
-                document.getElementById('caseBody').innerHTML = c.content || '<p>暂无详细内容</p>';
-
-                // Hero image or gradient
-                const heroImage = document.getElementById('heroImage');
-                const heroGradient = document.getElementById('heroGradient');
-                if (c.image) {
-                    heroImage.style.display = 'block';
-                    heroImage.src = c.image;
-                    heroImage.alt = c.title;
-                    heroGradient.style.display = 'none';
-                } else {
-                    heroGradient.style.display = 'flex';
-                    heroGradient.style.background = c.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)';
-                    heroGradient.textContent = c.icon || '📌';
-                    heroImage.style.display = 'none';
-                }
-
-                // Tags
-                const tagsEl = document.getElementById('heroTags');
-                if (c.tags && c.tags.length) {
-                    tagsEl.innerHTML = c.tags.map(t => '<span>' + escapeHtml(t) + '</span>').join('');
-                }
-
-                document.getElementById('detailLoading').style.display = 'none';
-                document.getElementById('detailContent').style.display = 'block';
-
-                loadOtherCases(id);
+                renderCase(result.data);
             } catch (err) {
-                document.getElementById('detailLoading').style.display = 'none';
-                document.getElementById('detailError').style.display = 'block';
+                console.warn('API 案例加载失败，尝试静态数据:', err);
+                const cases = await loadCasesStatically();
+                const c = cases ? cases.find(c => c.id === id) : null;
+                if (c) {
+                    renderCase(c);
+                } else {
+                    document.getElementById('detailLoading').style.display = 'none';
+                    document.getElementById('detailError').style.display = 'block';
+                }
             }
         }
 
         async function loadOtherCases(excludeId) {
+            let cases = [];
             try {
                 const res = await fetch('/api/cases');
                 const result = await res.json();
-                const cases = (result.items || []).filter(c => c.id !== excludeId).slice(0, 5);
-                if (cases.length === 0) return;
+                cases = result.items || [];
+            } catch (e) {
+                console.warn('API 其他案例加载失败，尝试静态数据:', e);
+                cases = await loadCasesStatically() || [];
+            }
+            cases = cases.filter(c => c.id !== excludeId).slice(0, 5);
+            if (cases.length === 0) return;
 
-                document.getElementById('otherCases').innerHTML = cases.map(c => `
-                    <div class="sidebar-case">
-                        <a href="case-detail.html?id=${c.id}">${escapeHtml(c.title)}</a>
-                        <div class="case-date">${c.date || ''}</div>
-                    </div>
-                `).join('');
-            } catch (e) { console.error(e); }
+            document.getElementById('otherCases').innerHTML = cases.map(c => `
+                <div class="sidebar-case">
+                    <a href="case-detail.html?id=${c.id}">${escapeHtml(c.title)}</a>
+                    <div class="case-date">${c.date || ''}</div>
+                </div>
+            `).join('');
         }
 
         document.addEventListener('DOMContentLoaded', loadCase);

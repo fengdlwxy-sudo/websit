@@ -12,6 +12,32 @@ document.addEventListener('DOMContentLoaded', function() {
         return response.json();
     }
 
+    // 将绝对路径（如 /assets/...）转为相对路径，兼容 GitHub Pages 子目录部署
+    function resolveAssetPath(path) {
+        if (!path) return '';
+        if (path.startsWith('http://') || path.startsWith('https://') || path.startsWith('data:')) return path;
+        if (path.startsWith('/')) return path.slice(1);
+        return path;
+    }
+
+    async function loadStaticData() {
+        const cacheBuster = '?_=' + Date.now();
+        const [config, countries, projects, articles, cases, certificates] = await Promise.all([
+            fetchJson('data/config.json' + cacheBuster).catch(() => null),
+            fetchJson('data/countries.json' + cacheBuster).catch(() => null),
+            fetchJson('data/projects.json' + cacheBuster).catch(() => null),
+            fetchJson('data/articles.json' + cacheBuster).catch(() => null),
+            fetchJson('data/cases.json' + cacheBuster).catch(() => null),
+            fetchJson('data/certificates.json' + cacheBuster).catch(() => null)
+        ]);
+        return { config, countries, projects, articles, cases, certificates };
+    }
+
+    // 暴露给详情页脚本在 GitHub Pages 静态环境下使用
+    window.hcFetchJson = fetchJson;
+    window.hcResolveAssetPath = resolveAssetPath;
+    window.hcLoadStaticData = loadStaticData;
+
     async function loadDynamicContent() {
         try {
             const response = await fetch('/api/content');
@@ -181,7 +207,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!container || !slides || !slides.length) return;
 
         container.innerHTML = slides.map((slide, index) => `
-            <div class="slide ${index === 0 ? 'active' : ''}" style="background-image: linear-gradient(135deg, rgba(0,120,120,0.85) 0%, rgba(0,80,90,0.8) 100%), url('${slide.image || ''}');">
+            <div class="slide ${index === 0 ? 'active' : ''}" style="background-image: linear-gradient(135deg, rgba(0,120,120,0.85) 0%, rgba(0,80,90,0.8) 100%), url('${resolveAssetPath(slide.image || '')}');">
                 <div class="slide-content">
                     <h1>${escapeHtml(slide.title)}</h1>
                     <p>${slide.subtitle || ''}</p>
@@ -233,7 +259,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         container.innerHTML = cases.items.map(item => `
             <a href="case-detail.html?id=${item.id}" class="case-card">
-                <div class="case-img" style="${item.image ? `background: url('${item.image}') center/cover;` : `background: ${item.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)'};`}">
+                <div class="case-img" style="${item.image ? `background: url('${resolveAssetPath(item.image)}') center/cover;` : `background: ${item.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)'};`}">
                     ${item.image ? '' : `<span>${item.icon || '📌'}</span>`}
                     <div class="case-read-more">查看详情 ›</div>
                 </div>
@@ -254,7 +280,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         container.innerHTML = certificates.items.map(item => `
             <div class="cert-card">
-                <div class="cert-icon">${item.image ? `<img src="${item.image}" alt="${escapeHtml(item.title)}" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">` : (item.icon || '🏆')}</div>
+                <div class="cert-icon">${item.image ? `<img src="${resolveAssetPath(item.image)}" alt="${escapeHtml(item.title)}" style="width:100%;height:100%;object-fit:contain;border-radius:8px;">` : (item.icon || '🏆')}</div>
                 <p>${escapeHtml(item.title)}</p>
             </div>
         `).join('');
@@ -272,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (grid && services.items) {
             grid.innerHTML = services.items.map(item => `
                 <div class="service-card">
-                    <div class="service-icon">${isImageUrl(item.icon) ? `<img src="${item.icon}" alt="${escapeHtml(item.title)}" style="width:48px;height:48px;object-fit:contain;">` : (item.icon || '📌')}</div>
+                    <div class="service-icon">${isImageUrl(item.icon) ? `<img src="${resolveAssetPath(item.icon)}" alt="${escapeHtml(item.title)}" style="width:48px;height:48px;object-fit:contain;">` : (item.icon || '📌')}</div>
                     <h3>${escapeHtml(item.title)}</h3>
                     <p>${escapeHtml(item.desc)}</p>
                 </div>
@@ -297,7 +323,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (imageIconEl) {
             if (about.image && isImageUrl(about.image)) {
-                imageIconEl.innerHTML = `<img src="${about.image}" alt="关于汇程移民" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
+                imageIconEl.innerHTML = `<img src="${resolveAssetPath(about.image)}" alt="关于汇程移民" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">`;
             } else {
                 imageIconEl.textContent = about.imageIcon || '🏢';
             }
@@ -340,7 +366,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (quickGrid) {
             quickGrid.innerHTML = items.map(c => `
                 <a href="projects.html?countryId=${c.id}" class="country-quick-item">
-                    <div class="country-flag"><img src="${c.flag}" alt="${c.name}国旗"></div>
+                    <div class="country-flag"><img src="${resolveAssetPath(c.flag)}" alt="${c.name}国旗"></div>
                     <span>${c.name}</span>
                 </a>
             `).join('');
@@ -351,8 +377,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if (track) {
             track.innerHTML = items.map((c, i) => `
                 <a href="projects.html?countryId=${c.id}" class="country-card">
-                    <div class="country-img" style="${c.coverImage ? `background: url('${c.coverImage}') center/cover;` : `background: ${gradients[i % gradients.length]};`}">
-                        ${c.coverImage ? '' : `<img src="${c.flag}" alt="${c.name}" style="width:60px;height:60px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.2);">`}
+                    <div class="country-img" style="${c.coverImage ? `background: url('${resolveAssetPath(c.coverImage)}') center/cover;` : `background: ${gradients[i % gradients.length]};`}">
+                        ${c.coverImage ? '' : `<img src="${resolveAssetPath(c.flag)}" alt="${c.name}" style="width:60px;height:60px;object-fit:contain;border-radius:8px;background:rgba(255,255,255,0.2);">`}
                         <div class="country-name-overlay">
                             <h3>${c.name}</h3>
                             <span>${c.nameEn || ''}</span>
@@ -503,7 +529,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const primaryHtml = featured1 ? `
             <div class="news-feature-primary">
                 <a href="${escapeHtml(featured1.link || ('article-detail.html?id=' + (featured1.id || '')))}" class="news-feature-card news-feature-card-primary">
-                    <div class="news-feature-img" style="${featured1.image ? `background: url('${escapeHtml(featured1.image)}') center/cover;` : `background: ${escapeHtml(featured1.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)')};`}">
+                    <div class="news-feature-img" style="${featured1.image ? `background: url('${escapeHtml(resolveAssetPath(featured1.image))}') center/cover;` : `background: ${escapeHtml(featured1.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)')};`}">
                         ${featured1.image ? '' : `<span>${escapeHtml(featured1.icon || '🎓')}</span>`}
                         <span class="news-feature-tag">${escapeHtml(articleCategoryMap[featured1.category] || '头条')}</span>
                     </div>

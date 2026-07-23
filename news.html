@@ -607,6 +607,7 @@
         </button>
     </div>
 
+    <script src="js/main.js?v=2"></script>
     <script>
         (function() {
             'use strict';
@@ -698,9 +699,10 @@
                 var icon = CATEGORY_ICONS[cat] || '\u{1F4F0}';
                 var label = CATEGORY_LABELS[cat] || cat;
 
+                var resolvedImage = window.hcResolveAssetPath ? window.hcResolveAssetPath(article.image) : article.image;
                 container.innerHTML =
                     '<a href="article-detail.html?id=' + escapeHtml(article.id) + '" class="featured-card">' +
-                        '<div class="featured-img" style="' + (article.image && (article.image.startsWith('/') || article.image.startsWith('http')) ? 'background: url(\'' + article.image + '\') center/cover' : 'background: ' + grad) + ';">' +
+                        '<div class="featured-img" style="' + (resolvedImage ? 'background: url(\'' + resolvedImage + '\') center/cover' : 'background: ' + grad) + ';">' +
                             '<span>' + icon + '</span>' +
                             '<div class="featured-img-badge">\u{1F31F} 精选文章</div>' +
                         '</div>' +
@@ -728,9 +730,10 @@
                     var grad = CATEGORY_GRADIENTS[cat] || CATEGORY_GRADIENTS['latest'];
                     var icon = CATEGORY_ICONS[cat] || '\u{1F4F0}';
                     var label = CATEGORY_LABELS[cat] || cat;
+                    var itemImage = window.hcResolveAssetPath ? window.hcResolveAssetPath(item.image) : item.image;
                     return (
                         '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="article-card">' +
-                            '<div class="article-card-img" style="' + (item.image && (item.image.startsWith('/') || item.image.startsWith('http')) ? 'background: url(\'' + item.image + '\') center/cover' : 'background: ' + grad) + ';">' +
+                            '<div class="article-card-img" style="' + (itemImage ? 'background: url(\'' + itemImage + '\') center/cover' : 'background: ' + grad) + ';">' +
                                 '<span>' + icon + '</span>' +
                             '</div>' +
                             '<div class="article-card-body">' +
@@ -812,6 +815,39 @@
                 document.getElementById('errorText').textContent = msg || '加载失败，请稍后重试';
             }
 
+            function setData(data, category) {
+                // 兼容 featured 为数组或单对象，规范化后只取第一条作为置顶推荐
+                var rawFeatured = data.featured;
+                if (Array.isArray(rawFeatured)) {
+                    featuredArticle = rawFeatured.filter(Boolean)[0] || null;
+                } else if (rawFeatured) {
+                    featuredArticle = rawFeatured;
+                } else {
+                    featuredArticle = null;
+                }
+                allItems = data.items || [];
+
+                // 如果选了分类，推荐文章也过滤同分类
+                if (category && featuredArticle && featuredArticle.category !== category) {
+                    featuredArticle = null;
+                }
+
+                if (featuredArticle || allItems.length > 0) {
+                    showContent();
+                    renderFeatured(featuredArticle);
+                    currentPage = getUrlPage();
+                    var totalPages = Math.ceil(allItems.length / pageSize);
+                    if (currentPage > totalPages) {
+                        currentPage = 1;
+                        updateUrl(currentCategory, 1);
+                    }
+                    if (currentPage < 1) currentPage = 1;
+                    showPage();
+                } else {
+                    showEmpty();
+                }
+            }
+
             // 加载数据
             async function loadArticles(category) {
                 showLoading();
@@ -822,41 +858,24 @@
                     if (!response.ok) throw new Error('Failed to fetch articles');
                     var result = await response.json();
                     if (!result.success) throw new Error(result.message || '加载失败');
-
-                    var data = result.data;
-                    // 兼容 featured 为数组或单对象，规范化后只取第一条作为置顶推荐
-                    var rawFeatured = data.featured;
-                    if (Array.isArray(rawFeatured)) {
-                        featuredArticle = rawFeatured.filter(Boolean)[0] || null;
-                    } else if (rawFeatured) {
-                        featuredArticle = rawFeatured;
-                    } else {
-                        featuredArticle = null;
-                    }
-                    allItems = data.items || [];
-
-                    // 如果选了分类，推荐文章也过滤同分类
-                    if (category && featuredArticle && featuredArticle.category !== category) {
-                        featuredArticle = null;
-                    }
-
-                    if (featuredArticle || allItems.length > 0) {
-                        showContent();
-                        renderFeatured(featuredArticle);
-                        currentPage = getUrlPage();
-                        var totalPages = Math.ceil(allItems.length / pageSize);
-                        if (currentPage > totalPages) {
-                            currentPage = 1;
-                            updateUrl(currentCategory, 1);
-                        }
-                        if (currentPage < 1) currentPage = 1;
-                        showPage();
-                    } else {
-                        showEmpty();
-                    }
+                    setData(result.data, category);
                 } catch (error) {
-                    console.error('加载文章失败:', error);
-                    showError(error.message || '加载失败，请稍后重试');
+                    console.warn('API 文章列表加载失败，尝试静态数据:', error);
+                    try {
+                        var staticData = await window.hcLoadStaticData();
+                        if (staticData && staticData.articles) {
+                            var data = staticData.articles;
+                            if (category && data.items) {
+                                data = { featured: data.featured, items: data.items.filter(function(item) { return item.category === category; }) };
+                            }
+                            setData(data, category);
+                        } else {
+                            throw new Error('静态数据为空');
+                        }
+                    } catch (staticError) {
+                        console.error('加载文章失败:', staticError);
+                        showError(staticError.message || '加载失败，请稍后重试');
+                    }
                 }
             }
 

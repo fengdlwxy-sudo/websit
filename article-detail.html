@@ -722,6 +722,7 @@
         </button>
     </div>
 
+    <script src="js/main.js?v=2"></script>
     <script>
         (function() {
             'use strict';
@@ -808,8 +809,9 @@
 
                 // 渲染文章封面图
                 var coverEl = document.getElementById('articleCover');
-                if (coverEl && article.image && (article.image.indexOf('/') === 0 || article.image.indexOf('http') === 0)) {
-                    coverEl.style.backgroundImage = 'url(' + article.image + ')';
+                var resolvedImage = window.hcResolveAssetPath ? window.hcResolveAssetPath(article.image) : article.image;
+                if (coverEl && resolvedImage) {
+                    coverEl.style.backgroundImage = 'url(' + resolvedImage + ')';
                     coverEl.style.display = 'block';
                 } else if (coverEl) {
                     coverEl.style.display = 'none';
@@ -824,37 +826,55 @@
                 }
             }
 
+            async function loadArticlesStatically() {
+                // GitHub Pages 静态环境：从 data/articles.json 加载
+                try {
+                    var data = await window.hcLoadStaticData();
+                    if (!data || !data.articles) return null;
+                    var all = [];
+                    if (Array.isArray(data.articles.featured)) all = all.concat(data.articles.featured);
+                    if (Array.isArray(data.articles.items)) all = all.concat(data.articles.items);
+                    return all;
+                } catch (e) {
+                    console.error('静态文章数据加载失败:', e);
+                    return null;
+                }
+            }
+
             async function loadRelatedArticles(category, excludeId) {
                 var listEl = document.getElementById('relatedArticlesList');
+                var items = [];
                 try {
                     var response = await fetch('/api/articles?category=' + encodeURIComponent(category));
                     if (!response.ok) throw new Error('Failed to fetch');
                     var result = await response.json();
                     if (!result.success) throw new Error(result.message || '加载失败');
-
-                    var items = (result.data.items || []).filter(function(item) {
-                        return item.id !== excludeId;
-                    });
-
-                    if (items.length === 0) {
-                        listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);">暂无相关文章</p>';
-                        return;
-                    }
-
-                    // 最多显示5篇
-                    items = items.slice(0, 5);
-                    listEl.innerHTML = items.map(function(item) {
-                        return (
-                            '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="sidebar-article-item">' +
-                                '<div class="sa-title">' + escapeHtml(item.title) + '</div>' +
-                                '<div class="sa-date">' + formatDate(item.createdAt) + '</div>' +
-                            '</a>'
-                        );
-                    }).join('');
+                    items = result.data.items || [];
                 } catch (error) {
-                    console.error('加载相关文章失败:', error);
-                    listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);">加载相关文章失败</p>';
+                    console.warn('API 相关文章加载失败，尝试静态数据:', error);
+                    var staticItems = await loadArticlesStatically();
+                    if (staticItems) {
+                        items = staticItems.filter(function(item) { return item.category === category; });
+                    }
                 }
+
+                items = items.filter(function(item) {
+                    return item.id !== excludeId;
+                }).slice(0, 5);
+
+                if (items.length === 0) {
+                    listEl.innerHTML = '<p style="font-size:13px;color:var(--text-muted);">暂无相关文章</p>';
+                    return;
+                }
+
+                listEl.innerHTML = items.map(function(item) {
+                    return (
+                        '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="sidebar-article-item">' +
+                            '<div class="sa-title">' + escapeHtml(item.title) + '</div>' +
+                            '<div class="sa-date">' + formatDate(item.createdAt) + '</div>' +
+                        '</a>'
+                    );
+                }).join('');
             }
 
             async function loadArticle() {
@@ -866,24 +886,21 @@
                 showLoading();
                 try {
                     var response = await fetch('/api/articles/' + encodeURIComponent(id));
-                    if (!response.ok) {
-                        if (response.status === 404) {
-                            showError('文章不存在或已被移除');
-                        } else {
-                            showError('加载失败 (HTTP ' + response.status + ')');
-                        }
-                        return;
-                    }
+                    if (!response.ok) throw new Error('HTTP ' + response.status);
                     var result = await response.json();
-                    if (!result.success || !result.data) {
-                        showError(result.message || '文章数据为空');
-                        return;
-                    }
+                    if (!result.success || !result.data) throw new Error(result.message || '文章数据为空');
                     showContent();
                     renderArticle(result.data);
                 } catch (error) {
-                    console.error('加载文章失败:', error);
-                    showError('网络错误，请检查网络连接后重试');
+                    console.warn('API 文章加载失败，尝试静态数据:', error);
+                    var staticItems = await loadArticlesStatically();
+                    var article = staticItems ? staticItems.find(function(item) { return item.id === id; }) : null;
+                    if (article) {
+                        showContent();
+                        renderArticle(article);
+                    } else {
+                        showError('文章不存在或已被移除');
+                    }
                 }
             }
 
