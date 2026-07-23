@@ -21,6 +21,9 @@ server.pid
 *.tmp
 *.log
 proof-*.png
+screenshot_*.js
+websit_pages*.png
+local_news.png
 
 # OS files
 .DS_Store
