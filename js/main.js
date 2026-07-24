@@ -328,6 +328,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 imageIconEl.textContent = about.imageIcon || '🏢';
             }
         }
+        // 关于我们右侧图片：有图时整块铺满，无图时显示渐变+图标
+        const aboutImgBox = document.querySelector('.about-img');
+        if (aboutImgBox) {
+            if (about.image && isImageUrl(about.image)) {
+                aboutImgBox.style.background = `url('${resolveAssetPath(about.image)}') center/cover no-repeat`;
+                aboutImgBox.style.backgroundSize = 'cover';
+                if (imageIconEl) imageIconEl.style.display = 'none';
+            } else {
+                aboutImgBox.style.background = 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)';
+                if (imageIconEl) { imageIconEl.style.display = ''; imageIconEl.textContent = about.imageIcon || '🏢'; }
+            }
+        }
     }
 
     // ====================

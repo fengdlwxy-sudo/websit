@@ -1443,6 +1443,7 @@ img {
     color: white;
     font-size: 16px;
     margin-bottom: 18px;
+    text-align: center;
 }
 .footer-qrcode {
     display: flex;
