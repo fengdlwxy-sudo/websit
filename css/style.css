@@ -1495,6 +1495,35 @@ img {
     text-align: center;
 }
 
+.footer-contact-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.footer-contact-item a {
+    color: #00D2C6;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.footer-contact-item a:hover {
+    color: #2ff5e8;
+    text-decoration: underline;
+}
+
+.footer-contact-divider {
+    width: 1px;
+    height: 16px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
 .footer-bottom p {
     font-size: 12px;
     opacity: 0.6;
