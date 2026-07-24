@@ -927,7 +927,8 @@ const pageTitles = {
     banners: '轮播管理',
     images: '图片管理',
     settings: '站点设置',
-    users: '用户管理'
+    users: '用户管理',
+    leads: '客户咨询管理'
 };
 
 function switchPage(pageName) {
@@ -939,6 +940,7 @@ function switchPage(pageName) {
     });
     document.getElementById('pageTitle').textContent = pageTitles[pageName] || pageName;
     if (pageName === 'dashboard') updateDashboard();
+    if (pageName === 'leads') renderLeads();
 }
 
 document.querySelectorAll('.nav-item, [data-page-link]').forEach(item => {

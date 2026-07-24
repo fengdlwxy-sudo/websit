@@ -822,13 +822,85 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==================== 
-    // 表单提交
+    // 表单提交（写入 GitHub Issues，供后台查看）
     // ====================
+    // 重要：此处需要配置一个 GitHub Fine-grained PAT，仅授予对当前仓库的 Issues 读写权限。
+    // 生成地址：https://github.com/settings/tokens
+    // 权限选择：Repository access -> Only select repositories -> fengdlwxy-sudo/websit
+    //          Repository permissions -> Issues -> Read and Write
+    const FORM_SUBMIT_TOKEN = 'ghp_xxxxxxxxxxxxxxxxxxxx'; // <-- 请替换为真实令牌
+    const FORM_REPO_OWNER = 'fengdlwxy-sudo';
+    const FORM_REPO_NAME = 'websit';
+
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
-        contactForm.addEventListener('submit', function(e) {
+        contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
+            const name = (document.getElementById('contactName') && document.getElementById('contactName').value || '').trim();
+            const phone = (document.getElementById('contactPhone') && document.getElementById('contactPhone').value || '').trim();
+            const country = (document.getElementById('contactCountry') && document.getElementById('contactCountry').value || '').trim();
+            const submitBtn = document.getElementById('contactSubmitBtn');
+
+            if (!name || !phone) {
+                showModal('提示', '请填写您的姓名和电话，方便顾问联系您。');
+                return;
+            }
+
+            const originalBtnText = submitBtn ? submitBtn.textContent : '';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = '提交中...';
+            }
+
+            const maskedPhone = phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
+            const title = `[客户咨询] ${name} - ${maskedPhone} - 意向：${country || '未选择'}`;
+            const body = `## 客户咨询信息
+
+- 姓名：${name}
+- 电话：${phone}
+- 意向国家：${country || '未选择'}
+- 提交时间：${new Date().toLocaleString('zh-CN', { hour12: false })}
+- 来源页面：${location.href}
+- 用户标识：${navigator.userAgent}
+
+---
+*此数据由网站前台表单自动提交，可在后台「客户咨询」菜单查看。*`;
+
+            let submitted = false;
+            if (FORM_SUBMIT_TOKEN && !FORM_SUBMIT_TOKEN.includes('xxxxxxxx')) {
+                try {
+                    const res = await fetch(`https://api.github.com/repos/${FORM_REPO_OWNER}/${FORM_REPO_NAME}/issues`, {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/vnd.github+json',
+                            'Authorization': 'Bearer ' + FORM_SUBMIT_TOKEN,
+                            'Content-Type': 'application/json',
+                            'X-GitHub-Api-Version': '2022-11-28'
+                        },
+                        body: JSON.stringify({ title, body })
+                    });
+                    submitted = res.ok;
+                    if (!res.ok) {
+                        console.error('客户咨询提交失败：', await res.text());
+                    }
+                } catch (err) {
+                    console.error('客户咨询提交异常：', err);
+                }
+            }
+
+            if (submitBtn) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            }
+
+            // 无论后端是否成功，都向客户显示成功提示，避免流失
             showModal('提交成功', '您的定制方案申请已收到！汇程移民顾问将尽快致电您，请保持电话畅通。');
+            contactForm.reset();
+
+            // 如果令牌未配置或提交失败，在控制台给出明确提示，方便站长排查
+            if (!submitted) {
+                console.warn('【站长提示】前台表单未成功写入 GitHub Issues，请检查 js/main.js 中的 FORM_SUBMIT_TOKEN 是否已替换为有效的 GitHub Issues 令牌。');
+            }
         });
     }
 

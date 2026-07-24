@@ -319,15 +319,15 @@
                     <form class="contact-form" id="contactForm">
                         <div class="form-group">
                             <label>您的姓名：</label>
-                            <input type="text" placeholder="请输入您的姓名" required>
+                            <input type="text" id="contactName" placeholder="请输入您的姓名" required>
                         </div>
                         <div class="form-group">
                             <label>您的电话：</label>
-                            <input type="tel" placeholder="请输入您的电话" required>
+                            <input type="tel" id="contactPhone" placeholder="请输入您的电话" required>
                         </div>
                         <div class="form-group">
                             <label>意向国家：</label>
-                            <select>
+                            <select id="contactCountry">
                                 <option value="">请选择</option>
                                 <option>希腊</option>
                                 <option>美国</option>
@@ -339,7 +339,7 @@
                                 <option>中国香港</option>
                             </select>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block">获取私人定制方案</button>
+                        <button type="submit" class="btn btn-primary btn-block" id="contactSubmitBtn">获取私人定制方案</button>
                     </form>
                 </div>
                 <div class="contact-features">

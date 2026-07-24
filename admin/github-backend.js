@@ -155,6 +155,29 @@ async function ghWriteData(key, data, message, attempt = 0) {
     return putRes.json();
 }
 
+// 解析 GitHub Issue 为客户咨询对象
+function parseLeadIssue(issue) {
+    const title = issue.title || '';
+    const body = issue.body || '';
+    const bodyName = body.match(/-\s*姓名[：:]\s*(.+)/);
+    const bodyPhone = body.match(/-\s*电话[：:]\s*(.+)/);
+    const bodyCountry = body.match(/-\s*意向国家[：:]\s*(.+)/);
+    const bodyTime = body.match(/-\s*提交时间[：:]\s*(.+)/);
+    // 标题格式：[客户咨询] 姓名 - 电话 - 意向：国家
+    const titleParts = title.replace(/^\[客户咨询\]\s*/, '').split(/\s+-\s+/);
+    return {
+        id: issue.number,
+        title: title,
+        name: (bodyName ? bodyName[1].trim() : (titleParts[0] ? titleParts[0].trim() : '')),
+        phone: (bodyPhone ? bodyPhone[1].trim() : (titleParts[1] ? titleParts[1].trim() : '')),
+        country: (bodyCountry ? bodyCountry[1].trim() : (titleParts[2] ? titleParts[2].replace(/^意向[：:]\s*/, '').trim() : '')),
+        createdAt: (bodyTime ? bodyTime[1].trim() : issue.created_at),
+        status: issue.state === 'open' ? 'pending' : 'done',
+        body: body,
+        url: issue.html_url
+    };
+}
+
 // ==================== 集合类通用增删改 ====================
 async function collectionOp(key, method, id, bodyObj) {
     const data = await ghReadData(key);
@@ -319,6 +342,38 @@ async function githubApiRequest(url, options = {}) {
         });
         if (!delRes.ok) throw new Error('删除图片失败：GitHub ' + delRes.status);
         return { success: true };
+    }
+
+    // 客户咨询（使用 GitHub Issues 存储）
+    if (url === '/leads' && method === 'GET') {
+        const q = encodeURIComponent('repo:' + ghConfig.owner + '/' + ghConfig.repo + ' "[客户咨询]" in:title');
+        const res = await ghRaw('GET', '/search/issues?q=' + q + '&sort=created&order=desc&per_page=100');
+        if (!res.ok) throw new Error('读取客户咨询失败：GitHub ' + res.status);
+        const data = await res.json();
+        return { success: true, data: (data.items || []).map(parseLeadIssue) };
+    }
+    if (url.startsWith('/leads/') && method === 'GET') {
+        const id = url.split('/')[2];
+        const res = await ghRaw('GET', '/repos/' + ghConfig.owner + '/' + ghConfig.repo + '/issues/' + encodeURIComponent(id));
+        if (!res.ok) throw new Error('读取客户咨询详情失败：GitHub ' + res.status);
+        return { success: true, data: parseLeadIssue(await res.json()) };
+    }
+    if (url.startsWith('/leads/') && method === 'PUT') {
+        const id = url.split('/')[2];
+        const payload = {};
+        if (body && body.status === 'done') payload.state = 'closed';
+        else if (body && body.status === 'pending') payload.state = 'open';
+        if (body && typeof body.note === 'string' && body.note.trim()) {
+            // 追加备注到 body
+            const getRes = await ghRaw('GET', '/repos/' + ghConfig.owner + '/' + ghConfig.repo + '/issues/' + encodeURIComponent(id));
+            if (!getRes.ok) throw new Error('读取客户咨询失败：GitHub ' + getRes.status);
+            const issue = await getRes.json();
+            const now = new Date().toLocaleString('zh-CN', { hour12: false });
+            payload.body = (issue.body || '') + '\n\n---\n**后台备注** (' + now + ')：' + body.note.trim();
+        }
+        const res = await ghRaw('POST', '/repos/' + ghConfig.owner + '/' + ghConfig.repo + '/issues/' + encodeURIComponent(id), payload);
+        if (!res.ok) throw new Error('更新客户咨询失败：GitHub ' + res.status);
+        return { success: true, data: parseLeadIssue(await res.json()) };
     }
 
     // 文章头条（featured）
