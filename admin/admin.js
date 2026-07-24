@@ -1999,6 +1999,116 @@ document.getElementById('addUserBtn').addEventListener('click', () => {
     `);
 });
 
+// ==================== 客户咨询 ====================
+async function renderLeads() {
+    const list = document.getElementById('leadsList');
+    if (!list) return;
+    list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">加载中...</p>';
+    try {
+        const res = await apiRequest('/leads');
+        const leads = res.data || [];
+        const filter = document.getElementById('leadStatusFilter');
+        const status = filter ? filter.value : '';
+        const filtered = status ? leads.filter(l => l.status === status) : leads;
+        if (!filtered.length) {
+            list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">暂无客户咨询</p>';
+            return;
+        }
+        list.innerHTML = filtered.map(item => `
+            <div class="list-item">
+                <div class="item-thumb">📋</div>
+                <div class="item-content">
+                    <div class="item-title">${escapeHtml(item.name)} <span class="tag ${item.status === 'pending' ? 'tag-warning' : 'tag-success'}">${item.status === 'pending' ? '待跟进' : '已处理'}</span></div>
+                    <div class="item-meta">
+                        <span>电话：${escapeHtml(item.phone)}</span>
+                        <span>意向国家：${escapeHtml(item.country || '未选择')}</span>
+                        <span>提交时间：${escapeHtml(item.createdAt)}</span>
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn btn-default btn-small" onclick="viewLead(${item.id})">查看详情</button>
+                    <button class="btn btn-${item.status === 'pending' ? 'success' : 'warning'} btn-small" onclick="toggleLeadStatus(${item.id}, '${item.status}')">${item.status === 'pending' ? '标记已处理' : '标记待跟进'}</button>
+                </div>
+            </div>
+        `).join('');
+    } catch (err) {
+        list.innerHTML = '<p style="text-align:center;color:var(--text-muted);padding:40px;">加载失败：' + escapeHtml(err.message) + '</p>';
+    }
+}
+
+window.viewLead = async function(id) {
+    try {
+        const res = await apiRequest('/leads/' + id);
+        const item = res.data;
+        openModal('客户咨询详情', `
+            <div class="form-group">
+                <label>姓名</label>
+                <input type="text" value="${escapeHtml(item.name)}" readonly>
+            </div>
+            <div class="form-group">
+                <label>电话</label>
+                <input type="text" value="${escapeHtml(item.phone)}" readonly>
+            </div>
+            <div class="form-group">
+                <label>意向国家</label>
+                <input type="text" value="${escapeHtml(item.country || '未选择')}" readonly>
+            </div>
+            <div class="form-group">
+                <label>提交时间</label>
+                <input type="text" value="${escapeHtml(item.createdAt)}" readonly>
+            </div>
+            <div class="form-group">
+                <label>当前状态</label>
+                <input type="text" value="${item.status === 'pending' ? '待跟进' : '已处理'}" readonly>
+            </div>
+            <div class="form-group">
+                <label>跟进备注</label>
+                <textarea id="leadNote" rows="4" placeholder="记录跟进情况..."></textarea>
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" onclick="saveLeadNote(${item.id})">保存备注</button>
+                <a href="${escapeHtml(item.url)}" target="_blank" class="btn btn-default" style="margin-left:10px;">在 GitHub 查看</a>
+            </div>
+            <hr style="margin:16px 0;border:0;border-top:1px solid var(--border);">
+            <div style="font-size:13px;color:var(--text-light);white-space:pre-wrap;">${escapeHtml(item.body)}</div>
+        `);
+    } catch (err) {
+        showToast('读取详情失败：' + err.message, 'error');
+    }
+};
+
+window.toggleLeadStatus = async function(id, currentStatus) {
+    const nextStatus = currentStatus === 'pending' ? 'done' : 'pending';
+    const label = nextStatus === 'done' ? '已处理' : '待跟进';
+    if (!confirm('确定要标记为「' + label + '」吗？')) return;
+    try {
+        await apiRequest('/leads/' + id, { method: 'PUT', body: JSON.stringify({ status: nextStatus }) });
+        showToast('已标记为' + label);
+        await renderLeads();
+    } catch (err) {
+        showToast('操作失败：' + err.message, 'error');
+    }
+};
+
+window.saveLeadNote = async function(id) {
+    const note = document.getElementById('leadNote');
+    if (!note || !note.value.trim()) {
+        showToast('请输入备注内容', 'warning');
+        return;
+    }
+    try {
+        await apiRequest('/leads/' + id, { method: 'PUT', body: JSON.stringify({ note: note.value.trim() }) });
+        showToast('备注保存成功');
+        closeModal();
+        await renderLeads();
+    } catch (err) {
+        showToast('保存失败：' + err.message, 'error');
+    }
+};
+
+document.getElementById('leadStatusFilter') && document.getElementById('leadStatusFilter').addEventListener('change', renderLeads);
+document.getElementById('refreshLeadsBtn') && document.getElementById('refreshLeadsBtn').addEventListener('click', renderLeads);
+
 // ==================== 轮播管理 ====================
 function renderBanners() {
     const list = document.getElementById('bannersList');

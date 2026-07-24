@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 生成地址：https://github.com/settings/tokens
     // 权限选择：Repository access -> Only select repositories -> fengdlwxy-sudo/websit
     //          Repository permissions -> Issues -> Read and Write
-    const FORM_SUBMIT_TOKEN = 'ghp_xxxxxxxxxxxxxxxxxxxx'; // <-- 请替换为真实令牌
+    const FORM_SUBMIT_TOKEN = 'ghp_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'; // <-- 请替换为真实令牌
     const FORM_REPO_OWNER = 'fengdlwxy-sudo';
     const FORM_REPO_NAME = 'websit';
 
