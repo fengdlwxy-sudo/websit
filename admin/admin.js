@@ -1895,26 +1895,87 @@ document.getElementById('addArticleBtn').addEventListener('click', () => {
 });
 
 // ==================== 分类管理 ====================
+function renderOneCategoryList(containerId, items) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    const list = items || [];
+    if (list.length === 0) {
+        container.innerHTML = '<p class="cat-empty">暂无分类，点击下方按钮添加</p>';
+        return;
+    }
+    container.innerHTML = list.map((c, i) => `
+        <div class="cat-row" data-index="${i}">
+            <input type="text" class="cat-id" value="${escapeHtml(c.id || '')}" placeholder="英文ID" title="分类英文ID（建议不改）" ${c.id ? '' : ''}>
+            <input type="text" class="cat-name" value="${escapeHtml(c.name || '')}" placeholder="分类名称">
+            <input type="number" class="cat-sort" value="${c.sortOrder != null ? c.sortOrder : (i + 1)}" title="排序（数字越小越靠前）" style="width: 70px;">
+            <button type="button" class="cat-del" title="删除该分类">✕</button>
+        </div>
+    `).join('');
+}
+
 function renderCategories() {
-    const projTextarea = document.getElementById('projectCategoriesJson');
-    const artTextarea = document.getElementById('articleCategoriesJson');
-    if (!projTextarea || !artTextarea) return;
-    
+    bindCategoryAddButtons();
     const cats = allData.categories || { projectCategories: [], articleCategories: [] };
-    projTextarea.value = JSON.stringify(cats.projectCategories || [], null, 2);
-    artTextarea.value = JSON.stringify(cats.articleCategories || [], null, 2);
+    renderOneCategoryList('projectCategoriesList', cats.projectCategories);
+    renderOneCategoryList('articleCategoriesList', cats.articleCategories);
+}
+
+function collectCategoryRows(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return [];
+    const rows = Array.from(container.querySelectorAll('.cat-row'));
+    const result = [];
+    rows.forEach((row, i) => {
+        const id = row.querySelector('.cat-id').value.trim();
+        const name = row.querySelector('.cat-name').value.trim();
+        const sortRaw = row.querySelector('.cat-sort').value.trim();
+        if (!name) return; // 名称为空则跳过
+        result.push({
+            id: id || ('cat-' + Date.now() + '-' + i),
+            name: name,
+            sortOrder: sortRaw === '' ? (i + 1) : parseInt(sortRaw, 10)
+        });
+    });
+    return result;
+}
+
+// 添加分类行（事件委托在初始化时绑定）
+let _catButtonsBound = false;
+function bindCategoryAddButtons() {
+    if (_catButtonsBound) return; // 防止重复绑定
+    _catButtonsBound = true;
+    const buildRow = () => {
+        const div = document.createElement('div');
+        div.className = 'cat-row';
+        div.innerHTML = '<input type="text" class="cat-id" placeholder="英文ID" title="分类英文ID"><input type="text" class="cat-name" placeholder="分类名称"><input type="number" class="cat-sort" value="99" title="排序" style="width:70px;"><button type="button" class="cat-del" title="删除该分类">✕</button>';
+        return div;
+    };
+    const addProj = document.getElementById('addProjectCatBtn');
+    const addArt = document.getElementById('addArticleCatBtn');
+    if (addProj) {
+        addProj.addEventListener('click', () => {
+            document.getElementById('projectCategoriesList').appendChild(buildRow());
+        });
+    }
+    if (addArt) {
+        addArt.addEventListener('click', () => {
+            document.getElementById('articleCategoriesList').appendChild(buildRow());
+        });
+    }
+    // 删除行（事件委托，整个 document 只绑一次）
+    document.addEventListener('click', (e) => {
+        if (e.target && e.target.classList && e.target.classList.contains('cat-del')) {
+            const row = e.target.closest('.cat-row');
+            if (row) row.remove();
+        }
+    });
 }
 
 document.getElementById('saveCategoriesBtn').addEventListener('click', async () => {
     try {
-        let projectCategories, articleCategories;
-        try {
-            projectCategories = JSON.parse(document.getElementById('projectCategoriesJson').value);
-            articleCategories = JSON.parse(document.getElementById('articleCategoriesJson').value);
-        } catch (e) {
-            return showToast('JSON 格式错误，请检查', 'error');
-        }
-        
+        const projectCategories = collectCategoryRows('projectCategoriesList');
+        const articleCategories = collectCategoryRows('articleCategoriesList');
+
         await apiRequest('/categories', {
             method: 'PUT',
             body: JSON.stringify({ projectCategories, articleCategories })

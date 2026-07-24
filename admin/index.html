@@ -377,16 +377,18 @@
             <section class="page" id="page-categories" style="display: none;">
                 <div class="settings-form" id="categoriesForm">
                     <h2>项目分类</h2>
-                    <div class="form-group">
-                        <label>项目分类 JSON (格式: [{"id":"id","name":"名称","sortOrder":0},...])</label>
-                        <textarea id="projectCategoriesJson" rows="8" style="font-family: monospace; font-size: 13px;"></textarea>
+                    <p class="form-hint">可直接修改分类名称，或新增 / 删除分类。排序数字越小越靠前。</p>
+                    <div id="projectCategoriesList" class="cat-list"></div>
+                    <button type="button" class="btn btn-sm btn-dashed" id="addProjectCatBtn">+ 添加项目分类</button>
+
+                    <h2 style="margin-top: 28px;">文章分类</h2>
+                    <p class="form-hint">可直接修改分类名称，或新增 / 删除分类。排序数字越小越靠前。</p>
+                    <div id="articleCategoriesList" class="cat-list"></div>
+                    <button type="button" class="btn btn-sm btn-dashed" id="addArticleCatBtn">+ 添加文章分类</button>
+
+                    <div style="margin-top: 24px;">
+                        <button class="btn btn-primary" id="saveCategoriesBtn">保存分类</button>
                     </div>
-                    <h2 style="margin-top: 20px;">文章分类</h2>
-                    <div class="form-group">
-                        <label>文章分类 JSON (格式: [{"id":"id","name":"名称","sortOrder":0},...])</label>
-                        <textarea id="articleCategoriesJson" rows="8" style="font-family: monospace; font-size: 13px;"></textarea>
-                    </div>
-                    <button class="btn btn-primary" id="saveCategoriesBtn">保存分类</button>
                 </div>
             </section>
 
