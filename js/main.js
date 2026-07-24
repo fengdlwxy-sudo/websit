@@ -184,6 +184,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 gradient: 'linear-gradient(135deg, #6B4C9A 0%, #9B6BCC 100%)',
                 icon: '💰',
                 tags: ['欧洲身份', '国际教育']
+            },
+            {
+                title: '药剂研发NIW零补件获批案例：公共卫生价值是突破审批收紧关键！',
+                summary: '42岁高级配方科学家Z先生，凭借扎实科研成果与汇程移民定制文书策略，成功获批EB-2 NIW国家利益豁免，全程无补件。',
+                gradient: 'linear-gradient(135deg, #4A0E4E 0%, #8E24AA 100%)',
+                icon: '🔬',
+                tags: ['美国NIW', '零补件获批']
             }
         ]
     };
