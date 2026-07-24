@@ -494,6 +494,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!articles) return;
         const container = document.getElementById('newsContent');
         if (!container) return;
+        // news.html 页面有自己的渲染逻辑和容器（featuredSection/articleGrid/pagination），
+        // 不要覆盖，否则会导致其分类筛选报 "Cannot set properties of null" 错误。
+        if (container.querySelector('#featuredSection, #articleGrid, #pagination')) return;
 
         // 兼容 featured 为数组或单对象，统一规范为最多 2 项的数组
         let featuredArr = [];

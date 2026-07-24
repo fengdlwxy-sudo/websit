@@ -690,6 +690,7 @@
             // 渲染推荐文章
             function renderFeatured(article) {
                 var container = document.getElementById('featuredSection');
+                if (!container) return;
                 if (!article) {
                     container.innerHTML = '';
                     return;
@@ -721,6 +722,7 @@
             // 渲染文章列表
             function renderArticles(items) {
                 var grid = document.getElementById('articleGrid');
+                if (!grid) return;
                 if (items.length === 0) {
                     grid.innerHTML = '';
                     return;
@@ -753,6 +755,7 @@
             // 渲染分页
             function renderPagination(total, current) {
                 var container = document.getElementById('pagination');
+                if (!container) return;
                 var totalPages = Math.ceil(total / pageSize);
                 if (totalPages <= 1) {
                     container.innerHTML = '';

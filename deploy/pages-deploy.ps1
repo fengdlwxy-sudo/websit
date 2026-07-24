@@ -44,7 +44,8 @@ $token = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($tokenBSTR)
 Write-Host ""
 Write-Host "Cleaning up any unfinished merge..."
 git merge --abort 2>$null
-if ($LASTEXITCODE -ne 0) { /* ignore: may not be merging */ }
+if ($LASTEXITCODE -ne 0) { # ignore: may not be merging
+}
 
 # 5. Pull latest changes, preferring local version on conflicts
 Write-Host "Pulling latest changes from $remoteName/$branch (using local version if conflicts)..."
