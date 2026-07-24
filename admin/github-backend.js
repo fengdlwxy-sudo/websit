@@ -120,14 +120,18 @@ async function ghReadData(key) {
     }
 }
 
-// 写入某个数据文件（自动处理 sha，遇 409 冲突重试一次）
-async function ghWriteData(key, data, message, retry) {
+// 写入某个数据文件（自动处理 sha，遇 409 冲突最多重试 3 次）
+async function ghWriteData(key, data, message, attempt = 0) {
     const file = DATA_FILES[key];
     const path = `/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data/${file}`;
-    // 先取 sha
-    const getRes = await ghRaw('GET', path + '?ref=' + encodeURIComponent(ghConfig.branch));
+    // 先取 sha，加 cache buster 避免 GitHub 返回缓存的旧 sha
+    const getRes = await ghRaw('GET', path + '?ref=' + encodeURIComponent(ghConfig.branch) + '&_cb=' + Date.now());
     let sha = null;
     if (getRes.status !== 404) {
+        if (!getRes.ok) {
+            const t = await getRes.text();
+            throw new Error('读取 ' + file + ' 版本失败：GitHub ' + getRes.status + ' ' + t.slice(0, 120));
+        }
         const j = await getRes.json();
         sha = j.sha;
     }
@@ -138,10 +142,11 @@ async function ghWriteData(key, data, message, retry) {
     };
     if (sha) body.sha = sha;
     const putRes = await ghRaw('PUT', path, body);
-    if (putRes.status === 409 && !retry) {
-        // 并发冲突：短暂等待 GitHub 状态一致后重新读取再写一次
-        await new Promise(r => setTimeout(r, 800));
-        return ghWriteData(key, data, message, true);
+    if (putRes.status === 409 && attempt < 3) {
+        // 并发冲突：指数退避后重新读取 sha 再写
+        const delay = 800 * Math.pow(2, attempt);
+        await new Promise(r => setTimeout(r, delay));
+        return ghWriteData(key, data, message, attempt + 1);
     }
     if (!putRes.ok) {
         const t = await putRes.text();

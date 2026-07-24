@@ -2253,7 +2253,14 @@ document.getElementById('editModal').addEventListener('click', (e) => {
     if (e.target.id === 'editModal') closeModal();
 });
 
+let isSaving = false;
 document.getElementById('modalSaveBtn').addEventListener('click', async () => {
+    if (isSaving) return;
+    isSaving = true;
+    const saveBtn = document.getElementById('modalSaveBtn');
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = '保存中...';
+    saveBtn.disabled = true;
     try {
         if (currentEditType === 'news') {
             const data = {
@@ -2429,6 +2436,12 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
         await loadAllData();
     } catch (err) {
         showToast('保存失败：' + err.message, 'error');
+    } finally {
+        isSaving = false;
+        if (saveBtn) {
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+        }
     }
 });
 
