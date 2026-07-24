@@ -61,7 +61,7 @@
       "title": "美国EB-1A杰出人才移民",
       "slug": "usa-eb1a",
       "countryId": "us",
-      "category": "skilled",
+      "category": "investment",
       "summary": "周期短，无排期，费用低，一步到位拿美国永久绿卡。",
       "price": "约7万美元起",
       "image": "assets/images/flags/us.svg",
@@ -79,7 +79,7 @@
         "持续获得行业认可"
       ],
       "status": "published",
-      "sortOrder": 3,
+      "sortOrder": 11,
       "createdAt": "2026-07-22",
       "updatedAt": "2026-07-23"
     },
@@ -288,7 +288,7 @@
       "title": "美国NIW国家利益豁免移民",
       "slug": "usa-niw",
       "countryId": "us",
-      "category": "skilled",
+      "category": "investment",
       "summary": "无需美国雇主，无需劳工证，一步到位拿10年永久绿卡，适合高学历及特殊技能人士。",
       "price": "约27万人民币起",
       "image": "assets/images/flags/us.svg",
@@ -306,7 +306,7 @@
         "符合国家利益"
       ],
       "status": "published",
-      "sortOrder": 11,
+      "sortOrder": 12,
       "createdAt": "2026-07-23",
       "updatedAt": "2026-07-23"
     },

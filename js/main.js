@@ -426,8 +426,8 @@ document.addEventListener('DOMContentLoaded', function() {
             { id: 'p-mt-001', title: '马耳他永居计划', category: 'investment', countryId: 'mt', summary: '全球唯一四位一体国，一人投资四代拿永居', price: '约100万人民币起', image: 'assets/images/flags/mt.svg' },
             { id: 'p-jp-001', title: '日本高级经营管理者签证', category: 'business', countryId: 'jp', summary: '入籍要求低，无明确居住要求', price: '约500万日元起', image: 'assets/images/flags/jp.svg' },
             { id: 'p-sg-002', title: '新加坡自雇移民EP', category: 'business', countryId: 'sg', summary: '注册公司担任高管，申请就业准证', price: '约50万新币起', image: 'assets/images/flags/sg.svg' },
-            { id: 'p-us-002', title: '美国EB-1A杰出人才移民', category: 'skilled', countryId: 'us', summary: '周期短，无排期，费用低', price: '约7万美元起', image: 'assets/images/flags/us.svg' },
-            { id: 'p-hk-001', title: '香港优秀人才入境计划', category: 'skilled', countryId: 'hk', summary: '无需投资、申请快速简单、花费少', price: '约6万人民币', image: 'assets/images/flags/hk.svg' }
+            { id: 'p-us-002', title: '美国EB-1A杰出人才移民', category: 'investment', countryId: 'us', summary: '周期短，无排期，费用低', price: '约7万美元起', image: 'assets/images/flags/us.svg' },
+            { id: 'p-us-003', title: '美国NIW国家利益豁免移民', category: 'investment', countryId: 'us', summary: '无需雇主和劳工证，一步到位拿绿卡', price: '约27万人民币起', image: 'assets/images/flags/us.svg' }
         ]
     };
 
