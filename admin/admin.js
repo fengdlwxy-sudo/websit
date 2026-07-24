@@ -1748,16 +1748,17 @@ window.setArticleAsFeatured = async function(articleId, slotIndex) {
     const currentFeatured = getFeaturedList().slice();
     while (currentFeatured.length < 2) currentFeatured.push(null);
     currentFeatured[slotIndex] = featuredItem;
-    const payload = currentFeatured.filter(Boolean);
+
+    // 同步标记原文章 isFeatured，避免二次写 articles.json 导致 GitHub 409 冲突
+    article.isFeatured = true;
+    const payload = {
+        featured: currentFeatured.filter(Boolean),
+        items: items
+    };
 
     try {
-        // 保存头条配置
+        // 一次性写完整 articles（featured + items），只触发一次 GitHub 提交
         await apiRequest('/articles/featured', { method: 'PUT', body: JSON.stringify(payload) });
-
-        // 同步更新原文章的 isFeatured 标记
-        if (!article.isFeatured) {
-            await apiRequest(`/articles/${article.id}`, { method: 'PUT', body: JSON.stringify({ isFeatured: true }) });
-        }
 
         showToast(`已将「${article.title}」设为头条${slotIndex + 1}`);
         await loadAllData();

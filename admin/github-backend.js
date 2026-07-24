@@ -139,7 +139,8 @@ async function ghWriteData(key, data, message, retry) {
     if (sha) body.sha = sha;
     const putRes = await ghRaw('PUT', path, body);
     if (putRes.status === 409 && !retry) {
-        // 并发冲突：重新读取后再写一次
+        // 并发冲突：短暂等待 GitHub 状态一致后重新读取再写一次
+        await new Promise(r => setTimeout(r, 800));
         return ghWriteData(key, data, message, true);
     }
     if (!putRes.ok) {
@@ -314,13 +315,16 @@ async function githubApiRequest(url, options = {}) {
         const data = await ghReadData('articles');
         let next;
         if (Array.isArray(body)) next = body;
-        else if (body && Array.isArray(body.items)) next = body.items;
+        else if (body && Array.isArray(body.featured)) next = body.featured;
         else if (body && typeof body === 'object' && body.id) next = [body];
         else next = [];
         next = next.slice(0, 2);
         const original = Array.isArray(data.featured) ? data.featured : (data.featured ? [data.featured] : []);
-        next = next.map((item, idx) => Object.assign({}, original[idx] || {}, item, { isFeatured: true }));
-        data.featured = next;
+        data.featured = next.map((item, idx) => Object.assign({}, original[idx] || {}, item, { isFeatured: true }));
+        // 若前端一并传回完整 items（如批量更新 isFeatured），避免二次写文件导致 409
+        if (body && Array.isArray(body.items)) {
+            data.items = body.items;
+        }
         await ghWriteData('articles', data, 'update articles featured via admin');
         return { success: true, data: data.featured };
     }
