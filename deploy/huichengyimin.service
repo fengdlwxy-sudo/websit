@@ -1,0 +1,30 @@
+# systemd 单元文件。部署到 VM 后放到 /etc/systemd/system/huichengyimin.service
+# 注意：server.js 直接读取 process.env（没有用 dotenv），所以密码必须写在这里的 Environment，
+# 不要指望 .env 文件会自动生效。
+
+[Unit]
+Description=汇程移民快速评估表网站 (Node/Express)
+After=network.target
+
+[Service]
+Type=simple
+# 运行用户：建议用专门用户（如 www-data），并确保其拥有 /var/www/hcym 目录权限
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/hcym
+
+# 运行时环境变量
+Environment=PORT=3000
+Environment=NODE_ENV=production
+# ⚠️ 务必改成强密码！默认 admin/huicheng2026 已在代码里，生产必须覆盖
+Environment=ADMIN_USER=admin
+Environment=ADMIN_PASS=hC9mK2!pV7.qX4-zR8+Ln
+
+ExecStart=/usr/bin/node /var/www/hcym/server.js
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

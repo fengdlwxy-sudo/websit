@@ -3,7 +3,20 @@
  */
 
 const API_BASE = '/api';
-let authToken = localStorage.getItem('adminToken') || '';
+// 后台已改为 GitHub Pages 模式：登录令牌即 GitHub PAT，存于 ghConfig.token
+let authToken = (window.GitHubBackend && GitHubBackend.config.token) || localStorage.getItem('adminToken') || '';
+
+// 如果直接双击打开本地 HTML 文件（file:// 协议），fetch 会请求到磁盘根目录，导致登录报“网络错误”
+const isFileProtocol = window.location.protocol === 'file:';
+if (isFileProtocol) {
+    window.addEventListener('DOMContentLoaded', () => {
+        const errorEl = document.getElementById('loginError');
+        if (errorEl) {
+            errorEl.innerHTML = '请通过网站地址访问后台（例如 <strong>https://www.huichengyimin.com/admin</strong>），<br>不要直接双击打开本地 HTML 文件。';
+        }
+    });
+}
+
 let allData = {
     config: null,
     news: null,
@@ -12,7 +25,8 @@ let allData = {
     countries: [],
     projects: [],
     articles: { featured: [], items: [] },
-    categories: null
+    categories: null,
+    users: []
 };
 let currentEditType = null;
 let currentEditId = null;
@@ -180,23 +194,10 @@ async function confirmImageCrop() {
 }
 
 async function uploadImageBlob(blob, originalName, format = 'image/jpeg') {
-    // 根据格式生成后缀
-    let ext = '.jpg';
-    if (format === 'image/png') ext = '.png';
-    if (format === 'image/webp') ext = '.webp';
-    const filename = Date.now() + '-' + Math.random().toString(36).substring(2, 8) + ext;
-    const file = new File([blob], filename, { type: format });
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await fetch(API_BASE + '/upload', {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + authToken },
-        body: formData
-    });
-    const result = await response.json();
+    // GitHub Pages 模式下，图片直接以 base64 提交到仓库 assets/images/uploads/
+    const result = await GitHubBackend.ghUploadImageBlob(blob, originalName, format);
     if (!result.success || !result.data?.url) {
-        throw new Error(result.message || '上传失败');
+        throw new Error('上传失败');
     }
     return result.data.url;
 }
@@ -774,19 +775,16 @@ function updateSelectedImageSize() {
 }
 
 async function apiRequest(url, options = {}) {
-    const headers = {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
-    };
-    if (authToken) {
-        headers['Authorization'] = 'Bearer ' + authToken;
+    try {
+        return await GitHubBackend.githubApiRequest(url, options);
+    } catch (err) {
+        const msg = (err && err.message) || '';
+        if (err && err.status === 401 || /401|令牌|无效|未登录/.test(msg)) {
+            showLogin();
+            throw new Error('登录已失效，请重新登录');
+        }
+        throw err;
     }
-    const response = await fetch(API_BASE + url, { ...options, headers });
-    if (response.status === 401) {
-        showLogin();
-        throw new Error('未登录或登录已过期');
-    }
-    return response.json();
 }
 
 // ==================== 登录 ====================
@@ -804,18 +802,26 @@ function showAdmin() {
 
 document.getElementById('loginForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    const username = document.getElementById('loginUsername').value;
-    const password = document.getElementById('loginPassword').value;
+    const token = document.getElementById('loginToken').value.trim();
+    const owner = document.getElementById('ghOwner').value.trim();
+    const repo = document.getElementById('ghRepo').value.trim();
+    const branch = document.getElementById('ghBranch').value.trim() || 'main';
     const errorEl = document.getElementById('loginError');
     errorEl.textContent = '';
-    
+
+    if (!token) {
+        errorEl.textContent = '请填写 GitHub 令牌';
+        return;
+    }
+
+    // 保存仓库配置与令牌，供后续接口使用
+    GitHubBackend.saveGhConfig({ token, owner, repo, branch });
+
     try {
-        const result = await apiRequest('/login', {
-            method: 'POST',
-            body: JSON.stringify({ username, password })
-        });
+        // 校验令牌（/login 内部会调用 GitHub 校验）
+        const result = await apiRequest('/login', { method: 'POST' });
         if (result.success) {
-            authToken = result.token;
+            authToken = token;
             localStorage.setItem('adminToken', authToken);
             showAdmin();
             showToast('登录成功');
@@ -823,7 +829,15 @@ document.getElementById('loginForm').addEventListener('submit', async (e) => {
             errorEl.textContent = result.message || '登录失败';
         }
     } catch (err) {
-        errorEl.textContent = '网络错误，请重试';
+        if (isFileProtocol) {
+            errorEl.innerHTML = '请通过网站地址访问后台（例如 <strong>https://www.huichengyimin.com/admin</strong>），<br>不要直接双击打开本地 HTML 文件。';
+        } else if (err.message && (err.message.includes('令牌') || err.message.includes('401'))) {
+            errorEl.textContent = '令牌无效或无权限，请检查 PAT 与仓库设置';
+        } else if (err.message && err.message.includes('Failed to fetch')) {
+            errorEl.textContent = '无法连接 GitHub，请检查网络';
+        } else {
+            errorEl.textContent = '登录失败：' + (err.message || '请重试');
+        }
     }
 });
 
@@ -831,6 +845,7 @@ document.getElementById('logoutBtn').addEventListener('click', () => {
     apiRequest('/logout', { method: 'POST' }).catch(() => {});
     authToken = '';
     localStorage.removeItem('adminToken');
+    GitHubBackend.saveGhConfig({ token: '' });
     showLogin();
 });
 
@@ -874,6 +889,14 @@ async function loadAllData() {
         }
         allData.categories = allData.categories || { projectCategories: [], articleCategories: [] };
 
+        // 加载用户列表
+        try {
+            const usersResp = await apiRequest('/users');
+            allData.users = usersResp.data || [];
+        } catch (err) {
+            allData.users = [];
+        }
+
         renderNews();
         renderCases();
         renderCertificates();
@@ -884,6 +907,7 @@ async function loadAllData() {
         renderProjects();
         renderArticles();
         renderCategories();
+        renderUsers();
         updateDashboard();
     } catch (err) {
         showToast('加载数据失败：' + err.message, 'error');
@@ -902,7 +926,8 @@ const pageTitles = {
     certificates: '荣誉证书管理',
     banners: '轮播管理',
     images: '图片管理',
-    settings: '站点设置'
+    settings: '站点设置',
+    users: '用户管理'
 };
 
 function switchPage(pageName) {
@@ -1879,6 +1904,90 @@ document.getElementById('saveCategoriesBtn').addEventListener('click', async () 
     }
 });
 
+// ==================== 用户管理 ====================
+function renderUsers() {
+    const list = document.getElementById('usersList');
+    if (!list) return;
+    const items = allData.users || [];
+
+    if (items.length === 0) {
+        list.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 40px;">暂无用户，点击上方按钮添加</p>';
+        return;
+    }
+
+    list.innerHTML = items.map(user => `
+        <div class="list-item">
+            <div class="item-thumb">👤</div>
+            <div class="item-content">
+                <div class="item-title">${escapeHtml(user.username)}</div>
+                <div class="item-meta">
+                    <span class="tag">${escapeHtml(user.role || 'admin')}</span>
+                    <span>创建于 ${user.createdAt || '—'}</span>
+                </div>
+            </div>
+            <div class="item-actions">
+                <button class="btn btn-default btn-small" onclick="editUser('${user.id}')">编辑</button>
+                <button class="btn btn-danger btn-small" onclick="deleteUser('${user.id}')">删除</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+window.editUser = function(id) {
+    const user = allData.users.find(u => u.id === id);
+    if (!user) return;
+    currentEditType = 'user';
+    currentEditId = id;
+    openModal('编辑用户', `
+        <div class="form-group">
+            <label>账号</label>
+            <input type="text" id="editUserUsername" value="${escapeHtml(user.username)}">
+        </div>
+        <div class="form-group">
+            <label>新密码（留空表示不修改）</label>
+            <input type="password" id="editUserPassword" placeholder="不修改请留空">
+        </div>
+        <div class="form-group">
+            <label>角色</label>
+            <select id="editUserRole">
+                <option value="admin" ${(user.role || 'admin') === 'admin' ? 'selected' : ''}>管理员</option>
+            </select>
+        </div>
+    `);
+};
+
+window.deleteUser = async function(id) {
+    if (!confirm('确定要删除该用户吗？')) return;
+    try {
+        await apiRequest('/users/' + id, { method: 'DELETE' });
+        showToast('删除成功');
+        await loadAllData();
+    } catch (err) {
+        showToast('删除失败：' + err.message, 'error');
+    }
+};
+
+document.getElementById('addUserBtn').addEventListener('click', () => {
+    currentEditType = 'user';
+    currentEditId = null;
+    openModal('新增用户', `
+        <div class="form-group">
+            <label>账号</label>
+            <input type="text" id="editUserUsername" placeholder="请输入账号">
+        </div>
+        <div class="form-group">
+            <label>密码</label>
+            <input type="password" id="editUserPassword" placeholder="请输入密码">
+        </div>
+        <div class="form-group">
+            <label>角色</label>
+            <select id="editUserRole">
+                <option value="admin">管理员</option>
+            </select>
+        </div>
+    `);
+});
+
 // ==================== 轮播管理 ====================
 function renderBanners() {
     const list = document.getElementById('bannersList');
@@ -2021,17 +2130,10 @@ window.deleteImage = async function(name) {
 document.getElementById('imageUpload').addEventListener('change', async (e) => {
     const files = Array.from(e.target.files);
     if (!files.length) return;
-    
+
     for (const file of files) {
-        const formData = new FormData();
-        formData.append('image', file);
         try {
-            const response = await fetch(API_BASE + '/upload', {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + authToken },
-                body: formData
-            });
-            const result = await response.json();
+            const result = await GitHubBackend.ghUploadImageBlob(file, file.name, file.type);
             if (result.success) {
                 showToast(`已上传：${file.name}`);
             } else {
@@ -2305,6 +2407,19 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
                 await apiRequest('/articles/' + currentEditId, { method: 'PUT', body: JSON.stringify(data) });
             } else {
                 await apiRequest('/articles', { method: 'POST', body: JSON.stringify(data) });
+            }
+        } else if (currentEditType === 'user') {
+            const data = {
+                username: document.getElementById('editUserUsername').value.trim(),
+                password: document.getElementById('editUserPassword').value,
+                role: document.getElementById('editUserRole').value
+            };
+            if (!data.username) return showToast('请输入账号', 'warning');
+            if (!currentEditId && !data.password) return showToast('请输入密码', 'warning');
+            if (currentEditId) {
+                await apiRequest('/users/' + currentEditId, { method: 'PUT', body: JSON.stringify(data) });
+            } else {
+                await apiRequest('/users', { method: 'POST', body: JSON.stringify(data) });
             }
         }
         

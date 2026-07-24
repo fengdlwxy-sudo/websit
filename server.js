@@ -14,9 +14,9 @@ const PORT = process.env.PORT || 3000;
 const DATA_DIR = path.join(__dirname, 'data');
 const UPLOAD_DIR = path.join(__dirname, 'assets', 'images', 'uploads');
 
-// 默认管理员账号密码（生产环境请务必修改）
+// 默认管理员账号密码（可通过环境变量覆盖，生产环境建议用环境变量）
 const ADMIN_USERNAME = process.env.ADMIN_USER || 'admin';
-const ADMIN_PASSWORD = process.env.ADMIN_PASS || 'huicheng2026';
+const ADMIN_PASSWORD = process.env.ADMIN_PASS || 'Admin6363';
 
 // 确保目录存在
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -31,7 +31,8 @@ const dataFiles = {
     countries: { file: 'countries.json', default: { items: [] } },
     projects: { file: 'projects.json', default: { items: [] } },
     articles: { file: 'articles.json', default: { featured: null, items: [] } },
-    categories: { file: 'categories.json', default: { projectCategories: [], articleCategories: [] } }
+    categories: { file: 'categories.json', default: { projectCategories: [], articleCategories: [] } },
+    users: { file: 'users.json', default: { items: [] } }
 };
 
 Object.keys(dataFiles).forEach(key => {
@@ -40,6 +41,24 @@ Object.keys(dataFiles).forEach(key => {
         fs.writeFileSync(filePath, JSON.stringify(dataFiles[key].default, null, 2), 'utf8');
     }
 });
+
+// 确保默认管理员账户存在（首次启动或用户被清空时自动创建）
+function ensureDefaultAdmin() {
+    const usersData = readData('users');
+    const items = usersData.items || [];
+    const exists = items.some(u => u.username === ADMIN_USERNAME);
+    if (!exists) {
+        items.push({
+            id: generateId(),
+            username: ADMIN_USERNAME,
+            password: ADMIN_PASSWORD,
+            role: 'admin',
+            createdAt: new Date().toISOString().split('T')[0]
+        });
+        writeData('users', { items });
+    }
+}
+ensureDefaultAdmin();
 
 // 内存会话存储
 const sessions = new Map();
@@ -119,13 +138,25 @@ function generateId() {
 // ====================
 app.post('/api/login', (req, res) => {
     const { username, password } = req.body;
+    // 兼容环境变量中配置的 bootstrap 账号
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
         const token = generateToken();
         sessions.set(token, { username, loginAt: new Date().toISOString() });
-        res.json({ success: true, token });
-    } else {
-        res.status(401).json({ success: false, message: '账号或密码错误' });
+        return res.json({ success: true, token });
     }
+    // 从 users.json 校验
+    try {
+        const usersData = readData('users');
+        const user = (usersData.items || []).find(u => u.username === username && u.password === password);
+        if (user) {
+            const token = generateToken();
+            sessions.set(token, { username, loginAt: new Date().toISOString() });
+            return res.json({ success: true, token });
+        }
+    } catch (error) {
+        console.error('登录校验失败:', error);
+    }
+    res.status(401).json({ success: false, message: '账号或密码错误' });
 });
 
 app.post('/api/logout', requireAuth, (req, res) => {
@@ -137,6 +168,98 @@ app.post('/api/logout', requireAuth, (req, res) => {
 app.get('/api/auth-check', (req, res) => {
     const token = req.headers.authorization?.replace('Bearer ', '');
     res.json({ authenticated: !!token && sessions.has(token) });
+});
+
+// ==================== 
+// 用户管理
+// ====================
+app.get('/api/users', requireAuth, (req, res) => {
+    try {
+        const usersData = readData('users');
+        const items = (usersData.items || []).map(u => ({
+            id: u.id,
+            username: u.username,
+            role: u.role || 'admin',
+            createdAt: u.createdAt || ''
+        }));
+        res.json({ success: true, data: items });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+app.post('/api/users', requireAuth, (req, res) => {
+    try {
+        const { username, password, role = 'admin' } = req.body;
+        if (!username || !password) {
+            return res.status(400).json({ success: false, message: '账号和密码不能为空' });
+        }
+        const usersData = readData('users');
+        const items = usersData.items || [];
+        if (items.some(u => u.username === username)) {
+            return res.status(409).json({ success: false, message: '该账号已存在' });
+        }
+        const newUser = {
+            id: generateId(),
+            username,
+            password,
+            role,
+            createdAt: new Date().toISOString().split('T')[0]
+        };
+        items.unshift(newUser);
+        writeData('users', { items });
+        res.json({ success: true, data: { id: newUser.id, username, role, createdAt: newUser.createdAt } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+app.put('/api/users/:id', requireAuth, (req, res) => {
+    try {
+        const { username, password, role = 'admin' } = req.body;
+        if (!username) {
+            return res.status(400).json({ success: false, message: '账号不能为空' });
+        }
+        const usersData = readData('users');
+        const items = usersData.items || [];
+        const index = items.findIndex(u => u.id === req.params.id);
+        if (index === -1) {
+            return res.status(404).json({ success: false, message: '用户不存在' });
+        }
+        const duplicate = items.find((u, idx) => idx !== index && u.username === username);
+        if (duplicate) {
+            return res.status(409).json({ success: false, message: '该账号已存在' });
+        }
+        items[index] = {
+            ...items[index],
+            username,
+            role,
+            ...(password ? { password } : {})
+        };
+        writeData('users', { items });
+        res.json({ success: true, data: { id: items[index].id, username, role, createdAt: items[index].createdAt } });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+});
+
+app.delete('/api/users/:id', requireAuth, (req, res) => {
+    try {
+        const usersData = readData('users');
+        let items = usersData.items || [];
+        const index = items.findIndex(u => u.id === req.params.id);
+        if (index === -1) {
+            return res.status(404).json({ success: false, message: '用户不存在' });
+        }
+        const remaining = items.filter((_, idx) => idx !== index);
+        if (remaining.length === 0) {
+            return res.status(400).json({ success: false, message: '至少保留一个管理员账号' });
+        }
+        writeData('users', { items: remaining });
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
 });
 
 // ==================== 
@@ -653,5 +776,5 @@ app.listen(PORT, () => {
     console.log(`汇程移民网站已启动`);
     console.log(`前台访问: http://localhost:${PORT}`);
     console.log(`后台管理: http://localhost:${PORT}/admin`);
-    console.log(`默认管理员: ${ADMIN_USERNAME} / ${ADMIN_PASSWORD}`);
+    console.log(`默认管理员账号: ${ADMIN_USERNAME}`);
 });
