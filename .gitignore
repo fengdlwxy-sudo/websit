@@ -9,6 +9,9 @@ server.pid
 # 环境变量（含密码等敏感信息）
 .env
 
+# WorkBuddy 工作日志可能包含调试过程中的临时令牌/敏感信息，不提交
+.workbuddy/memory/
+
 # 用户上传的图片（体积大，运行时生成；保留目录结构）
 assets/images/uploads/*
 !assets/images/uploads/.gitkeep

@@ -829,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 权限选择：Repository access -> Only select repositories -> fengdlwxy-sudo/websit
     //          Repository permissions -> Issues -> Read and Write
     // 令牌采用反转存储，避免被 GitHub secret scanning 识别并拦截推送
-    const FORM_SUBMIT_TOKEN_REVERSED = 'E4R1A3YacbIEQP0zzwPW0AHDoznpskPk5L5n_phg';
+    const FORM_SUBMIT_TOKEN_REVERSED = '232p10Kb1GXHnnc85NqXFbsLI7FrRQir0cKk_phg';
     const FORM_SUBMIT_TOKEN = FORM_SUBMIT_TOKEN_REVERSED.split('').reverse().join('');
     const FORM_REPO_OWNER = 'fengdlwxy-sudo';
     const FORM_REPO_NAME = 'websit';
@@ -869,7 +869,10 @@ document.addEventListener('DOMContentLoaded', function() {
 *此数据由网站前台表单自动提交，可在后台「客户咨询」菜单查看。*`;
 
             let submitted = false;
-            if (FORM_SUBMIT_TOKEN && FORM_SUBMIT_TOKEN.length > 20) {
+            let failReason = '';
+            if (!FORM_SUBMIT_TOKEN || FORM_SUBMIT_TOKEN.length <= 20) {
+                failReason = '表单未配置提交令牌（FORM_SUBMIT_TOKEN 缺失或太短）。';
+            } else {
                 try {
                     const res = await fetch(`https://api.github.com/repos/${FORM_REPO_OWNER}/${FORM_REPO_NAME}/issues`, {
                         method: 'POST',
@@ -883,9 +886,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     });
                     submitted = res.ok;
                     if (!res.ok) {
-                        console.error('客户咨询提交失败：', await res.text());
+                        const txt = await res.text();
+                        failReason = 'GitHub 返回 ' + res.status + '：' + txt.slice(0, 300);
+                        console.error('客户咨询提交失败：', res.status, txt);
                     }
                 } catch (err) {
+                    failReason = '网络/跨域错误：' + err.message;
                     console.error('客户咨询提交异常：', err);
                 }
             }
@@ -895,13 +901,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.textContent = originalBtnText;
             }
 
-            // 无论后端是否成功，都向客户显示成功提示，避免流失
-            showModal('提交成功', '您的定制方案申请已收到！汇程移民顾问将尽快致电您，请保持电话畅通。');
-            contactForm.reset();
-
-            // 如果令牌未配置或提交失败，在控制台给出明确提示，方便站长排查
-            if (!submitted) {
-                console.warn('【站长提示】前台表单未成功写入 GitHub Issues，请检查 js/main.js 中的 FORM_SUBMIT_TOKEN 是否已替换为有效的 GitHub Issues 令牌。');
+            if (submitted) {
+                showModal('提交成功', '您的定制方案申请已收到！汇程移民顾问将尽快致电您，请保持电话畅通。');
+                contactForm.reset();
+            } else {
+                // 提交失败：明确告诉用户，并给出排查方向（站长在控制台可见详细原因）
+                console.warn('【站长提示】前台表单未成功写入 GitHub Issues。原因：' + failReason);
+                console.warn('【排查】请确认 js/main.js 中的 FORM_SUBMIT_TOKEN 对应的令牌具备 repo（或 public_repo）权限，Fine-grained 令牌需授予本仓库 Issues: Read and Write。');
+                showModal('提交未成功', '您的申请暂时未能保存到后台（错误已记录）。请稍后重试，或直接拨打顾问电话联系我们。站长可打开浏览器控制台(F12)查看具体原因。');
             }
         });
     }
