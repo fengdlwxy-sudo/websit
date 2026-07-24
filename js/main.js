@@ -505,29 +505,12 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (articles.featured) {
             featuredArr = [articles.featured];
         }
-        // 列表 = items 全部；附文 = items[0]（如果存在），并从列表中移除避免重复
-        const allItems = articles.items || [];
-        const mini = allItems[0] || null;
-        const items = mini ? allItems.slice(1) : allItems;
+        // 列表 = items 全部
+        const items = articles.items || [];
 
         // 头条一：占满左半（大图卡）
         const featured1 = featuredArr[0];
         const featured2 = featuredArr[1];
-
-        // 头条一附文：紧凑型，填充大图下方空白
-        const miniHtml = mini ? `
-            <a href="${escapeHtml(mini.link || ('article-detail.html?id=' + (mini.id || '')))}" class="news-feature-mini">
-                <div class="news-feature-mini-icon" style="background: ${escapeHtml(mini.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)')};">
-                    <span>${escapeHtml(mini.icon || '📑')}</span>
-                </div>
-                <div class="news-feature-mini-info">
-                    <span class="news-cat-badge">${escapeHtml(articleCategoryMap[mini.category] || '文章')}</span>
-                    <h4>${escapeHtml(mini.title)}</h4>
-                    <p>${escapeHtml(mini.summary || '')}</p>
-                    <span class="news-feature-date">${escapeHtml(mini.date || mini.createdAt || '')}</span>
-                </div>
-            </a>
-        ` : '';
 
         const secondaryHtml = featured2 ? `
             <a href="${escapeHtml(featured2.link || ('article-detail.html?id=' + (featured2.id || '')))}" class="news-feature-card-secondary">
@@ -557,7 +540,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="news-feature-date">${escapeHtml(featured1.date || featured1.createdAt || '')}</span>
                     </div>
                 </a>
-                ${miniHtml}
                 ${secondaryHtml}
             </div>
         ` : '';
@@ -576,7 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        // 整体结构：左 = 头条一 + 头条二 + 附文，右 = 精简列表
+        // 整体结构：左 = 头条一 + 头条二，右 = 精简列表
         container.innerHTML = `
             ${primaryHtml}
             <div class="news-right-col">
