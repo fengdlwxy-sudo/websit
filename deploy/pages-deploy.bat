@@ -14,6 +14,15 @@ if %errorlevel% neq 0 (
 
 cd /d %~dp0\..
 
+echo Pulling latest changes from GitHub...
+set GIT_MERGE_AUTOEDIT=no
+git pull --no-rebase
+if %errorlevel% neq 0 (
+    echo [ERROR] Pull failed. There may be conflicts.
+    pause
+    exit /b 1
+)
+
 git add -A
 git commit -m "deploy: update admin for GitHub Pages"
 git push -u origin HEAD
