@@ -328,6 +328,10 @@ input, textarea, select { font-family: inherit; }
     box-shadow: 0 4px 20px rgba(0,0,0,0.1);
 }
 
+.stat-card.clickable {
+    cursor: pointer;
+}
+
 .stat-icon {
     font-size: 36px;
     width: 60px;

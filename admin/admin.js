@@ -973,6 +973,17 @@ async function updateDashboard() {
         const result = await apiRequest('/images');
         document.getElementById('statImages').textContent = result.data?.length || 0;
     } catch (err) {}
+    // 客户咨询数量（GitHub Issues）
+    try {
+        const leadRes = await apiRequest('/leads');
+        const leads = leadRes.data || [];
+        const pending = leads.filter(l => l.status !== 'done').length;
+        const el = document.getElementById('statLeads');
+        if (el) el.textContent = pending > 0 ? (leads.length + '（' + pending + ' 待跟进）') : leads.length;
+    } catch (err) {
+        const el = document.getElementById('statLeads');
+        if (el) el.textContent = '-';
+    }
 }
 
 // ==================== 新闻管理 ====================
