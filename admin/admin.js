@@ -1812,6 +1812,10 @@ window.editArticle = function(id) {
             <input type="text" id="editArticleTags" value="${escapeHtml((item.tags || []).join(', '))}">
         </div>
         <div class="form-group">
+            <label>发布日期</label>
+            <input type="date" id="editArticleDate" value="${escapeHtml(item.createdAt || item.date || '')}">
+        </div>
+        <div class="form-group">
             <label>状态</label>
             <select id="editArticleStatus">
                 <option value="published" ${item.status === 'published' ? 'selected' : ''}>激活</option>
@@ -1861,6 +1865,10 @@ document.getElementById('addArticleBtn').addEventListener('click', () => {
         <div class="form-group">
             <label>标签 (英文逗号分隔)</label>
             <input type="text" id="editArticleTags" placeholder="标签1, 标签2">
+        </div>
+        <div class="form-group">
+            <label>发布日期</label>
+            <input type="date" id="editArticleDate" value="${new Date().toISOString().split('T')[0]}">
         </div>
         <div class="form-group">
             <label>状态</label>
@@ -2400,6 +2408,7 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
                 await apiRequest('/projects', { method: 'POST', body: JSON.stringify(data) });
             }
         } else if (currentEditType === 'article') {
+            const dateInput = document.getElementById('editArticleDate').value;
             const data = {
                 title: document.getElementById('editArticleTitle').value,
                 slug: document.getElementById('editArticleSlug').value,
@@ -2408,7 +2417,8 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
                 content: getRichEditorHtml(),
                 image: document.getElementById('editArticleImage').value,
                 tags: document.getElementById('editArticleTags').value.split(/[,，]/).map(s => s.trim()).filter(Boolean),
-                status: document.getElementById('editArticleStatus').value
+                status: document.getElementById('editArticleStatus').value,
+                createdAt: dateInput || (currentEditId ? undefined : new Date().toISOString().split('T')[0])
             };
             if (!data.title) return showToast('请输入文章标题', 'warning');
             if (currentEditId) {

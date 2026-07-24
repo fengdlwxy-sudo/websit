@@ -161,7 +161,8 @@ async function collectionOp(key, method, id, bodyObj) {
     const items = Array.isArray(data.items) ? data.items : [];
 
     if (method === 'POST') {
-        const item = Object.assign({ id: generateId() }, bodyObj);
+        const today = new Date().toISOString().split('T')[0];
+        const item = Object.assign({ id: generateId(), createdAt: today }, bodyObj);
         items.unshift(item);
         data.items = items;
         await ghWriteData(key, data, 'add ' + key + ' via admin');
@@ -170,7 +171,12 @@ async function collectionOp(key, method, id, bodyObj) {
     if (method === 'PUT') {
         const idx = items.findIndex(it => it.id === id);
         if (idx === -1) throw new Error('记录不存在');
-        items[idx] = Object.assign({}, items[idx], bodyObj, { id });
+        const merged = Object.assign({}, items[idx], bodyObj, { id });
+        // 兜底：记录没有创建日期时自动补今天，避免前台列表日期空白
+        if (!merged.createdAt && !merged.date) {
+            merged.createdAt = new Date().toISOString().split('T')[0];
+        }
+        items[idx] = merged;
         data.items = items;
         await ghWriteData(key, data, 'update ' + key + ' via admin');
         return { success: true, data: items[idx] };
