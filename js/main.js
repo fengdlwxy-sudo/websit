@@ -526,6 +526,20 @@ document.addEventListener('DOMContentLoaded', function() {
             </a>
         ` : '';
 
+        const secondaryHtml = featured2 ? `
+            <a href="${escapeHtml(featured2.link || ('article-detail.html?id=' + (featured2.id || '')))}" class="news-feature-card-secondary">
+                <div class="news-feature-icon-block" style="background: ${escapeHtml(featured2.gradient || 'linear-gradient(135deg, #E85D75 0%, #F39C12 100%)')};">
+                    <span>${escapeHtml(featured2.icon || '📘')}</span>
+                </div>
+                <div class="news-feature-info">
+                    <span class="news-cat-badge">${escapeHtml(articleCategoryMap[featured2.category] || '文章')}</span>
+                    <h3>${escapeHtml(featured2.title)}</h3>
+                    <p>${escapeHtml(featured2.summary || '')}</p>
+                    <span class="news-feature-date">${escapeHtml(featured2.date || featured2.createdAt || '')}</span>
+                </div>
+            </a>
+        ` : '';
+
         const primaryHtml = featured1 ? `
             <div class="news-feature-primary">
                 <a href="${escapeHtml(featured1.link || ('article-detail.html?id=' + (featured1.id || '')))}" class="news-feature-card news-feature-card-primary">
@@ -541,28 +555,15 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </a>
                 ${miniHtml}
+                ${secondaryHtml}
             </div>
         ` : '';
 
-        // 头条二：无图，文字+渐变 emoji 卡（放到右半顶部）
-        const secondaryHtml = featured2 ? `
-            <a href="${escapeHtml(featured2.link || ('article-detail.html?id=' + (featured2.id || '')))}" class="news-feature-card-secondary">
-                <div class="news-feature-icon-block" style="background: ${escapeHtml(featured2.gradient || 'linear-gradient(135deg, #E85D75 0%, #F39C12 100%)')};">
-                    <span>${escapeHtml(featured2.icon || '📘')}</span>
-                </div>
-                <div class="news-feature-info">
-                    <span class="news-cat-badge">${escapeHtml(articleCategoryMap[featured2.category] || '文章')}</span>
-                    <h3>${escapeHtml(featured2.title)}</h3>
-                    <p>${escapeHtml(featured2.summary || '')}</p>
-                    <span class="news-feature-date">${escapeHtml(featured2.date || featured2.createdAt || '')}</span>
-                </div>
-            </a>
-        ` : '';
-
-        // 文章列表：右半下半
+        // 右侧文章列表：只显示前 10 条，避免列表过长导致左侧留白
+        const listItems = items.slice(0, 10);
         const listHtml = `
             <div class="news-list">
-                ${items.map(item => `
+                ${listItems.map(item => `
                     <a href="article-detail.html?id=${escapeHtml(item.id)}" class="news-item">
                         <span class="news-tag ${item.createdAt && item.createdAt.startsWith('2026-07-1') ? 'new' : ''}">${escapeHtml(articleCategoryMap[item.category] || '文章')}</span>
                         <h4>${escapeHtml(item.title)}</h4>
@@ -572,11 +573,10 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
 
-        // 整体结构：左 = 头条一，右 = 头条二 + 列表
+        // 整体结构：左 = 头条一 + 头条二 + 附文，右 = 精简列表
         container.innerHTML = `
             ${primaryHtml}
             <div class="news-right-col">
-                ${secondaryHtml}
                 ${listHtml}
             </div>
         `;

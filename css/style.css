@@ -759,7 +759,7 @@ img {
     height: auto;
 }
 .news-feature-primary .news-feature-img {
-    height: 360px;  /* 大图：恢复原 featured 大小 */
+    height: 300px;  /* 大图：与右侧列表高度平衡 */
     flex: 0 0 auto;
 }
 
@@ -836,7 +836,12 @@ img {
     margin-top: auto;
 }
 
-/* 右半：头条二（无图文字卡） + 文章列表 */
+/* 左侧容器内的头条二卡片：与附文卡片视觉统一 */
+.news-feature-primary .news-feature-card-secondary {
+    border: 1px solid rgba(0, 122, 138, 0.08);
+}
+
+/* 右半：文章列表 */
 .news-right-col {
     display: flex;
     flex-direction: column;
