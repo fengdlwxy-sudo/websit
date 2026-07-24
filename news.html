@@ -687,6 +687,26 @@
                 return div.innerHTML;
             }
 
+            // 从图片上传路径中提取时间戳作为发布日期兜底（如 /assets/images/uploads/1784872643347-xxx.jpg）
+            function extractDateFromImageUrl(url) {
+                if (!url || typeof url !== 'string') return '';
+                var match = url.match(/\/uploads\/(\d{13})[-_]/);
+                if (!match) return '';
+                var ts = parseInt(match[1], 10);
+                if (!ts || isNaN(ts)) return '';
+                try {
+                    var d = new Date(ts);
+                    if (isNaN(d.getTime())) return '';
+                    return d.toISOString().split('T')[0];
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            function resolveArticleDate(item) {
+                return item.createdAt || item.date || extractDateFromImageUrl(item.image) || '';
+            }
+
             // 渲染推荐文章
             function renderFeatured(article) {
                 var container = document.getElementById('featuredSection');
@@ -712,7 +732,7 @@
                             '<h2>' + escapeHtml(article.title) + '</h2>' +
                             '<p>' + escapeHtml(article.summary || '') + '</p>' +
                             '<div class="featured-meta">' +
-                                '<span>\u{1F4C5} ' + formatDate(article.createdAt) + '</span>' +
+                                '<span>\u{1F4C5} ' + formatDate(resolveArticleDate(article)) + '</span>' +
                             '</div>' +
                             '<span class="read-more">\u9605\u8BFB\u5168\u6587 \u2192</span>' +
                         '</div>' +
@@ -743,7 +763,7 @@
                                 '<h3>' + escapeHtml(item.title) + '</h3>' +
                                 '<p>' + escapeHtml(item.summary || '') + '</p>' +
                                 '<div class="card-footer">' +
-                                    '<span>\u{1F4C5} ' + formatDate(item.createdAt) + '</span>' +
+                                    '<span>\u{1F4C5} ' + formatDate(resolveArticleDate(item)) + '</span>' +
                                     '<span class="read-more-link">\u9605\u8BFB\u5168\u6587 \u2192</span>' +
                                 '</div>' +
                             '</div>' +

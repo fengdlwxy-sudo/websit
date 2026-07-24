@@ -758,6 +758,26 @@
                 return div.innerHTML;
             }
 
+            // 从图片上传路径中提取时间戳作为发布日期兜底（如 /assets/images/uploads/1784872643347-xxx.jpg）
+            function extractDateFromImageUrl(url) {
+                if (!url || typeof url !== 'string') return '';
+                var match = url.match(/\/uploads\/(\d{13})[-_]/);
+                if (!match) return '';
+                var ts = parseInt(match[1], 10);
+                if (!ts || isNaN(ts)) return '';
+                try {
+                    var d = new Date(ts);
+                    if (isNaN(d.getTime())) return '';
+                    return d.toISOString().split('T')[0];
+                } catch (e) {
+                    return '';
+                }
+            }
+
+            function resolveArticleDate(item) {
+                return item.createdAt || item.date || extractDateFromImageUrl(item.image) || '';
+            }
+
             function showLoading() {
                 document.getElementById('loadingState').style.display = 'block';
                 document.getElementById('articleLayout').style.display = 'none';
@@ -791,8 +811,9 @@
                 // 渲染文章头部
                 document.getElementById('articleCategory').textContent = label;
                 document.getElementById('articleTitle').textContent = article.title;
-                document.getElementById('articleDate').innerHTML = '\u{1F4C5} 发布于 ' + formatDate(article.createdAt);
-                if (article.updatedAt && article.updatedAt !== article.createdAt) {
+                var displayDate = resolveArticleDate(article);
+                document.getElementById('articleDate').innerHTML = '\u{1F4C5} 发布于 ' + formatDate(displayDate);
+                if (article.updatedAt && article.updatedAt !== displayDate) {
                     document.getElementById('articleUpdated').innerHTML = '\u{1F504} 更新于 ' + formatDate(article.updatedAt);
                 } else {
                     document.getElementById('articleUpdated').innerHTML = '';
@@ -871,7 +892,7 @@
                     return (
                         '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="sidebar-article-item">' +
                             '<div class="sa-title">' + escapeHtml(item.title) + '</div>' +
-                            '<div class="sa-date">' + formatDate(item.createdAt) + '</div>' +
+                            '<div class="sa-date">' + formatDate(resolveArticleDate(item)) + '</div>' +
                         '</a>'
                     );
                 }).join('');

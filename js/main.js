@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <span class="news-cat-badge">${escapeHtml(articleCategoryMap[featured2.category] || '文章')}</span>
                     <h3>${escapeHtml(featured2.title)}</h3>
                     <p>${escapeHtml(featured2.summary || '')}</p>
-                    <span class="news-feature-date">${escapeHtml(featured2.date || featured2.createdAt || '')}</span>
+                    <span class="news-feature-date">${escapeHtml(featured2.date || featured2.createdAt || extractDateFromImageUrl(featured2.image) || '')}</span>
                 </div>
             </a>
         ` : '';
@@ -549,7 +549,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <span class="news-cat-badge">${escapeHtml(articleCategoryMap[featured1.category] || '文章')}</span>
                         <h3>${escapeHtml(featured1.title)}</h3>
                         <p>${escapeHtml(featured1.summary || '')}</p>
-                        <span class="news-feature-date">${escapeHtml(featured1.date || featured1.createdAt || '')}</span>
+                        <span class="news-feature-date">${escapeHtml(featured1.date || featured1.createdAt || extractDateFromImageUrl(featured1.image) || '')}</span>
                     </div>
                 </a>
                 ${secondaryHtml}
@@ -562,9 +562,9 @@ document.addEventListener('DOMContentLoaded', function() {
             <div class="news-list">
                 ${listItems.map(item => `
                     <a href="article-detail.html?id=${escapeHtml(item.id)}" class="news-item">
-                        <span class="news-tag ${item.createdAt && item.createdAt.startsWith('2026-07-1') ? 'new' : ''}">${escapeHtml(articleCategoryMap[item.category] || '文章')}</span>
+                        <span class="news-tag ${(item.createdAt || extractDateFromImageUrl(item.image)) && (item.createdAt || extractDateFromImageUrl(item.image)).startsWith('2026-07-1') ? 'new' : ''}">${escapeHtml(articleCategoryMap[item.category] || '文章')}</span>
                         <h4>${escapeHtml(item.title)}</h4>
-                        <span class="news-date">${escapeHtml(item.createdAt || '')}</span>
+                        <span class="news-date">${escapeHtml(item.createdAt || extractDateFromImageUrl(item.image) || '')}</span>
                     </a>
                 `).join('')}
             </div>
@@ -594,6 +594,22 @@ document.addEventListener('DOMContentLoaded', function() {
     function isImageUrl(str) {
         if (!str) return false;
         return str.startsWith('/') || str.startsWith('http://') || str.startsWith('https://');
+    }
+
+    // 从图片上传路径中提取时间戳作为发布日期兜底（如 /assets/images/uploads/1784872643347-xxx.jpg）
+    function extractDateFromImageUrl(url) {
+        if (!url || typeof url !== 'string') return '';
+        const match = url.match(/\/uploads\/(\d{13})[-_]/);
+        if (!match) return '';
+        const ts = parseInt(match[1], 10);
+        if (!ts || isNaN(ts)) return '';
+        try {
+            const d = new Date(ts);
+            if (isNaN(d.getTime())) return '';
+            return d.toISOString().split('T')[0];
+        } catch (e) {
+            return '';
+        }
     }
 
     // ==================== 
