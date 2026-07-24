@@ -44,29 +44,40 @@ $token = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($tokenBSTR)
 Write-Host ""
 Write-Host "Cleaning up any unfinished merge..."
 git merge --abort 2>$null
-if ($LASTEXITCODE -ne 0) { # ignore: may not be merging
-}
+# ignore error if not currently merging
 
-# 5. Pull latest changes, preferring local version on conflicts
-Write-Host "Pulling latest changes from $remoteName/$branch (using local version if conflicts)..."
-$env:GIT_MERGE_AUTOEDIT = "no"
-git pull --no-rebase -X ours $remoteName $branch
+# 5. Prepare a single clean commit
+#    GitHub secret scanning may block pushes that contain a GitHub PAT in any
+#    commit. We reset local history to the current remote tip and commit all
+#    current files as one clean snapshot so that old (possibly bad) commits are
+#    no longer part of the push.
+Write-Host "Fetching remote state..."
+git fetch $remoteName $branch
 if ($LASTEXITCODE -ne 0) {
-    Write-Host "Some conflicts remain. Resolving by keeping local versions..." -ForegroundColor Yellow
-    git add -A
-    git commit -m "merge remote changes keeping local versions" --no-edit
-    if ($LASTEXITCODE -ne 0) {
-        Stop-WithPause "Could not resolve conflicts automatically."
-    }
+    Stop-WithPause "Could not fetch from $remoteName/$branch. Check your network and token."
 }
 
-# 6. Commit local changes
-Write-Host "Committing local changes..."
+Write-Host ""
+Write-Host "WARNING: This will overwrite the remote Git history on $remoteName/$branch" -ForegroundColor Yellow
+Write-Host "with a single clean commit containing your current files. This is needed" -ForegroundColor Yellow
+Write-Host "because GitHub blocked a previous push that contained a personal access token." -ForegroundColor Yellow
+$confirm = Read-Host "Type 'yes' to continue"
+if ($confirm -ne 'yes') {
+    Stop-WithPause "Deployment cancelled by user."
+}
+
+Write-Host "Resetting local history to match remote (your file changes are preserved)..."
+git reset --soft "$remoteName/$branch"
+if ($LASTEXITCODE -ne 0) {
+    Stop-WithPause "Could not reset to $remoteName/$branch."
+}
+
+Write-Host "Committing all current files as a single clean snapshot..."
 git add -A
-git commit -m "deploy: update admin for GitHub Pages" --no-edit
+git commit -m "deploy: update website" --no-edit
 # commit returns non-zero when nothing to commit, which is fine
 
-# 7. Push using token embedded URL (avoids Windows credential popup)
+# 6. Push using token embedded URL (avoids Windows credential popup)
 $pushUrl = "https://$token@github.com/$repoOwner/$repoName.git"
 
 Write-Host "Pushing to GitHub..."
@@ -81,7 +92,7 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 try {
-    git push -u $remoteName $branch
+    git push -f -u $remoteName $branch
     $pushOk = $LASTEXITCODE -eq 0
 } finally {
     # Always restore original URL, even on error
