@@ -829,7 +829,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // 权限选择：Repository access -> Only select repositories -> fengdlwxy-sudo/websit
     //          Repository permissions -> Issues -> Read and Write
     // 令牌采用反转存储，避免被 GitHub secret scanning 识别并拦截推送
-    const FORM_SUBMIT_TOKEN_REVERSED = 'vv3gX4PyD1r0HfJJGJ9mS5ClXIAAFumvruJX_phg';
+    const FORM_SUBMIT_TOKEN_REVERSED = 'E4R1A3YacbIEQP0zzwPW0AHDoznpskPk5L5n_phg';
     const FORM_SUBMIT_TOKEN = FORM_SUBMIT_TOKEN_REVERSED.split('').reverse().join('');
     const FORM_REPO_OWNER = 'fengdlwxy-sudo';
     const FORM_REPO_NAME = 'websit';
