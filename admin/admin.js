@@ -581,6 +581,11 @@ function initRichEditor(initialHtml = '', placeholder = '') {
             e.target.removeAttribute('data-loading-error');
         }
     }, true);
+    // 选中图片后，浮层工具栏随内容/窗口滚动重新定位
+    const repositionFloatTb = () => positionImageFloatToolbar();
+    currentRichEditor.addEventListener('scroll', repositionFloatTb, true);
+    window.addEventListener('resize', repositionFloatTb);
+    window.addEventListener('scroll', repositionFloatTb, true);
 }
 
 function getRichEditorHtml() {
@@ -728,6 +733,7 @@ let richEditorSourceBackup = '';
 
 function richEditorToggleSource() {
     if (!currentRichEditor) return;
+    clearSelectedImage();
     richEditorSourceMode = !richEditorSourceMode;
     const toolbar = currentRichEditor.previousElementSibling;
     if (richEditorSourceMode) {
@@ -761,6 +767,7 @@ let richEditorPreviewMode = false;
 
 function richEditorTogglePreview() {
     if (!currentRichEditor) return;
+    clearSelectedImage();
     richEditorPreviewMode = !richEditorPreviewMode;
     const toolbar = currentRichEditor.previousElementSibling;
     const actions = currentRichEditor.nextElementSibling;
@@ -792,6 +799,7 @@ function richEditorToggleFullscreen() {
     wrapper.classList.toggle('fullscreen');
     const isFullscreen = wrapper.classList.contains('fullscreen');
     document.body.style.overflow = isFullscreen ? 'hidden' : '';
+    positionImageFloatToolbar();
     showToast(isFullscreen ? '已进入全屏编辑' : '已退出全屏编辑', 'success');
 }
 
@@ -799,6 +807,7 @@ function richEditorClearContent() {
     if (!currentRichEditor) return;
     if (confirm('确定要清空编辑器里的所有内容吗？此操作不可撤销。')) {
         currentRichEditor.innerHTML = '';
+        clearSelectedImage();
         updateWordCount();
         showToast('内容已清空', 'success');
     }
@@ -953,6 +962,9 @@ function selectEditorImage(img) {
     const nh = img.naturalHeight || parseFloat(img.style.height) || img.height || 0;
     selectedImageRatio = (nw && nh) ? nw / nh : null;
     showImageSizePanel(img);
+    ensureImageFloatToolbar();
+    positionImageFloatToolbar();
+    updateAlignButtonsState();
 }
 
 function clearSelectedImage() {
@@ -967,6 +979,89 @@ function clearSelectedImage() {
         imageResizeOverlay.remove();
         imageResizeOverlay = null;
     }
+    if (imageFloatToolbar) imageFloatToolbar.style.display = 'none';
+}
+
+// ---- 选中图片浮层工具栏（左/中/右对齐 + 快捷尺寸） ----
+let imageFloatToolbar = null;
+
+function ensureImageFloatToolbar() {
+    if (imageFloatToolbar) return imageFloatToolbar;
+    const tb = document.createElement('div');
+    tb.className = 'image-float-toolbar';
+    tb.setAttribute('contenteditable', 'false');
+    tb.innerHTML = `
+        <button type="button" data-align="left" title="左对齐（文字环绕）">⬅ 左</button>
+        <button type="button" data-align="center" title="居中">↔ 中</button>
+        <button type="button" data-align="right" title="右对齐（文字环绕）">右 ➡</button>
+        <span class="ift-sep"></span>
+        <button type="button" data-pct="25" title="宽度 25%">25%</button>
+        <button type="button" data-pct="50" title="宽度 50%">50%</button>
+        <button type="button" data-pct="75" title="宽度 75%">75%</button>
+        <button type="button" data-pct="100" title="宽度 100%">100%</button>
+    `;
+    // 阻止事件冒泡到编辑器，避免点击按钮时取消图片选中或丢焦点
+    tb.addEventListener('mousedown', (e) => { e.preventDefault(); e.stopPropagation(); });
+    tb.addEventListener('click', (e) => {
+        const btn = e.target.closest('button');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        if (btn.dataset.align) {
+            setImageAlign(btn.dataset.align);
+        } else if (btn.dataset.pct) {
+            setImageWidthPercent(parseInt(btn.dataset.pct, 10));
+        }
+    });
+    document.body.appendChild(tb);
+    imageFloatToolbar = tb;
+    return tb;
+}
+
+function positionImageFloatToolbar() {
+    if (!imageFloatToolbar || !selectedEditorImage || imageFloatToolbar.style.display === 'none') return;
+    const img = selectedEditorImage;
+    const r = img.getBoundingClientRect();
+    const tb = imageFloatToolbar;
+    // 先显示再测量尺寸，测量时隐藏避免闪跳
+    tb.style.visibility = 'hidden';
+    tb.style.display = 'flex';
+    const tbW = tb.offsetWidth;
+    const tbH = tb.offsetHeight;
+    tb.style.visibility = '';
+    let top = r.top - tbH - 10;
+    let left = r.left + r.width / 2 - tbW / 2;
+    if (top < 8) top = r.bottom + 10;                       // 上方空间不足则显示在图片下方
+    if (left < 8) left = 8;
+    if (left + tbW > window.innerWidth - 8) left = window.innerWidth - tbW - 8;
+    tb.style.top = top + 'px';
+    tb.style.left = left + 'px';
+}
+
+function getCurrentAlign(img) {
+    const fl = (img.style.float || '').toLowerCase();
+    if (fl === 'left') return 'left';
+    if (fl === 'right') return 'right';
+    return 'center';
+}
+
+function updateAlignButtonsState() {
+    if (!imageFloatToolbar || !selectedEditorImage) return;
+    const cur = getCurrentAlign(selectedEditorImage);
+    imageFloatToolbar.querySelectorAll('button[data-align]').forEach(b => {
+        b.classList.toggle('active', b.dataset.align === cur);
+    });
+}
+
+function syncSizePanelFromImage() {
+    if (!selectedEditorImage) return;
+    const wInput = document.getElementById('editorImgWidth');
+    const hInput = document.getElementById('editorImgHeight');
+    if (!wInput || !hInput) return;
+    const w = selectedEditorImage.style.width;
+    const h = selectedEditorImage.style.height;
+    wInput.value = (w && w.indexOf('%') === -1) ? Math.round(parseFloat(w)) : '';
+    hInput.value = (h && h.indexOf('%') === -1 && h !== 'auto') ? Math.round(parseFloat(h)) : '';
 }
 
 function showImageSizePanel(img) {
@@ -1025,6 +1120,9 @@ function updateSelectedImageSize(changedSide) {
     } else {
         selectedEditorImage.style.height = 'auto';
     }
+    syncSizePanelFromImage();
+    updateAlignButtonsState();
+    positionImageFloatToolbar();
 }
 
 function setImageWidthPercent(percent) {
@@ -1035,20 +1133,35 @@ function setImageWidthPercent(percent) {
     // 更新输入框显示为空（百分比模式）
     document.getElementById('editorImgWidth').value = '';
     document.getElementById('editorImgHeight').value = '';
+    updateAlignButtonsState();
+    positionImageFloatToolbar();
 }
 
 function setImageAlign(align) {
     if (!selectedEditorImage) return;
     const img = selectedEditorImage;
     img.style.display = 'block';
+    img.style.float = 'none';
+    img.style.height = 'auto';
     if (align === 'left') {
-        img.style.margin = '12px auto 12px 0';
+        // 左对齐并允许文字环绕：未指定宽度时给一个合理默认宽度
+        if (!img.style.width || img.style.width === '100%') img.style.width = '50%';
+        img.style.float = 'left';
+        img.style.margin = '8px 18px 8px 0';
     } else if (align === 'right') {
-        img.style.margin = '12px 0 12px auto';
+        if (!img.style.width || img.style.width === '100%') img.style.width = '50%';
+        img.style.float = 'right';
+        img.style.margin = '8px 0 8px 18px';
     } else {
+        // 居中：保持当前宽度（或自适应）
+        if (!img.style.width) img.style.width = 'auto';
         img.style.margin = '12px auto';
     }
-    showToast(`图片已${align === 'center' ? '居中' : (align === 'left' ? '左对齐' : '右对齐')}`, 'success');
+    syncSizePanelFromImage();
+    updateAlignButtonsState();
+    positionImageFloatToolbar();
+    const label = align === 'center' ? '居中' : (align === 'left' ? '左对齐（文字环绕）' : '右对齐（文字环绕）');
+    showToast(`图片已${label}`, 'success');
 }
 
 async function apiRequest(url, options = {}) {

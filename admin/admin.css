@@ -857,6 +857,45 @@ input, textarea, select { font-family: inherit; }
     outline-offset: 2px;
 }
 
+/* 选中图片后浮在图片上方的工具栏 */
+.image-float-toolbar {
+    position: fixed;
+    z-index: 99999;
+    display: none;
+    align-items: center;
+    gap: 2px;
+    padding: 5px 7px;
+    background: #243042;
+    border-radius: 10px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, .28);
+    user-select: none;
+}
+.image-float-toolbar button {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 12px;
+    line-height: 1;
+    padding: 7px 9px;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background .15s;
+}
+.image-float-toolbar button:hover {
+    background: rgba(255, 255, 255, .18);
+}
+.image-float-toolbar button.active {
+    background: var(--primary);
+    color: #fff;
+}
+.image-float-toolbar .ift-sep {
+    width: 1px;
+    height: 18px;
+    background: rgba(255, 255, 255, .28);
+    margin: 0 3px;
+}
+
 .rich-editor-actions {
     display: flex;
     align-items: center;

@@ -1983,3 +1983,27 @@ img {
         font-size: 18px;
     }
 }
+
+/* 文章详情正文内的图片（支持后台设置的左/中/右对齐与文字环绕） */
+.article-body {
+    overflow-wrap: break-word;
+}
+.article-body::after {
+    content: '';
+    display: block;
+    clear: both;
+}
+.article-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 12px auto;
+}
+.article-body img[style*="float: left"],
+.article-body img[style*="float:left"] {
+    margin: 8px 18px 8px 0;
+}
+.article-body img[style*="float: right"],
+.article-body img[style*="float:right"] {
+    margin: 8px 0 8px 18px;
+}
