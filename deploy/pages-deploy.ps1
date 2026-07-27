@@ -140,6 +140,25 @@ if (Test-Path $dataDir) {
     }
 }
 
+# 同步远程 uploads 中本地缺失的图片（本地优先，绝不删除本地已有图片，只补回后台新上传的）。
+# 防止部署强推把远程后台刚上传的图片冲掉；同时本地已恢复的图片会随 add -A 一并推送。
+Write-Host "Restoring any remote-only uploaded images (local-first)..."
+$upLines = git ls-tree -r "$remoteName/$branch" -- assets/images/uploads 2>$null
+if ($upLines) {
+    $upLines | ForEach-Object {
+        if ($_ -match '^\S+\s+blob\s+(\S+)\s+(.+)$') {
+            $rp = $Matches[2].Trim()
+            $localFile = Join-Path $projectRoot $rp
+            if (-not (Test-Path $localFile)) {
+                $dir = Split-Path $localFile
+                if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
+                git checkout -f "$remoteName/$branch" -- $rp 2>$null
+                if ($?) { Write-Host "  [OK] restored image $rp" -ForegroundColor Green }
+            }
+        }
+    }
+}
+
 Write-Host "Committing all current files as a single clean snapshot..."
 git add -A
 git commit -m "deploy: update website" --no-edit
