@@ -1296,3 +1296,66 @@ input, textarea, select { font-family: inherit; }
         font-size: 24px;
     }
 }
+
+/* 站点设置可视化列表 */
+.viz-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.viz-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+.viz-row input,
+.viz-row textarea {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 14px;
+    background: #fff;
+}
+.viz-row textarea {
+    min-height: 60px;
+    resize: vertical;
+}
+.viz-row .field-narrow {
+    flex: 0 0 80px;
+    text-align: center;
+}
+.viz-row .field-medium {
+    flex: 1 1 120px;
+}
+.viz-row .field-wide {
+    flex: 2 1 200px;
+}
+.viz-row .btn-del {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border: none;
+    background: #fff0f0;
+    color: var(--danger, #dc3545);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background .15s;
+}
+.viz-row .btn-del:hover {
+    background: #ffe0e0;
+}
+.image-preview-clickable:hover {
+    background: #f0f7ff !important;
+    border-color: var(--primary) !important;
+}
+.image-preview-clickable img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

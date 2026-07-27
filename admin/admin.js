@@ -2852,6 +2852,81 @@ document.getElementById('imageUpload').addEventListener('change', async (e) => {
 });
 
 // ==================== 站点设置 ====================
+
+// 服务项目可视化列表
+function renderServicesList(items) {
+    const container = document.getElementById('servicesList');
+    if (!container) return;
+    items = Array.isArray(items) ? items : [];
+    container.innerHTML = items.map((item, idx) => `
+        <div class="viz-row" data-idx="${idx}">
+            <input type="text" class="field-narrow svc-icon" placeholder="图标 emoji" value="${escapeHtml(item.icon || '')}">
+            <input type="text" class="field-medium svc-title" placeholder="标题" value="${escapeHtml(item.title || '')}">
+            <input type="text" class="field-wide svc-desc" placeholder="描述" value="${escapeHtml(item.desc || '')}">
+            <button type="button" class="btn-del" onclick="this.closest('.viz-row').remove()">删除</button>
+        </div>
+    `).join('');
+}
+function collectServicesList() {
+    const rows = document.querySelectorAll('#servicesList .viz-row');
+    return Array.from(rows).map((row, idx) => ({
+        id: row.dataset.idx ? `svc-${parseInt(row.dataset.idx, 10) + 1}` : `svc-${idx + 1}`,
+        icon: row.querySelector('.svc-icon')?.value || '',
+        title: row.querySelector('.svc-title')?.value || '',
+        desc: row.querySelector('.svc-desc')?.value || ''
+    })).filter(it => it.title || it.desc || it.icon);
+}
+
+// 关于我们段落可视化列表
+function renderAboutParagraphsList(items) {
+    const container = document.getElementById('aboutParagraphsList');
+    if (!container) return;
+    items = Array.isArray(items) ? items : [];
+    container.innerHTML = items.map((text, idx) => `
+        <div class="viz-row" data-idx="${idx}">
+            <textarea class="field-wide para-text" rows="2" placeholder="段落内容">${escapeHtml(text || '')}</textarea>
+            <button type="button" class="btn-del" onclick="this.closest('.viz-row').remove()">删除</button>
+        </div>
+    `).join('');
+}
+function collectAboutParagraphsList() {
+    const rows = document.querySelectorAll('#aboutParagraphsList .viz-row');
+    return Array.from(rows).map(row => row.querySelector('.para-text')?.value || '').filter(Boolean);
+}
+
+// 关于我们统计数据可视化列表
+function renderAboutStatsList(items) {
+    const container = document.getElementById('aboutStatsList');
+    if (!container) return;
+    items = Array.isArray(items) ? items : [];
+    container.innerHTML = items.map((item, idx) => `
+        <div class="viz-row" data-idx="${idx}">
+            <input type="text" class="field-narrow stat-value" placeholder="数值，如 500+" value="${escapeHtml(item.value || '')}">
+            <input type="text" class="field-medium stat-label" placeholder="标签，如 移民项目" value="${escapeHtml(item.label || '')}">
+            <button type="button" class="btn-del" onclick="this.closest('.viz-row').remove()">删除</button>
+        </div>
+    `).join('');
+}
+function collectAboutStatsList() {
+    const rows = document.querySelectorAll('#aboutStatsList .viz-row');
+    return Array.from(rows).map(row => ({
+        value: row.querySelector('.stat-value')?.value || '',
+        label: row.querySelector('.stat-label')?.value || ''
+    })).filter(it => it.value || it.label);
+}
+
+function updateAboutImagePreview(url) {
+    const input = document.getElementById('aboutImage');
+    const preview = document.getElementById('aboutImagePreview');
+    if (input) input.value = url || '';
+    if (!preview) return;
+    if (url) {
+        preview.innerHTML = `<img src="${toPreviewUrl(url)}" alt="预览">`;
+    } else {
+        preview.innerHTML = '<span style="color:#999;">未上传图片，点击上传</span>';
+    }
+}
+
 function loadSettings() {
     if (!allData.config || !allData.config.site) return;
     const s = allData.config.site;
@@ -2867,33 +2942,20 @@ function loadSettings() {
     document.getElementById('servicesTitle').value = services.title || '';
     document.getElementById('servicesSubtitle').value = services.subtitle || '';
     document.getElementById('servicesMoreLink').value = services.moreLink || '';
-    document.getElementById('servicesJson').value = JSON.stringify(services.items || [], null, 2);
+    renderServicesList(services.items || []);
     
     const about = allData.config.about || {};
     document.getElementById('aboutTitle').value = about.title || '';
-    document.getElementById('aboutParagraphsJson').value = JSON.stringify(about.paragraphs || [], null, 2);
-    document.getElementById('aboutStatsJson').value = JSON.stringify(about.stats || [], null, 2);
+    renderAboutParagraphsList(about.paragraphs || []);
+    renderAboutStatsList(about.stats || []);
     document.getElementById('aboutImageIcon').value = about.imageIcon || '';
-    // 加载关于我们图片预览
-    const aboutImageInput = document.getElementById('aboutImage');
-    const aboutImagePreview = document.getElementById('aboutImagePreview');
-    if (about.image && aboutImageInput && aboutImagePreview) {
-        aboutImageInput.value = about.image;
-        aboutImagePreview.innerHTML = `<img src="${about.image}" style="width:100%;height:100%;object-fit:cover;">`;
-    } else if (aboutImagePreview) {
-        aboutImagePreview.innerHTML = '<span style="color:#999;">未上传图片</span>';
-    }
+    updateAboutImagePreview(about.image || '');
 }
 
 document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
-    let servicesItems, aboutParagraphs, aboutStats;
-    try {
-        servicesItems = JSON.parse(document.getElementById('servicesJson').value || '[]');
-        aboutParagraphs = JSON.parse(document.getElementById('aboutParagraphsJson').value || '[]');
-        aboutStats = JSON.parse(document.getElementById('aboutStatsJson').value || '[]');
-    } catch (e) {
-        return showToast('JSON 格式错误，请检查服务或关于我们配置', 'error');
-    }
+    const servicesItems = collectServicesList();
+    const aboutParagraphs = collectAboutParagraphsList();
+    const aboutStats = collectAboutStatsList();
     
     allData.config.site = {
         name: document.getElementById('siteName').value,
@@ -3168,8 +3230,14 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
 });
 
 // 关于我们图片上传监听
-document.addEventListener('DOMContentLoaded', () => {
+ document.addEventListener('DOMContentLoaded', () => {
     const aboutImageUpload = document.getElementById('aboutImageUpload');
+    const aboutImagePreview = document.getElementById('aboutImagePreview');
+
+    if (aboutImagePreview && aboutImageUpload) {
+        aboutImagePreview.addEventListener('click', () => aboutImageUpload.click());
+    }
+
     if (aboutImageUpload) {
         aboutImageUpload.addEventListener('change', async (e) => {
             const file = e.target.files[0];
@@ -3177,17 +3245,52 @@ document.addEventListener('DOMContentLoaded', () => {
             try {
                 const uploadResult = await openImageCropper({ file, aspectRatio: 16/9 });
                 const url = uploadResult?.url || uploadResult;
-                const previewUrl = uploadResult?.previewUrl || url;
-                const aboutImageInput = document.getElementById('aboutImage');
-                const aboutImagePreview = document.getElementById('aboutImagePreview');
-                if (aboutImageInput) aboutImageInput.value = url;
-                if (aboutImagePreview) {
-                    aboutImagePreview.innerHTML = `<img src="${previewUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-                }
+                updateAboutImagePreview(url);
             } catch (err) {}
             e.target.value = '';
         });
     }
+
+    // 站点设置可视化列表添加按钮
+    document.getElementById('addServiceItemBtn')?.addEventListener('click', () => {
+        const container = document.getElementById('servicesList');
+        const idx = container?.children.length || 0;
+        const row = document.createElement('div');
+        row.className = 'viz-row';
+        row.dataset.idx = idx;
+        row.innerHTML = `
+            <input type="text" class="field-narrow svc-icon" placeholder="图标 emoji">
+            <input type="text" class="field-medium svc-title" placeholder="标题">
+            <input type="text" class="field-wide svc-desc" placeholder="描述">
+            <button type="button" class="btn-del" onclick="this.closest('.viz-row').remove()">删除</button>
+        `;
+        container?.appendChild(row);
+    });
+    document.getElementById('addAboutParagraphBtn')?.addEventListener('click', () => {
+        const container = document.getElementById('aboutParagraphsList');
+        const idx = container?.children.length || 0;
+        const row = document.createElement('div');
+        row.className = 'viz-row';
+        row.dataset.idx = idx;
+        row.innerHTML = `
+            <textarea class="field-wide para-text" rows="2" placeholder="段落内容"></textarea>
+            <button type="button" class="btn-del" onclick="this.closest('.viz-row').remove()">删除</button>
+        `;
+        container?.appendChild(row);
+    });
+    document.getElementById('addAboutStatBtn')?.addEventListener('click', () => {
+        const container = document.getElementById('aboutStatsList');
+        const idx = container?.children.length || 0;
+        const row = document.createElement('div');
+        row.className = 'viz-row';
+        row.dataset.idx = idx;
+        row.innerHTML = `
+            <input type="text" class="field-narrow stat-value" placeholder="数值，如 500+">
+            <input type="text" class="field-medium stat-label" placeholder="标签，如 移民项目">
+            <button type="button" class="btn-del" onclick="this.closest('.viz-row').remove()">删除</button>
+        `;
+        container?.appendChild(row);
+    });
 
     // 图片裁剪取消按钮
     const cropperCancel = document.getElementById('cropperCancelBtn');

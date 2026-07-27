@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1200" width="1000" height="1200">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#007A8A"/>
+      <stop offset="100%" stop-color="#00A8B5"/>
+    </linearGradient>
+    <linearGradient id="glass" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.06)"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="24" flood-color="rgba(0,80,90,0.25)"/>
+    </filter>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1000" height="1200" fill="url(#bg)"/>
+
+  <!-- 装饰圆环 -->
+  <circle cx="850" cy="180" r="280" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+  <circle cx="850" cy="180" r="220" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="2"/>
+  <circle cx="150" cy="1050" r="240" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="2"/>
+
+  <!-- 装饰点阵 -->
+  <g fill="rgba(255,255,255,0.18)">
+    <circle cx="90" cy="220" r="6"/>
+    <circle cx="130" cy="220" r="4"/>
+    <circle cx="90" cy="260" r="4"/>
+    <circle cx="130" cy="260" r="6"/>
+    <circle cx="90" cy="300" r="6"/>
+    <circle cx="130" cy="300" r="4"/>
+  </g>
+  <g fill="rgba(255,255,255,0.18)">
+    <circle cx="870" cy="900" r="6"/>
+    <circle cx="910" cy="900" r="4"/>
+    <circle cx="870" cy="940" r="4"/>
+    <circle cx="910" cy="940" r="6"/>
+    <circle cx="870" cy="980" r="6"/>
+    <circle cx="910" cy="980" r="4"/>
+  </g>
+
+  <!-- 主视觉卡片 -->
+  <rect x="120" y="180" width="760" height="840" rx="28" fill="url(#glass)" stroke="rgba(255,255,255,0.22)" stroke-width="1.5" filter="url(#softShadow)"/>
+
+  <!-- 顶部图标装饰：公司 logo -->
+  <image href="data:image/png;base64,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" x="370" y="270" width="260" height="60" preserveAspectRatio="xMidYMid meet"/>
+
+  <!-- 大标题：汇程移民 -->
+  <text x="500" y="560" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif" font-size="120" font-weight="800" fill="#FFFFFF" letter-spacing="8">汇程移民</text>
+
+  <!-- 分割线 -->
+  <line x1="320" y1="620" x2="680" y2="620" stroke="rgba(255,255,255,0.5)" stroke-width="3" stroke-linecap="round"/>
+
+  <!-- 副标题 -->
+  <text x="500" y="720" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif" font-size="42" font-weight="500" fill="#FFFFFF" opacity="0.95">专业移民经验护航</text>
+  <text x="500" y="790" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif" font-size="42" font-weight="500" fill="#FFFFFF" opacity="0.95">助您身份规划更轻松</text>
+
+  <!-- 小标题 -->
+  <text x="500" y="900" text-anchor="middle" font-family="'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif" font-size="34" font-weight="400" fill="rgba(255,255,255,0.85)">一对一定制，契合您的专属移民方案</text>
+
+  <!-- 底部装饰点 -->
+  <circle cx="500" cy="1020" r="8" fill="rgba(255,255,255,0.7)"/>
+</svg>

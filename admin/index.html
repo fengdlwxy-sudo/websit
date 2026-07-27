@@ -300,8 +300,9 @@
                         <input type="text" id="servicesMoreLink">
                     </div>
                     <div class="form-group">
-                        <label>服务项目 JSON (格式: [{"id":"svc-1","icon":"🆔","title":"标题","desc":"描述"},...])</label>
-                        <textarea id="servicesJson" rows="8" style="font-family: monospace; font-size: 13px;"></textarea>
+                        <label>服务项目</label>
+                        <div id="servicesList" class="viz-list"></div>
+                        <button type="button" class="btn btn-sm btn-secondary" id="addServiceItemBtn" style="margin-top:8px;">+ 添加服务项目</button>
                     </div>
 
                     <h2 style="margin-top: 30px;">关于我们区块</h2>
@@ -310,18 +311,20 @@
                         <input type="text" id="aboutTitle">
                     </div>
                     <div class="form-group">
-                        <label>段落 JSON (格式: ["段落1","段落2"])</label>
-                        <textarea id="aboutParagraphsJson" rows="6" style="font-family: monospace; font-size: 13px;"></textarea>
+                        <label>段落</label>
+                        <div id="aboutParagraphsList" class="viz-list"></div>
+                        <button type="button" class="btn btn-sm btn-secondary" id="addAboutParagraphBtn" style="margin-top:8px;">+ 添加段落</button>
                     </div>
                     <div class="form-group">
-                        <label>统计数据 JSON (格式: [{"value":"500+","label":"移民项目"},...])</label>
-                        <textarea id="aboutStatsJson" rows="6" style="font-family: monospace; font-size: 13px;"></textarea>
+                        <label>统计数据</label>
+                        <div id="aboutStatsList" class="viz-list"></div>
+                        <button type="button" class="btn btn-sm btn-secondary" id="addAboutStatBtn" style="margin-top:8px;">+ 添加统计</button>
                     </div>
                     <div class="form-group">
-                        <label>右侧图片（上传后将替换色块）</label>
+                        <label>右侧图片（点击上传后将替换色块）</label>
                         <div class="image-upload-wrap">
-                            <div class="image-preview" id="aboutImagePreview" style="width:200px;height:120px;border:1px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f9f9f9;margin-bottom:8px;overflow:hidden;">
-                                <span style="color:#999;">未上传图片</span>
+                            <div class="image-preview image-preview-clickable" id="aboutImagePreview" style="width:200px;height:120px;border:1px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f9f9f9;margin-bottom:8px;overflow:hidden;cursor:pointer;">
+                                <span style="color:#999;">未上传图片，点击上传</span>
                             </div>
                             <label class="btn btn-sm btn-primary" for="aboutImageUpload">选择图片</label>
                             <input type="file" id="aboutImageUpload" accept="image/*" style="display:none;">
