@@ -48,7 +48,9 @@
       "image": "/assets/images/uploads/1784872643347-8tiwcf.jpg",
       "tags": [],
       "status": "published",
-      "isFeatured": true
+      "isFeatured": true,
+      "wordCount": 186,
+      "createdAt": "2026-07-27"
     },
     {
       "id": "mryi0py9-94i8br",
