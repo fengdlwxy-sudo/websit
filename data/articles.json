@@ -49,7 +49,7 @@
       "tags": [],
       "status": "published",
       "isFeatured": true,
-      "wordCount": 1200,
+      "wordCount": 186,
       "createdAt": "2026-07-27"
     },
     {
@@ -74,7 +74,9 @@
       "tags": [
         "匈牙利移民 移民匈牙利"
       ],
-      "status": "published"
+      "status": "published",
+      "wordCount": 506,
+      "createdAt": "2026-07-27"
     },
     {
       "id": "mryh69v0-5btbtx",
