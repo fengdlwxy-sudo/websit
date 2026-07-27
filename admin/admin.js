@@ -2095,13 +2095,25 @@ function renderArticles() {
     let items = (allData.articles && allData.articles.items) || [];
     if (catFilter) items = items.filter(a => a.category === catFilter);
     if (keyword) {
+        const terms = keyword.split(/\s+/).filter(Boolean);
         items = items.filter(a => {
-            const haystack = [
-                a.title, a.summary, a.slug,
-                Array.isArray(a.tags) ? a.tags.join(' ') : a.tags,
-                a.content
-            ].filter(Boolean).join(' ').toLowerCase();
-            return haystack.includes(keyword);
+            const title = (a.title || '').toLowerCase();
+            const summary = (a.summary || '').toLowerCase();
+            const slug = (a.slug || '').toLowerCase();
+            const tags = (Array.isArray(a.tags) ? a.tags.join(' ') : (a.tags || '')).toLowerCase();
+            return terms.every(t => title.includes(t) || summary.includes(t) || tags.includes(t) || slug.includes(t));
+        }).sort((a, b) => {
+            const score = x => {
+                const t = (x.title || '').toLowerCase();
+                const s = (x.summary || '').toLowerCase();
+                let sc = 0;
+                terms.forEach(term => {
+                    if (t.includes(term)) sc += 10;
+                    else if (s.includes(term)) sc += 5;
+                });
+                return sc;
+            };
+            return score(b) - score(a);
         });
     }
 
