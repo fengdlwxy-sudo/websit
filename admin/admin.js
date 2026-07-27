@@ -572,6 +572,8 @@ function initRichEditor(initialHtml = '', placeholder = '') {
     currentRichEditor._editorEventsBound = true;
     // 输入时实时统计字数
     currentRichEditor.addEventListener('input', updateWordCount);
+    // 粘贴处理：支持从微信公众号等来源一键复制图文，图片自动保留并绕过防盗链
+    currentRichEditor.addEventListener('paste', handleRichEditorPaste);
     // 图片加载失败时给标记，方便用户识别
     currentRichEditor.addEventListener('error', (e) => {
         if (e.target.tagName === 'IMG') {
@@ -588,6 +590,60 @@ function initRichEditor(initialHtml = '', placeholder = '') {
     currentRichEditor.addEventListener('scroll', repositionFloatTb, true);
     window.addEventListener('resize', repositionFloatTb);
     window.addEventListener('scroll', repositionFloatTb, true);
+}
+
+/**
+ * 智能粘贴：从微信公众号/网页复制图文时，图片也能一并进来并显示。
+ * - 微信懒加载图片：真实地址在 data-src / data-original / data-lazy-src，转正到 src
+ * - 外链图片（如微信 qpic）：加 referrerpolicy="no-referrer" 绕过防盗链，前台可直接显示
+ * - 清理 script/style/link 等冗余与潜在危险标签
+ */
+function handleRichEditorPaste(e) {
+    if (!currentRichEditor) return;
+    const cd = e.clipboardData || window.clipboardData;
+    if (!cd) return;
+    const html = cd.getData('text/html');
+    if (!html || !html.trim()) return; // 纯文本/无 HTML 走浏览器默认粘贴
+    e.preventDefault();
+
+    const tpl = document.createElement('div');
+    tpl.innerHTML = html;
+
+    tpl.querySelectorAll('img').forEach(img => {
+        // 微信等平台常用 data-src 存放真实图片地址
+        const realSrc = img.getAttribute('data-src')
+            || img.getAttribute('data-original')
+            || img.getAttribute('data-lazy-src');
+        if (realSrc) {
+            img.setAttribute('src', realSrc);
+        }
+        ['data-src', 'data-original', 'data-lazy-src'].forEach(a => img.removeAttribute(a));
+        // 清理内联事件，避免 XSS 与重复加载逻辑
+        img.removeAttribute('onerror');
+        img.removeAttribute('onload');
+        img.removeAttribute('onclick');
+
+        const src = (img.getAttribute('src') || '').trim();
+        if (/^https?:\/\//i.test(src)) {
+            // 外链图片（微信 qpic 等）加 no-referrer 绕过防盗链，前台可直接显示
+            img.setAttribute('referrerpolicy', 'no-referrer');
+        }
+        // 自适应，避免超大图撑破布局
+        const cur = img.getAttribute('style') || '';
+        img.setAttribute('style', (cur + ';max-width:100%;height:auto;').replace(/;;+/g, ';'));
+    });
+
+    // 移除潜在危险的脚本/样式/link 标签（微信冗余样式与脚本）
+    tpl.querySelectorAll('script, style, link').forEach(el => el.remove());
+
+    const content = tpl.innerHTML;
+    currentRichEditor.focus();
+    const ok = document.execCommand('insertHTML', false, content);
+    if (!ok) {
+        currentRichEditor.insertAdjacentHTML('beforeend', content);
+    }
+    updateWordCount();
+    positionImageFloatToolbar();
 }
 
 function getRichEditorHtml() {
