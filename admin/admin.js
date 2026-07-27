@@ -208,6 +208,14 @@ async function uploadImageBlob(blob, originalName, format = 'image/jpeg') {
     return result.data;
 }
 
+// 把相对路径转成 GitHub raw URL，供后台图片字段即时预览（避免 file:// 或 Pages 子目录下破图）
+function toPreviewUrl(url) {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url) || /^data:/i.test(url)) return url;
+    const p = url.startsWith('/') ? url : '/' + url;
+    return `https://raw.githubusercontent.com/fengdlwxy-sudo/websit/main${p}`;
+}
+
 function closeImageCropper() {
     const modal = document.getElementById('imageCropperModal');
     modal.style.display = 'none';
@@ -227,7 +235,7 @@ function closeImageCropper() {
 function imageFieldHtml(inputId, value = '', options = {}) {
     const label = options.label || '图片';
     const placeholder = options.placeholder || '图片 URL';
-    const previewUrl = value || '';
+    const previewUrl = toPreviewUrl(value);
     const previewContent = previewUrl
         ? `<img src="${previewUrl}" alt="预览">`
         : `<div class="image-field-empty">暂无图片<br>建议尺寸：${options.suggest || '按实际展示区域选择'}</div>`;
@@ -330,7 +338,8 @@ function setImageFieldValue(inputId, url) {
     if (input) input.value = url || '';
     if (preview) {
         if (url) {
-            preview.innerHTML = `<img src="${url}" alt="预览"><div class="image-field-tag image-field-tag-success">已上传</div>`;
+            const previewUrl = toPreviewUrl(url);
+            preview.innerHTML = `<img src="${previewUrl}" alt="预览"><div class="image-field-tag image-field-tag-success">已上传</div>`;
         } else {
             preview.innerHTML = `<div class="image-field-empty">暂无图片</div>`;
         }

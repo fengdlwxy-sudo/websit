@@ -20,6 +20,14 @@ document.addEventListener('DOMContentLoaded', function() {
         return path;
     }
 
+    // 头条封面图用 GitHub raw URL：保存后 commit 立即可见，避免 GitHub Pages 构建/缓存延迟
+    function resolveFeaturedImage(path) {
+        if (!path) return '';
+        if (/^https?:\/\//i.test(path) || /^data:/i.test(path)) return path;
+        const p = path.startsWith('/') ? path : '/' + path;
+        return `https://raw.githubusercontent.com/fengdlwxy-sudo/websit/main${p}`;
+    }
+
     async function loadStaticData() {
         const cacheBuster = '?_=' + Date.now();
         const [config, countries, projects, articles, cases, certificates] = await Promise.all([
@@ -548,7 +556,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const primaryHtml = featured1 ? `
             <div class="news-feature-primary">
                 <a href="${escapeHtml(featured1.link || ('article-detail.html?id=' + (featured1.id || '')))}" class="news-feature-card news-feature-card-primary">
-                    <div class="news-feature-img" style="${featured1.image ? `background: url('${escapeHtml(resolveAssetPath(featured1.image))}') center/cover;` : `background: ${escapeHtml(featured1.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)')};`}">
+                    <div class="news-feature-img" style="${featured1.image ? `background: url('${escapeHtml(resolveFeaturedImage(featured1.image))}') center/cover;` : `background: ${escapeHtml(featured1.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)')};`}">
                         ${featured1.image ? '' : `<span>${escapeHtml(featured1.icon || '🎓')}</span>`}
                         <span class="news-feature-tag">${escapeHtml(articleCategoryMap[featured1.category] || '头条')}</span>
                     </div>
