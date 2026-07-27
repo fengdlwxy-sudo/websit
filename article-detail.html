@@ -167,8 +167,66 @@
         }
         .article-body img {
             max-width: 100%;
+            height: auto !important;
             border-radius: var(--radius);
             margin: 20px 0;
+            display: block;
+            cursor: zoom-in;
+            transition: transform 0.2s ease;
+        }
+        .article-body img:hover {
+            transform: scale(1.01);
+        }
+
+        /* 图片灯箱：点击正文图片查看完整长图 */
+        .img-lightbox {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0, 0, 0, 0.92);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 60px 20px 40px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .img-lightbox.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .img-lightbox img {
+            max-width: 100%;
+            height: auto;
+            width: auto;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            cursor: zoom-out;
+        }
+        .img-lightbox .lb-close {
+            position: absolute;
+            top: 16px;
+            right: 20px;
+            color: #fff;
+            font-size: 32px;
+            line-height: 1;
+            cursor: pointer;
+            opacity: 0.85;
+            transition: opacity 0.2s;
+        }
+        .img-lightbox .lb-close:hover {
+            opacity: 1;
+        }
+        .img-lightbox .lb-hint {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.75);
+            font-size: 13px;
+            pointer-events: none;
         }
         .article-body blockquote {
             border-left: 4px solid var(--primary);
@@ -644,6 +702,13 @@
         </div>
     </section>
 
+    <!-- 图片灯箱 -->
+    <div class="img-lightbox" id="imgLightbox" aria-hidden="true">
+        <span class="lb-close" id="lbClose">&times;</span>
+        <img src="" alt="查看大图" id="lbImage">
+        <span class="lb-hint">点击图片或 × 关闭</span>
+    </div>
+
     <!-- 页脚 -->
     <footer class="main-footer">
         <div class="container">
@@ -851,10 +916,52 @@
                 // 渲染文章内容
                 document.getElementById('articleBody').innerHTML = article.content || '<p>暂无内容</p>';
 
+                // 初始化正文图片灯箱
+                initImageLightbox();
+
                 // 加载相关文章
                 if (article.category) {
                     loadRelatedArticles(article.category, article.id);
                 }
+            }
+
+            function initImageLightbox() {
+                var body = document.getElementById('articleBody');
+                var lb = document.getElementById('imgLightbox');
+                var lbImg = document.getElementById('lbImage');
+                var lbClose = document.getElementById('lbClose');
+                if (!body || !lb || !lbImg) return;
+
+                body.querySelectorAll('img').forEach(function(img) {
+                    img.addEventListener('click', function() {
+                        var src = img.getAttribute('src');
+                        if (!src) return;
+                        // 如果用了相对路径，尝试解析为绝对路径
+                        if (window.hcResolveAssetPath) {
+                            src = window.hcResolveAssetPath(src);
+                        }
+                        lbImg.setAttribute('src', src);
+                        lb.classList.add('active');
+                        lb.setAttribute('aria-hidden', 'false');
+                        document.body.style.overflow = 'hidden';
+                    });
+                });
+
+                function closeLb() {
+                    lb.classList.remove('active');
+                    lb.setAttribute('aria-hidden', 'true');
+                    document.body.style.overflow = '';
+                    lbImg.setAttribute('src', '');
+                }
+
+                lbClose.addEventListener('click', closeLb);
+                lbImg.addEventListener('click', closeLb);
+                lb.addEventListener('click', function(e) {
+                    if (e.target === lb) closeLb();
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && lb.classList.contains('active')) closeLb();
+                });
             }
 
             async function loadArticlesStatically() {

@@ -1995,9 +1995,10 @@ img {
 }
 .article-body img {
     max-width: 100%;
-    height: auto;
+    height: auto !important;
     border-radius: 8px;
     margin: 12px auto;
+    display: block;
 }
 .article-body img[style*="float: left"],
 .article-body img[style*="float:left"] {
