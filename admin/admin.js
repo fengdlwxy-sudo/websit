@@ -32,6 +32,10 @@ let currentEditType = null;
 let currentEditId = null;
 // 保存后尚未被后台刷新确认的乐观文章（避免 GitHub 读取缓存导致列表闪烁/丢失）
 let pendingArticles = {};
+// 保存后尚未被后台刷新确认的站点配置（避免 GitHub 读取缓存导致设置被旧数据覆盖）
+let pendingConfig = null;
+let pendingConfigSavedAt = 0;
+const PENDING_CONFIG_TTL = 5 * 60 * 1000; // 5 分钟内若读到旧缓存仍用本地乐观配置覆盖
 
 // ==================== 工具函数 ====================
 function showToast(message, type = 'success') {
@@ -1329,6 +1333,16 @@ async function loadAllData() {
     try {
         const result = await apiRequest('/content');
         allData = result;
+
+        // 合并乐观保存但后台刷新尚未确认的配置，避免 GitHub 读取缓存导致设置被旧数据覆盖
+        if (pendingConfig && allData.config) {
+            if (Date.now() - pendingConfigSavedAt < PENDING_CONFIG_TTL) {
+                allData.config = { ...allData.config, ...pendingConfig };
+            } else {
+                pendingConfig = null;
+                pendingConfigSavedAt = 0;
+            }
+        }
 
         // content 端点返回原始数据（无状态过滤），直接提取数组
         // 注意：articles 必须保留 {featured, items} 整体，因为头条管理依赖 featured
@@ -2952,43 +2966,56 @@ function loadSettings() {
     updateAboutImagePreview(about.image || '');
 }
 
-document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+async function saveSiteSettings({ silent = false, skipToast = false } = {}) {
     const servicesItems = collectServicesList();
     const aboutParagraphs = collectAboutParagraphsList();
     const aboutStats = collectAboutStatsList();
-    
-    allData.config.site = {
-        name: document.getElementById('siteName').value,
-        title: document.getElementById('siteTitle').value,
-        description: document.getElementById('siteDescription').value,
-        keywords: document.getElementById('siteKeywords').value,
-        hotlineLabel: document.getElementById('hotlineLabel').value,
-        hotline1: document.getElementById('hotline1').value,
-        hotline2: document.getElementById('hotline2').value
+
+    const newConfig = {
+        ...allData.config,
+        site: {
+            name: document.getElementById('siteName').value,
+            title: document.getElementById('siteTitle').value,
+            description: document.getElementById('siteDescription').value,
+            keywords: document.getElementById('siteKeywords').value,
+            hotlineLabel: document.getElementById('hotlineLabel').value,
+            hotline1: document.getElementById('hotline1').value,
+            hotline2: document.getElementById('hotline2').value
+        },
+        services: {
+            title: document.getElementById('servicesTitle').value,
+            subtitle: document.getElementById('servicesSubtitle').value,
+            moreLink: document.getElementById('servicesMoreLink').value,
+            items: servicesItems
+        },
+        about: {
+            title: document.getElementById('aboutTitle').value,
+            paragraphs: aboutParagraphs,
+            stats: aboutStats,
+            imageIcon: document.getElementById('aboutImageIcon').value,
+            image: document.getElementById('aboutImage')?.value || ''
+        }
     };
-    allData.config.services = {
-        title: document.getElementById('servicesTitle').value,
-        subtitle: document.getElementById('servicesSubtitle').value,
-        moreLink: document.getElementById('servicesMoreLink').value,
-        items: servicesItems
-    };
-    allData.config.about = {
-        title: document.getElementById('aboutTitle').value,
-        paragraphs: aboutParagraphs,
-        stats: aboutStats,
-        imageIcon: document.getElementById('aboutImageIcon').value,
-        image: document.getElementById('aboutImage')?.value || ''
-    };
+
+    // 乐观更新：先更新内存与标记，避免 GitHub 读取缓存导致设置回退
+    pendingConfig = JSON.parse(JSON.stringify(newConfig));
+    pendingConfigSavedAt = Date.now();
+    allData.config = pendingConfig;
+
     try {
         await apiRequest('/config', {
             method: 'PUT',
-            body: JSON.stringify(allData.config)
+            body: JSON.stringify(newConfig)
         });
-        showToast('保存成功');
+        if (!skipToast) showToast('保存成功');
+        return true;
     } catch (err) {
-        showToast('保存失败', 'error');
+        if (!silent) showToast('保存失败：' + (err.message || ''), 'error');
+        return false;
     }
-});
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', () => saveSiteSettings());
 
 // ==================== 弹窗 ====================
 function openModal(title, html, wide = false) {
@@ -3233,21 +3260,47 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
  document.addEventListener('DOMContentLoaded', () => {
     const aboutImageUpload = document.getElementById('aboutImageUpload');
     const aboutImagePreview = document.getElementById('aboutImagePreview');
+    let isUploadingAboutImage = false;
 
     if (aboutImagePreview && aboutImageUpload) {
-        aboutImagePreview.addEventListener('click', () => aboutImageUpload.click());
+        aboutImagePreview.addEventListener('click', () => {
+            if (isUploadingAboutImage) return;
+            aboutImageUpload.click();
+        });
     }
 
     if (aboutImageUpload) {
         aboutImageUpload.addEventListener('change', async (e) => {
             const file = e.target.files[0];
-            if (!file) return;
+            e.target.value = '';
+            if (!file || isUploadingAboutImage) return;
+            isUploadingAboutImage = true;
+            aboutImageUpload.disabled = true;
+            const originalPreview = aboutImagePreview.innerHTML;
+            aboutImagePreview.innerHTML = '<span style="color:#999;">上传中...</span>';
             try {
                 const uploadResult = await openImageCropper({ file, aspectRatio: 16/9 });
                 const url = uploadResult?.url || uploadResult;
+                if (!url) throw new Error('上传未返回图片地址');
                 updateAboutImagePreview(url);
-            } catch (err) {}
-            e.target.value = '';
+                // 同步到内存配置，避免刷新后被旧数据覆盖
+                if (allData.config) {
+                    allData.config.about = { ...(allData.config.about || {}), image: url };
+                }
+                showToast('图片已上传，正在保存...');
+                const saved = await saveSiteSettings({ skipToast: true });
+                if (saved) {
+                    showToast('图片已上传并保存');
+                } else {
+                    showToast('图片已上传，但自动保存失败，请手动点击保存设置', 'warning');
+                }
+            } catch (err) {
+                aboutImagePreview.innerHTML = originalPreview;
+                showToast('图片上传失败：' + (err.message || ''), 'error');
+            } finally {
+                isUploadingAboutImage = false;
+                aboutImageUpload.disabled = false;
+            }
         });
     }
 
