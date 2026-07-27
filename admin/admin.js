@@ -183,9 +183,9 @@ async function confirmImageCrop() {
         });
         if (!blob) throw new Error('图片导出失败');
 
-        const url = await uploadImageBlob(blob, cropperFile.name, format);
+        const result = await uploadImageBlob(blob, cropperFile.name, format);
         closeImageCropper();
-        if (cb) cb.resolve(url);
+        if (cb) cb.resolve(result);
     } catch (err) {
         closeImageCropper();
         showToast('上传失败：' + err.message, 'error');
@@ -199,7 +199,8 @@ async function uploadImageBlob(blob, originalName, format = 'image/jpeg') {
     if (!result.success || !result.data?.url) {
         throw new Error('上传失败');
     }
-    return result.data.url;
+    // 返回对象：url 是相对路径（保存到数据库用），previewUrl 是 GitHub raw URL（编辑器即时预览用）
+    return result.data;
 }
 
 function closeImageCropper() {
@@ -291,7 +292,8 @@ async function confirmImageFieldUpload(inputId, options) {
     }
     if (status) status.textContent = '上传中...';
     try {
-        const url = await openImageCropper({ file, ...options });
+        const uploadResult = await openImageCropper({ file, ...options });
+        const url = uploadResult?.url || uploadResult;
         setImageFieldValue(inputId, url);
         // 清理暂存
         if (file._objectUrl) URL.revokeObjectURL(file._objectUrl);
@@ -450,6 +452,8 @@ function clearImageField(inputId) {
 let currentRichEditor = null;
 let selectedEditorImage = null;
 let imageResizeOverlay = null;
+let selectedImageRatio = null;      // 选中图片的原始宽高比
+let ratioLockEnabled = true;        // 是否锁定宽高比
 
 function richEditorToolbarHtml() {
     return `
@@ -512,6 +516,13 @@ function richEditorToolbarHtml() {
             <button type="button" onclick="richEditorFormat('indent')" title="增加缩进">→|</button>
             <button type="button" onclick="richEditorFormat('outdent')" title="减少缩进">|←</button>
         </div>
+        <div class="toolbar-group">
+            <button type="button" onclick="richEditorInsertVideo()" title="插入视频">🎬 视频</button>
+            <button type="button" onclick="richEditorToggleSource()" title="HTML 源码"><> 源码</button>
+            <button type="button" onclick="richEditorTogglePreview()" title="预览">👁 预览</button>
+            <button type="button" onclick="richEditorToggleFullscreen()" title="全屏">⛶ 全屏</button>
+            <button type="button" onclick="richEditorClearContent()" title="清空内容">🗑 清空</button>
+        </div>
     </div>
     <div class="rich-editor-content" id="richEditorContent" contenteditable="true" data-placeholder="在此输入内容，支持图文混排..."></div>
     <div class="rich-editor-actions">
@@ -525,10 +536,22 @@ function richEditorToolbarHtml() {
         <button type="button" class="btn btn-default btn-small" onclick="richEditorFormat('insertHorizontalRule')">— 分割线</button>
         <button type="button" class="btn btn-default btn-small" onclick="richEditorInsertFromLibrary()">🖼️ 从图片库选择</button>
         <div class="image-size-panel" id="editorImageSizePanel" style="display:none; margin-left:auto;">
-            <span>宽:</span><input type="number" id="editorImgWidth" onchange="updateSelectedImageSize()">
-            <span>高:</span><input type="number" id="editorImgHeight" onchange="updateSelectedImageSize()">
+            <span>宽:</span><input type="number" id="editorImgWidth" oninput="updateSelectedImageSize('width')">
+            <span>高:</span><input type="number" id="editorImgHeight" oninput="updateSelectedImageSize('height')">
+            <label class="ratio-lock" title="锁定宽高比">
+                <input type="checkbox" id="editorImgRatioLock" checked onchange="toggleImageRatioLock()">
+                <span id="editorImgRatioLockIcon">🔒</span>
+            </label>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageWidthPercent(25)">25%</button>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageWidthPercent(50)">50%</button>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageWidthPercent(75)">75%</button>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageWidthPercent(100)">100%</button>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageAlign('left')" title="左对齐">⬅</button>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageAlign('center')" title="居中">↔</button>
+            <button type="button" class="btn btn-default btn-small" onclick="setImageAlign('right')" title="右对齐">➡</button>
             <button type="button" class="btn btn-default btn-small" onclick="clearSelectedImage()">取消选择</button>
         </div>
+        <span class="editor-word-count" id="editorWordCount">0 字</span>
     </div>
     `;
 }
@@ -539,12 +562,60 @@ function initRichEditor(initialHtml = '', placeholder = '') {
     currentRichEditor.innerHTML = initialHtml || '';
     if (placeholder) currentRichEditor.setAttribute('data-placeholder', placeholder);
     setupImageResize(currentRichEditor);
+    updateWordCount();
+    if (currentRichEditor._editorEventsBound) return;
+    currentRichEditor._editorEventsBound = true;
+    // 输入时实时统计字数
+    currentRichEditor.addEventListener('input', updateWordCount);
+    // 图片加载失败时给标记，方便用户识别
+    currentRichEditor.addEventListener('error', (e) => {
+        if (e.target.tagName === 'IMG') {
+            e.target.setAttribute('data-loading-error', '1');
+        }
+    }, true);
+    currentRichEditor.addEventListener('load', (e) => {
+        if (e.target.tagName === 'IMG') {
+            e.target.removeAttribute('data-loading-error');
+        }
+    }, true);
 }
 
 function getRichEditorHtml() {
     // 移除选中状态，避免保存选中样式
     clearSelectedImage();
-    return currentRichEditor ? currentRichEditor.innerHTML : '';
+    if (!currentRichEditor) return '';
+
+    // 如果在源码模式，先把 textarea 内容同步回编辑器
+    const sourceArea = document.getElementById('richEditorSourceArea');
+    if (sourceArea) {
+        currentRichEditor.innerHTML = sourceArea.value;
+        richEditorToggleSource();
+    }
+    // 如果在预览模式，先退出
+    if (richEditorPreviewMode) {
+        richEditorTogglePreview();
+    }
+
+    // 克隆节点，把编辑器里的 GitHub raw 预览 URL 替换回相对路径，避免数据库保存外链
+    const clone = currentRichEditor.cloneNode(true);
+    clone.querySelectorAll('img').forEach(img => {
+        const original = img.getAttribute('data-original-src');
+        if (original) {
+            img.setAttribute('src', original);
+            img.removeAttribute('data-original-src');
+        }
+        // 兜底：直接把 raw.githubusercontent.com 的 URL 统一替换为相对路径
+        const src = img.getAttribute('src') || '';
+        const rawMatch = src.match(/https:\/\/raw\.githubusercontent\.com\/[^/]+\/[^/]+\/[^/]+(\/assets\/images\/uploads\/[^?#]+)/);
+        if (rawMatch) {
+            img.setAttribute('src', rawMatch[1]);
+        }
+        // 移除编辑器内部选中样式和错误标记
+        img.classList.remove('selected');
+        img.style.outline = '';
+        img.removeAttribute('data-loading-error');
+    });
+    return clone.innerHTML;
 }
 
 function richEditorFormat(command, value = null) {
@@ -625,6 +696,121 @@ function richEditorInsertQuote() {
     });
 }
 
+function richEditorInsertVideo() {
+    if (!currentRichEditor) return;
+    const url = prompt('请输入视频地址（支持哔哩哔哩、腾讯视频、YouTube 等 iframe 嵌入链接）：', 'https://');
+    if (!url) return;
+    let embedHtml = '';
+    // 哔哩哔哩
+    const bvidMatch = url.match(/bilibili\.com\/video\/(BV[\w]+)/i);
+    if (bvidMatch) {
+        embedHtml = `<iframe src="https://player.bilibili.com/player.html?bvid=${bvidMatch[1]}&page=1" scrolling="no" border="0" frameborder="no" framespacing="0" allowfullscreen="true" style="width:100%;height:360px;border-radius:8px;margin:12px 0;display:block;"></iframe>`;
+    }
+    // YouTube
+    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([\w-]+)/i);
+    if (ytMatch) {
+        embedHtml = `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width:100%;height:360px;border-radius:8px;margin:12px 0;display:block;"></iframe>`;
+    }
+    // 默认用 iframe 包裹
+    if (!embedHtml) {
+        embedHtml = `<iframe src="${escapeHtml(url)}" frameborder="0" allowfullscreen style="width:100%;height:360px;border-radius:8px;margin:12px 0;display:block;"></iframe>`;
+    }
+    currentRichEditor.focus();
+    document.execCommand('insertHTML', false, embedHtml + '<p><br></p>');
+    showToast('视频已插入', 'success');
+}
+
+let richEditorSourceMode = false;
+let richEditorSourceBackup = '';
+
+function richEditorToggleSource() {
+    if (!currentRichEditor) return;
+    richEditorSourceMode = !richEditorSourceMode;
+    const toolbar = currentRichEditor.previousElementSibling;
+    if (richEditorSourceMode) {
+        richEditorSourceBackup = currentRichEditor.innerHTML;
+        currentRichEditor.setAttribute('contenteditable', 'false');
+        // 用一个 textarea 展示源码
+        const ta = document.createElement('textarea');
+        ta.id = 'richEditorSourceArea';
+        ta.className = 'rich-editor-source';
+        ta.value = richEditorSourceBackup;
+        ta.style.cssText = 'width:100%;min-height:360px;padding:16px;border:none;outline:none;font-family:Consolas,Monaco,monospace;font-size:13px;line-height:1.6;resize:vertical;background:#f8f9fa;color:#333;';
+        currentRichEditor.parentNode.insertBefore(ta, currentRichEditor.nextSibling);
+        currentRichEditor.style.display = 'none';
+        if (toolbar) toolbar.style.pointerEvents = 'none';
+        showToast('已进入 HTML 源码模式，修改后再次点击 <> 源码 即可保存', 'info');
+    } else {
+        const ta = document.getElementById('richEditorSourceArea');
+        if (ta) {
+            currentRichEditor.innerHTML = ta.value;
+            ta.remove();
+        }
+        currentRichEditor.setAttribute('contenteditable', 'true');
+        currentRichEditor.style.display = '';
+        if (toolbar) toolbar.style.pointerEvents = '';
+        setupImageResize(currentRichEditor);
+        showToast('已退出源码模式', 'success');
+    }
+}
+
+let richEditorPreviewMode = false;
+
+function richEditorTogglePreview() {
+    if (!currentRichEditor) return;
+    richEditorPreviewMode = !richEditorPreviewMode;
+    const toolbar = currentRichEditor.previousElementSibling;
+    const actions = currentRichEditor.nextElementSibling;
+    if (richEditorPreviewMode) {
+        currentRichEditor.setAttribute('contenteditable', 'false');
+        const preview = document.createElement('div');
+        preview.id = 'richEditorPreviewArea';
+        preview.className = 'rich-editor-preview';
+        preview.innerHTML = currentRichEditor.innerHTML;
+        preview.style.cssText = 'min-height:280px;max-height:500px;overflow-y:auto;padding:16px;line-height:1.8;background:white;';
+        currentRichEditor.parentNode.insertBefore(preview, currentRichEditor.nextSibling);
+        currentRichEditor.style.display = 'none';
+        if (toolbar) toolbar.style.pointerEvents = 'none';
+        if (actions) actions.style.display = 'none';
+        showToast('已进入预览模式，再次点击 👁 预览 可返回编辑', 'info');
+    } else {
+        const preview = document.getElementById('richEditorPreviewArea');
+        if (preview) preview.remove();
+        currentRichEditor.setAttribute('contenteditable', 'true');
+        currentRichEditor.style.display = '';
+        if (toolbar) toolbar.style.pointerEvents = '';
+        if (actions) actions.style.display = '';
+    }
+}
+
+function richEditorToggleFullscreen() {
+    const wrapper = currentRichEditor?.closest('.rich-editor');
+    if (!wrapper) return;
+    wrapper.classList.toggle('fullscreen');
+    const isFullscreen = wrapper.classList.contains('fullscreen');
+    document.body.style.overflow = isFullscreen ? 'hidden' : '';
+    showToast(isFullscreen ? '已进入全屏编辑' : '已退出全屏编辑', 'success');
+}
+
+function richEditorClearContent() {
+    if (!currentRichEditor) return;
+    if (confirm('确定要清空编辑器里的所有内容吗？此操作不可撤销。')) {
+        currentRichEditor.innerHTML = '';
+        updateWordCount();
+        showToast('内容已清空', 'success');
+    }
+}
+
+function updateWordCount() {
+    const el = document.getElementById('editorWordCount');
+    if (!el || !currentRichEditor) return;
+    const text = currentRichEditor.innerText || '';
+    // 中文字符 + 英文单词分别统计
+    const cnChars = (text.match(/[\u4e00-\u9fa5]/g) || []).length;
+    const enWords = (text.replace(/[\u4e00-\u9fa5]/g, '').match(/[a-zA-Z0-9_]+/g) || []).length;
+    el.textContent = `${cnChars + enWords} 字`;
+}
+
 function richEditorInsertFromLibrary() {
     // 复用图片库选择器（如果存在）
     if (typeof openImageLibraryPicker === 'function') {
@@ -671,8 +857,10 @@ async function confirmEditorImageUpload() {
     }
     if (status) status.textContent = '上传中...';
     try {
-        const url = await openImageCropper({ file: pendingEditorImage });
-        insertImageToEditor(url);
+        const uploadResult = await openImageCropper({ file: pendingEditorImage });
+        // 编辑器内使用 GitHub raw URL 即时预览，保存时再替换回相对路径
+        const previewUrl = uploadResult?.previewUrl || uploadResult?.url || uploadResult;
+        insertImageToEditor(previewUrl, uploadResult?.url);
         // 清理暂存
         if (pendingEditorImage._objectUrl) URL.revokeObjectURL(pendingEditorImage._objectUrl);
         pendingEditorImage = null;
@@ -717,16 +905,32 @@ async function handleEditorImageUpload(input) {
     }
 }
 
-function insertImageToEditor(url) {
-    if (!currentRichEditor) return;
+function insertImageToEditor(previewUrl, originalUrl) {
+    if (!currentRichEditor || !previewUrl) return;
     currentRichEditor.focus();
     const img = document.createElement('img');
-    img.src = url;
-    img.style.maxWidth = '100%';
-    document.execCommand('insertHTML', false, img.outerHTML);
+    img.src = previewUrl;
+    img.alt = '';
+    if (originalUrl) img.setAttribute('data-original-src', originalUrl);
+    img.style.cssText = 'max-width:100%;height:auto;border-radius:8px;margin:12px 0;display:block;';
+
+    // 预加载图片，成功后再插入编辑器，避免显示破图小图标
+    const loader = new Image();
+    loader.onload = () => {
+        document.execCommand('insertHTML', false, img.outerHTML + '<p><br></p>');
+        showToast('图片已插入正文', 'success');
+    };
+    loader.onerror = () => {
+        // 预览失败也插入，但给用户提示；保存并部署后正式 URL 即可访问
+        document.execCommand('insertHTML', false, img.outerHTML + '<p><br></p>');
+        showToast('图片预览尚未同步，保存部署后可正常显示', 'warning');
+    };
+    loader.src = previewUrl;
 }
 
 function setupImageResize(editor) {
+    if (editor._imageResizeBound) return;
+    editor._imageResizeBound = true;
     editor.addEventListener('click', (e) => {
         if (e.target.tagName === 'IMG') {
             e.preventDefault();
@@ -741,6 +945,10 @@ function selectEditorImage(img) {
     clearSelectedImage();
     selectedEditorImage = img;
     img.classList.add('selected');
+    // 计算并保存原始宽高比
+    const nw = img.naturalWidth || parseFloat(img.style.width) || img.width || 0;
+    const nh = img.naturalHeight || parseFloat(img.style.height) || img.height || 0;
+    selectedImageRatio = (nw && nh) ? nw / nh : null;
     showImageSizePanel(img);
 }
 
@@ -749,6 +957,7 @@ function clearSelectedImage() {
         selectedEditorImage.classList.remove('selected');
         selectedEditorImage = null;
     }
+    selectedImageRatio = null;
     const panel = document.getElementById('editorImageSizePanel');
     if (panel) panel.style.display = 'none';
     if (imageResizeOverlay) {
@@ -761,17 +970,82 @@ function showImageSizePanel(img) {
     const panel = document.getElementById('editorImageSizePanel');
     if (!panel) return;
     panel.style.display = 'flex';
-    document.getElementById('editorImgWidth').value = img.width || img.naturalWidth || '';
-    document.getElementById('editorImgHeight').value = img.height || img.naturalHeight || '';
+    const lockEl = document.getElementById('editorImgRatioLock');
+    if (lockEl) lockEl.checked = ratioLockEnabled;
+    updateRatioLockIcon();
+
+    // 优先读取行内样式中的尺寸，否则读自然尺寸
+    const currentW = parseFloat(img.style.width) || img.width || img.naturalWidth || '';
+    const currentH = parseFloat(img.style.height) || img.height || img.naturalHeight || '';
+    document.getElementById('editorImgWidth').value = currentW ? Math.round(currentW) : '';
+    document.getElementById('editorImgHeight').value = currentH ? Math.round(currentH) : '';
 }
 
-function updateSelectedImageSize() {
+function updateRatioLockIcon() {
+    const icon = document.getElementById('editorImgRatioLockIcon');
+    if (icon) icon.textContent = ratioLockEnabled ? '🔒' : '🔓';
+}
+
+function toggleImageRatioLock() {
+    const lockEl = document.getElementById('editorImgRatioLock');
+    ratioLockEnabled = lockEl ? lockEl.checked : true;
+    updateRatioLockIcon();
+}
+
+function updateSelectedImageSize(changedSide) {
     if (!selectedEditorImage) return;
-    const w = document.getElementById('editorImgWidth').value;
-    const h = document.getElementById('editorImgHeight').value;
-    if (w) selectedEditorImage.style.width = w + 'px';
-    if (h) selectedEditorImage.style.height = h + 'px';
-    if (!h) selectedEditorImage.style.height = 'auto';
+    const wInput = document.getElementById('editorImgWidth');
+    const hInput = document.getElementById('editorImgHeight');
+    let w = parseFloat(wInput.value);
+    let h = parseFloat(hInput.value);
+
+    // 等比例缩放
+    if (ratioLockEnabled && selectedImageRatio) {
+        if (changedSide === 'width' && w) {
+            h = Math.round(w / selectedImageRatio);
+            hInput.value = h;
+        } else if (changedSide === 'height' && h) {
+            w = Math.round(h * selectedImageRatio);
+            wInput.value = w;
+        }
+    }
+
+    if (w) {
+        selectedEditorImage.style.width = w + 'px';
+        selectedEditorImage.style.maxWidth = 'none';
+    } else {
+        selectedEditorImage.style.width = '';
+        selectedEditorImage.style.maxWidth = '100%';
+    }
+    if (h) {
+        selectedEditorImage.style.height = h + 'px';
+    } else {
+        selectedEditorImage.style.height = 'auto';
+    }
+}
+
+function setImageWidthPercent(percent) {
+    if (!selectedEditorImage) return;
+    selectedEditorImage.style.width = percent + '%';
+    selectedEditorImage.style.height = 'auto';
+    selectedEditorImage.style.maxWidth = '100%';
+    // 更新输入框显示为空（百分比模式）
+    document.getElementById('editorImgWidth').value = '';
+    document.getElementById('editorImgHeight').value = '';
+}
+
+function setImageAlign(align) {
+    if (!selectedEditorImage) return;
+    const img = selectedEditorImage;
+    img.style.display = 'block';
+    if (align === 'left') {
+        img.style.margin = '12px auto 12px 0';
+    } else if (align === 'right') {
+        img.style.margin = '12px 0 12px auto';
+    } else {
+        img.style.margin = '12px auto';
+    }
+    showToast(`图片已${align === 'center' ? '居中' : (align === 'left' ? '左对齐' : '右对齐')}`, 'success');
 }
 
 async function apiRequest(url, options = {}) {
@@ -2647,12 +2921,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const file = e.target.files[0];
             if (!file) return;
             try {
-                const url = await openImageCropper({ file, aspectRatio: 16/9 });
+                const uploadResult = await openImageCropper({ file, aspectRatio: 16/9 });
+                const url = uploadResult?.url || uploadResult;
+                const previewUrl = uploadResult?.previewUrl || url;
                 const aboutImageInput = document.getElementById('aboutImage');
                 const aboutImagePreview = document.getElementById('aboutImagePreview');
                 if (aboutImageInput) aboutImageInput.value = url;
                 if (aboutImagePreview) {
-                    aboutImagePreview.innerHTML = `<img src="${url}" style="width:100%;height:100%;object-fit:cover;">`;
+                    aboutImagePreview.innerHTML = `<img src="${previewUrl}" style="width:100%;height:100%;object-fit:cover;">`;
                 }
             } catch (err) {}
             e.target.value = '';

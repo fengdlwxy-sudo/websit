@@ -447,7 +447,10 @@ async function ghUploadImageBlob(blob, originalName, format) {
         const t = await res.text();
         throw new Error('图片上传失败：GitHub ' + res.status + ' ' + t.slice(0, 120));
     }
-    return { success: true, data: { name: filename, url: '/assets/images/uploads/' + filename } };
+    // 返回相对路径（保存到数据库用）和 GitHub raw 预览 URL（编辑器即时显示用）
+    const relativeUrl = '/assets/images/uploads/' + filename;
+    const previewUrl = `https://raw.githubusercontent.com/${ghConfig.owner}/${ghConfig.repo}/${ghConfig.branch}/assets/images/uploads/${filename}`;
+    return { success: true, data: { name: filename, url: relativeUrl, previewUrl } };
 }
 
 // 导出到全局，供 admin.js 使用

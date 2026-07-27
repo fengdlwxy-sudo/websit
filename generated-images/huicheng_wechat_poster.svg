@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1920" width="1080" height="1920">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#005f6b"/>
+      <stop offset="0.5" stop-color="#007A8A"/>
+      <stop offset="1" stop-color="#00A8B5"/>
+    </linearGradient>
+    <linearGradient id="cardBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#f4f9fa"/>
+    </linearGradient>
+    <linearGradient id="heroBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#004d56"/>
+      <stop offset="1" stop-color="#007A8A"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffd700"/>
+      <stop offset="1" stop-color="#ffaa00"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 背景 -->
+  <rect width="1080" height="1920" fill="url(#bg)"/>
+
+  <!-- 装饰圆形 -->
+  <circle cx="920" cy="180" r="360" fill="#ffd700" opacity="0.06"/>
+  <circle cx="120" cy="1720" r="300" fill="#00bcd4" opacity="0.08"/>
+
+  <!-- 金色弧线 -->
+  <path d="M -60 420 Q 540 120 1140 420" fill="none" stroke="#ffd700" stroke-width="2" opacity="0.35"/>
+  <path d="M -40 1480 Q 540 1380 1120 1520" fill="none" stroke="#ffd700" stroke-width="1.5" opacity="0.25"/>
+
+  <!-- Logo -->
+  <g transform="translate(540, 150)">
+    <!-- 地球 -->
+    <circle cx="-60" cy="0" r="38" fill="none" stroke="#ffffff" stroke-width="3"/>
+    <ellipse cx="-60" cy="0" rx="38" ry="15" fill="none" stroke="#ffffff" stroke-width="2"/>
+    <line x1="-98" y1="0" x2="-22" y2="0" stroke="#ffffff" stroke-width="2"/>
+    <line x1="-60" y1="-38" x2="-60" y2="38" stroke="#ffffff" stroke-width="2"/>
+    <!-- 护照 -->
+    <rect x="-25" y="-28" width="36" height="48" rx="4" fill="#ffffff" opacity="0.95"/>
+    <rect x="-20" y="-23" width="26" height="38" rx="2" fill="none" stroke="#007A8A" stroke-width="2"/>
+    <circle cx="-7" cy="-4" r="7" fill="none" stroke="#007A8A" stroke-width="1.5"/>
+    <path d="M -14 14 L 0 14" stroke="#007A8A" stroke-width="2" stroke-linecap="round"/>
+    <!-- 品牌名 -->
+    <text x="35" y="6" font-size="44" fill="#ffffff" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="bold" text-anchor="start">汇程移民</text>
+    <text x="35" y="38" font-size="16" fill="#ffffff" opacity="0.75" font-family="Arial, sans-serif" letter-spacing="2" text-anchor="start">HUICHENG YIMIN</text>
+  </g>
+
+  <!-- 主标题 -->
+  <text x="540" y="360" font-size="86" fill="#ffffff" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="bold" text-anchor="middle">汇程移民</text>
+  <text x="540" y="460" font-size="86" fill="#ffffff" font-family="Microsoft YaHei, PingFang SC, sans-serif" font-weight="bold" text-anchor="middle">官网全新改版</text>
+
+  <!-- 副标题 -->
+  <text x="540" y="540" font-size="34" fill="url(#gold)" font-family="Microsoft YaHei, PingFang SC, sans-serif" text-anchor="middle" letter-spacing="4">全球身份规划 · 财富生活领航</text>
+
+  <!-- 手机/网页 Mockup 卡片 -->
+  <rect x="120" y="620" width="840" height="640" rx="28" fill="url(#cardBg)" stroke="#ffffff" stroke-width="2" opacity="0.98"/>
+
+  <!-- 浏览器顶栏 -->
+  <rect x="120" y="620" width="840" height="80" rx="28" fill="#f0f4f5"/>
+  <path d="M 120 700 L 960 700" stroke="#e0e6e8" stroke-width="1"/>
+  <circle cx="170" cy="660" r="10" fill="#ff5f57"/>
+  <circle cx="200" cy="660" r="10" fill="#febc2e"/>
+  <circle cx="230" cy="660" r="10" fill="#28c840"/>
+  <rect x="320" y="646" width="440" height="28" rx="14" fill="#ffffff" stroke="#d0d8db" stroke-width="1"/>
+  <text x="540" y="666" font-size="16" fill="#667c85" font-family="Arial, sans-serif" text-anchor="middle">www.huichengyimin.com</text>
+
+  <!-- 导航栏 -->
+  <text x="180" y="725" font-size="18" fill="#007A8A" font-family="Microsoft YaHei, sans-serif" font-weight="bold">首页</text>
+  <text x="290" y="725" font-size="18" fill="#8899a0" font-family="Microsoft YaHei, sans-serif">移民项目</text>
+  <text x="440" y="725" font-size="18" fill="#8899a0" font-family="Microsoft YaHei, sans-serif">成功案例</text>
+  <text x="590" y="725" font-size="18" fill="#8899a0" font-family="Microsoft YaHei, sans-serif">新闻资讯</text>
+  <text x="740" y="725" font-size="18" fill="#8899a0" font-family="Microsoft YaHei, sans-serif">关于我们</text>
+  <rect x="160" y="735" width="60" height="4" rx="2" fill="#007A8A"/>
+
+  <!-- Hero 图区域 -->
+  <rect x="170" y="760" width="740" height="280" rx="16" fill="url(#heroBg)"/>
+  <text x="540" y="890" font-size="52" fill="#ffffff" font-family="Microsoft YaHei, sans-serif" font-weight="bold" text-anchor="middle">美国投资移民</text>
+  <text x="540" y="940" font-size="18" fill="#ffffff" opacity="0.85" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="2">AMERICAN INVESTMENT IMMIGRATION</text>
+  <!-- 装饰线条 -->
+  <line x1="440" y1="960" x2="640" y2="960" stroke="#ffd700" stroke-width="2" opacity="0.7"/>
+
+  <!-- 三个功能小卡片 -->
+  <rect x="180" y="1070" width="220" height="150" rx="14" fill="#eaf7f9"/>
+  <circle cx="290" cy="1105" r="22" fill="#007A8A" opacity="0.1"/>
+  <path d="M 280 1095 L 290 1088 L 300 1095 L 300 1112 L 280 1112 Z" fill="#007A8A"/>
+  <text x="290" y="1140" font-size="22" fill="#004d56" font-family="Microsoft YaHei, sans-serif" font-weight="bold" text-anchor="middle">教育规划</text>
+  <text x="290" y="1168" font-size="14" fill="#5a757d" font-family="Microsoft YaHei, sans-serif" text-anchor="middle">子女升学无忧</text>
+
+  <rect x="430" y="1070" width="220" height="150" rx="14" fill="#eaf7f9"/>
+  <circle cx="540" cy="1105" r="22" fill="#007A8A" opacity="0.1"/>
+  <circle cx="540" cy="1102" r="10" fill="none" stroke="#007A8A" stroke-width="2"/>
+  <path d="M 540 1092 L 540 1098 M 540 1106 L 540 1112" stroke="#007A8A" stroke-width="2"/>
+  <text x="540" y="1140" font-size="22" fill="#004d56" font-family="Microsoft YaHei, sans-serif" font-weight="bold" text-anchor="middle">资产配置</text>
+  <text x="540" y="1168" font-size="14" fill="#5a757d" font-family="Microsoft YaHei, sans-serif" text-anchor="middle">全球财富布局</text>
+
+  <rect x="680" y="1070" width="220" height="150" rx="14" fill="#eaf7f9"/>
+  <circle cx="790" cy="1105" r="22" fill="#007A8A" opacity="0.1"/>
+  <circle cx="790" cy="1105" r="12" fill="none" stroke="#007A8A" stroke-width="2"/>
+  <ellipse cx="790" cy="1105" rx="12" ry="5" fill="none" stroke="#007A8A" stroke-width="1.5"/>
+  <text x="790" y="1140" font-size="22" fill="#004d56" font-family="Microsoft YaHei, sans-serif" font-weight="bold" text-anchor="middle">全球身份</text>
+  <text x="790" y="1168" font-size="14" fill="#5a757d" font-family="Microsoft YaHei, sans-serif" text-anchor="middle">多元身份选择</text>
+
+  <!-- 官网地址胶囊 -->
+  <rect x="290" y="1300" width="500" height="68" rx="34" fill="#004d56"/>
+  <text x="540" y="1342" font-size="26" fill="#ffffff" font-family="Arial, sans-serif" text-anchor="middle" letter-spacing="1">www.huichengyimin.com</text>
+
+  <!-- 二维码占位 -->
+  <rect x="380" y="1410" width="180" height="180" rx="16" fill="#ffffff"/>
+  <g fill="#004d56">
+    <rect x="395" y="1425" width="48" height="48"/>
+    <rect x="497" y="1425" width="48" height="48"/>
+    <rect x="395" y="1527" width="48" height="48"/>
+    <rect x="412" y="1442" width="14" height="14" fill="#ffffff"/>
+    <rect x="514" y="1442" width="14" height="14" fill="#ffffff"/>
+    <rect x="412" y="1544" width="14" height="14" fill="#ffffff"/>
+    <rect x="455" y="1465" width="12" height="12"/>
+    <rect x="480" y="1485" width="12" height="12"/>
+    <rect x="510" y="1465" width="12" height="12"/>
+    <rect x="455" y="1495" width="12" height="12"/>
+    <rect x="510" y="1495" width="12" height="12"/>
+    <rect x="455" y="1527" width="12" height="12"/>
+    <rect x="480" y="1527" width="12" height="12"/>
+  </g>
+  <text x="620" y="1475" font-size="30" fill="#ffffff" font-family="Microsoft YaHei, sans-serif" text-anchor="start">扫码关注我们</text>
+  <text x="620" y="1515" font-size="18" fill="#ffffff" opacity="0.75" font-family="Microsoft YaHei, sans-serif" text-anchor="start">获取最新移民资讯</text>
+
+  <!-- 底部图标 -->
+  <g transform="translate(540, 1690)" fill="none" stroke="#ffffff" stroke-width="2" opacity="0.85">
+    <!-- 家庭 -->
+    <circle cx="-220" cy="-8" r="14"/>
+    <circle cx="-190" cy="-8" r="14"/>
+    <circle cx="-205" cy="-36" r="9"/>
+    <path d="M -235 15 L -175 15" stroke-linecap="round"/>
+    <!-- 教育 -->
+    <path d="M -80 -25 L -50 -40 L -20 -25 L -50 -10 Z" fill="#ffffff" fill-opacity="0.1"/>
+    <rect x="-58" y="-22" width="16" height="22" rx="2"/>
+    <line x1="-50" y1="-8" x2="-50" y2="0"/>
+    <!-- 地球 -->
+    <circle cx="50" cy="-18" r="20"/>
+    <ellipse cx="50" cy="-18" rx="20" ry="8"/>
+    <line x1="30" y1="-18" x2="70" y2="-18"/>
+    <line x1="50" y1="-38" x2="50" y2="2"/>
+    <!-- 财富 -->
+    <rect x="110" y="-32" width="34" height="26" rx="4"/>
+    <text x="127" y="-12" font-size="16" fill="#ffffff" stroke="none" text-anchor="middle">¥</text>
+    <circle cx="118" cy="-12" r="3" fill="#ffffff" stroke="none"/>
+  </g>
+
+  <!-- 底部小字 -->
+  <text x="540" y="1770" font-size="18" fill="#ffffff" opacity="0.6" font-family="Microsoft YaHei, sans-serif" text-anchor="middle">专业 · 高效 · 可信赖</text>
+</svg>
