@@ -326,7 +326,10 @@
                             <div class="image-preview image-preview-clickable" id="aboutImagePreview" style="width:200px;height:120px;border:1px dashed #ddd;border-radius:8px;display:flex;align-items:center;justify-content:center;background:#f9f9f9;margin-bottom:8px;overflow:hidden;cursor:pointer;">
                                 <span style="color:#999;">未上传图片，点击上传</span>
                             </div>
-                            <label class="btn btn-sm btn-primary" for="aboutImageUpload">选择图片</label>
+                            <div style="display:flex;gap:8px;align-items:center;">
+                                <label class="btn btn-sm btn-primary" for="aboutImageUpload">选择图片</label>
+                                <button type="button" class="btn btn-sm btn-danger" id="aboutImageDeleteBtn">删除图片</button>
+                            </div>
                             <input type="file" id="aboutImageUpload" accept="image/*" style="display:none;">
                             <input type="hidden" id="aboutImage">
                         </div>

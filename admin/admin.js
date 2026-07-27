@@ -3304,6 +3304,24 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
         });
     }
 
+    // 删除关于我们图片
+    const aboutImageDeleteBtn = document.getElementById('aboutImageDeleteBtn');
+    if (aboutImageDeleteBtn) {
+        aboutImageDeleteBtn.addEventListener('click', async () => {
+            if (!confirm('确定要删除右侧图片吗？')) return;
+            updateAboutImagePreview('');
+            if (allData.config) {
+                allData.config.about = { ...(allData.config.about || {}), image: '' };
+            }
+            const saved = await saveSiteSettings({ skipToast: true });
+            if (saved) {
+                showToast('图片已删除');
+            } else {
+                showToast('本地已清空，但自动保存失败，请手动点击保存设置', 'warning');
+            }
+        });
+    }
+
     // 站点设置可视化列表添加按钮
     document.getElementById('addServiceItemBtn')?.addEventListener('click', () => {
         const container = document.getElementById('servicesList');
