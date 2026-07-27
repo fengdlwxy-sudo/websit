@@ -30,6 +30,8 @@ let allData = {
 };
 let currentEditType = null;
 let currentEditId = null;
+// 保存后尚未被后台刷新确认的乐观文章（避免 GitHub 读取缓存导致列表闪烁/丢失）
+let pendingArticles = {};
 
 // ==================== 工具函数 ====================
 function showToast(message, type = 'success') {
@@ -1269,10 +1271,20 @@ async function loadAllData() {
         allData.projects = allData.projects?.items || [];
         if (allData.articles && !Array.isArray(allData.articles) && Array.isArray(allData.articles.items)) {
             // 保留 articles 整体结构（featured + items）
+            const fetchedItems = allData.articles.items || [];
+            // 合并乐观保存但后台刷新尚未确认的文章，避免 GitHub 读取缓存导致列表闪烁/丢失
+            const mergedItems = fetchedItems.slice();
+            Object.keys(pendingArticles).forEach(id => {
+                const pi = pendingArticles[id];
+                const fi = mergedItems.findIndex(f => f.id === id);
+                if (fi >= 0) mergedItems[fi] = pi;   // 用更新的乐观版本覆盖
+                else mergedItems.push(pi);
+                delete pendingArticles[id];
+            });
             allData.articles = {
                 featured: Array.isArray(allData.articles.featured) ? allData.articles.featured
                           : (allData.articles.featured ? [allData.articles.featured] : []),
-                items: allData.articles.items
+                items: mergedItems
             };
         } else if (!allData.articles) {
             allData.articles = { featured: [], items: [] };
@@ -2259,6 +2271,7 @@ window.deleteArticle = async function(id) {
     if (!confirm('确定要删除这篇文章吗？')) return;
     try {
         await apiRequest('/articles/' + id, { method: 'DELETE' });
+        delete pendingArticles[id];
         showToast('删除成功');
         await loadAllData();
     } catch (err) {
@@ -2874,7 +2887,8 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
     saveBtn.textContent = '保存中...';
     saveBtn.disabled = true;
     try {
-        if (currentEditType === 'news') {
+        let saveResp = null;
+    if (currentEditType === 'news') {
             const data = {
                 title: document.getElementById('editTitle').value,
                 tag: document.getElementById('editTag').value,
@@ -3031,9 +3045,9 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
             }
             if (!data.title) return showToast('请输入文章标题', 'warning');
             if (currentEditId) {
-                await apiRequest('/articles/' + currentEditId, { method: 'PUT', body: JSON.stringify(data) });
+                saveResp = await apiRequest('/articles/' + currentEditId, { method: 'PUT', body: JSON.stringify(data) });
             } else {
-                await apiRequest('/articles', { method: 'POST', body: JSON.stringify(data) });
+                saveResp = await apiRequest('/articles', { method: 'POST', body: JSON.stringify(data) });
             }
         } else if (currentEditType === 'user') {
             const data = {
@@ -3050,6 +3064,18 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
             }
         }
         
+        // 保存成功后立即在内存里更新列表并渲染，不等 GitHub 读取缓存，保证“发布后立即显示”
+        if (currentEditType === 'article' && saveResp && saveResp.data) {
+            const saved = saveResp.data;
+            const items = (allData.articles && allData.articles.items) || [];
+            const idx = items.findIndex(i => i.id === saved.id);
+            if (idx >= 0) items[idx] = saved;
+            else items.unshift(saved);
+            pendingArticles[saved.id] = saved;
+            renderArticles();
+            updateDashboard();
+        }
+
         showToast('保存成功');
         closeModal();
         await loadAllData();

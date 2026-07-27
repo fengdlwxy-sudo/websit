@@ -72,6 +72,74 @@ if ($LASTEXITCODE -ne 0) {
     Stop-WithPause "Could not reset to $remoteName/$branch."
 }
 
+# 合并远程 data/ 与本地 data/（本地优先，远程补充本地缺失的项）。
+# 后台发文/编辑直接写 GitHub，本地磁盘的 data 可能是旧的；但本地若已恢复/更新过，
+# 也不应被远程旧版覆盖。采用「本地优先 + 远程补缺失」的并集合并，避免任何一方内容丢失。
+Write-Host "Merging live data files from remote (local-first union, never lose content)..."
+
+function KeyOf($x) {
+    if ($x -is [PSCustomObject]) {
+        if ($x.PSObject.Properties.Name -contains 'id')   { return [string]$x.id }
+        if ($x.PSObject.Properties.Name -contains 'slug') { return [string]$x.slug }
+        if ($x.PSObject.Properties.Name -contains 'title'){ return [string]$x.title }
+    }
+    return $null
+}
+function Merge-List($local, $remote) {
+    $map = @{}
+    foreach ($x in $local) { $k = KeyOf $x; if ($k -and -not $map.ContainsKey($k)) { $map[$k] = $x } }
+    foreach ($x in $remote){ $k = KeyOf $x; if ($k -and -not $map.ContainsKey($k)) { $map[$k] = $x } }
+    return @($map.Values)
+}
+function Merge-Json($local, $remote) {
+    if ($null -eq $local) { return $remote }
+    if ($null -eq $remote) { return $local }
+    if ($local -is [System.Collections.IList] -and $remote -is [System.Collections.IList]) {
+        return Merge-List $local $remote
+    }
+    if ($local.GetType().Name -eq 'PSCustomObject' -and $remote.GetType().Name -eq 'PSCustomObject') {
+        $out = New-Object PSObject
+        foreach ($p in $local.PSObject.Properties) { Add-Member -InputObject $out -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force }
+        foreach ($p in $remote.PSObject.Properties) {
+            $exists = $out.PSObject.Properties.Name -contains $p.Name
+            if (-not $exists) {
+                Add-Member -InputObject $out -NotePropertyName $p.Name -NotePropertyValue $p.Value -Force
+                continue
+            }
+            $lv = $out.PSObject.Properties[$p.Name].Value
+            if ($lv -is [System.Collections.IList] -and $p.Value -is [System.Collections.IList]) {
+                $out.PSObject.Properties[$p.Name].Value = Merge-List $lv $p.Value
+            } elseif ($lv.GetType().Name -eq 'PSCustomObject' -and $p.Value.GetType().Name -eq 'PSCustomObject') {
+                $out.PSObject.Properties[$p.Name].Value = Merge-Json $lv $p.Value
+            }
+        }
+        return $out
+    }
+    return $local
+}
+
+$dataDir = Join-Path $projectRoot "data"
+if (Test-Path $dataDir) {
+    Get-ChildItem $dataDir -Filter *.json | ForEach-Object {
+        $rel = "data/" + $_.Name
+        $refSpec = "$remoteName/$branch" + ':' + $rel
+        $remoteRaw = git show $refSpec 2>$null
+        if ($LASTEXITCODE -ne 0 -or -not $remoteRaw) {
+            Write-Host "  (no remote $rel, keep local)" -ForegroundColor DarkGray
+            return
+        }
+        try {
+            $localObj  = Get-Content $_.FullName -Raw | ConvertFrom-Json
+            $remoteObj = $remoteRaw | ConvertFrom-Json
+            $merged = Merge-Json $localObj $remoteObj
+            $merged | ConvertTo-Json -Depth 20 | Set-Content $_.FullName -Encoding UTF8
+            Write-Host "  [OK] merged $rel" -ForegroundColor Green
+        } catch {
+            Write-Host "  (skip $rel merge, parse error)" -ForegroundColor DarkYellow
+        }
+    }
+}
+
 Write-Host "Committing all current files as a single clean snapshot..."
 git add -A
 git commit -m "deploy: update website" --no-edit
