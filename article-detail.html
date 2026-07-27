@@ -585,6 +585,7 @@
                         <h1 class="article-title" id="articleTitle"></h1>
                         <div class="article-meta">
                             <span id="articleDate"></span>
+                            <span id="articleWordCount"></span>
                             <span id="articleUpdated"></span>
                         </div>
                         <div class="article-tags" id="articleTags"></div>
@@ -813,6 +814,15 @@
                 document.getElementById('articleTitle').textContent = article.title;
                 var displayDate = resolveArticleDate(article);
                 document.getElementById('articleDate').innerHTML = '\u{1F4C5} 发布于 ' + formatDate(displayDate);
+                var wordCountEl = document.getElementById('articleWordCount');
+                if (wordCountEl) {
+                    var wc = article.wordCount;
+                    if (wc != null && wc !== '' && !isNaN(Number(wc)) && Number(wc) > 0) {
+                        wordCountEl.innerHTML = '\u{1F4DD} 约 ' + Number(wc).toLocaleString('zh-CN') + ' 字';
+                    } else {
+                        wordCountEl.innerHTML = '';
+                    }
+                }
                 if (article.updatedAt && article.updatedAt !== displayDate) {
                     document.getElementById('articleUpdated').innerHTML = '\u{1F504} 更新于 ' + formatDate(article.updatedAt);
                 } else {

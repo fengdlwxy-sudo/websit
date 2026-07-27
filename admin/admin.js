@@ -57,9 +57,12 @@ function formatDate(dateStr) {
     return dateStr;
 }
 
-function formatDate(dateStr) {
-    if (!dateStr) return '';
-    return dateStr;
+function debounce(fn, wait) {
+    let timer = null;
+    return function(...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), wait);
+    };
 }
 
 // ==================== 图片裁剪上传 ====================
@@ -1963,8 +1966,19 @@ function renderArticles() {
     populateArticleCategoryFilter();
 
     const catFilter = document.getElementById('articleCategoryFilter')?.value || '';
+    const keyword = (document.getElementById('articleSearchInput')?.value || '').trim().toLowerCase();
     let items = (allData.articles && allData.articles.items) || [];
     if (catFilter) items = items.filter(a => a.category === catFilter);
+    if (keyword) {
+        items = items.filter(a => {
+            const haystack = [
+                a.title, a.summary, a.slug,
+                Array.isArray(a.tags) ? a.tags.join(' ') : a.tags,
+                a.content
+            ].filter(Boolean).join(' ').toLowerCase();
+            return haystack.includes(keyword);
+        });
+    }
 
     // 当前头条槽位占用情况
     const featured = getFeaturedList();
@@ -2056,6 +2070,17 @@ window.setArticleAsFeatured = async function(articleId, slotIndex) {
 
 document.getElementById('articleCategoryFilter').addEventListener('change', renderArticles);
 
+// 文章搜索：按钮点击 + 回车实时搜索
+const articleSearchInput = document.getElementById('articleSearchInput');
+const articleSearchBtn = document.getElementById('articleSearchBtn');
+if (articleSearchInput) {
+    articleSearchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') renderArticles();
+    });
+    articleSearchInput.addEventListener('input', debounce(renderArticles, 250));
+}
+if (articleSearchBtn) articleSearchBtn.addEventListener('click', renderArticles);
+
 function getArticleCategorySelectHtml(selectedId) {
     let html = '<select id="editArticleCategory"><option value="">选择分类</option>';
     const cats = allData.categories?.articleCategories || [];
@@ -2097,6 +2122,10 @@ window.editArticle = function(id) {
         <div class="form-group">
             <label>标签 (英文逗号分隔)</label>
             <input type="text" id="editArticleTags" value="${escapeHtml((item.tags || []).join(', '))}">
+        </div>
+        <div class="form-group">
+            <label>字数（前台显示用，可自定义）</label>
+            <input type="number" id="editArticleWordCount" value="${item.wordCount != null ? item.wordCount : ''}" placeholder="如：1200" min="0">
         </div>
         <div class="form-group">
             <label>发布日期</label>
@@ -2152,6 +2181,10 @@ document.getElementById('addArticleBtn').addEventListener('click', () => {
         <div class="form-group">
             <label>标签 (英文逗号分隔)</label>
             <input type="text" id="editArticleTags" placeholder="标签1, 标签2">
+        </div>
+        <div class="form-group">
+            <label>字数（前台显示用，可自定义）</label>
+            <input type="number" id="editArticleWordCount" placeholder="如：1200" min="0">
         </div>
         <div class="form-group">
             <label>发布日期</label>
@@ -2867,6 +2900,7 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
             }
         } else if (currentEditType === 'article') {
             const dateInput = document.getElementById('editArticleDate').value;
+            const wordCountRaw = document.getElementById('editArticleWordCount')?.value?.trim();
             const data = {
                 title: document.getElementById('editArticleTitle').value,
                 slug: document.getElementById('editArticleSlug').value,
@@ -2878,6 +2912,10 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
                 status: document.getElementById('editArticleStatus').value,
                 createdAt: dateInput || (currentEditId ? undefined : new Date().toISOString().split('T')[0])
             };
+            if (wordCountRaw !== '') {
+                const wc = parseInt(wordCountRaw, 10);
+                if (!isNaN(wc) && wc >= 0) data.wordCount = wc;
+            }
             if (!data.title) return showToast('请输入文章标题', 'warning');
             if (currentEditId) {
                 await apiRequest('/articles/' + currentEditId, { method: 'PUT', body: JSON.stringify(data) });
