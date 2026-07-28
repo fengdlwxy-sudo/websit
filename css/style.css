@@ -1470,7 +1470,8 @@ img {
     padding: 6px;
     display: block;
     margin: 0 auto 10px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 .footer-qrcode-item-title {
     font-size: 13px;
@@ -1478,11 +1479,13 @@ img {
     font-weight: 600;
     margin-bottom: 3px;
     line-height: 1.4;
+    text-align: center;
 }
 .footer-qrcode-item-desc {
     font-size: 11px;
     color: rgba(255, 255, 255, 0.55);
     line-height: 1.4;
+    text-align: center;
 }
 
 .footer-bottom {
@@ -1767,9 +1770,11 @@ img {
 @keyframes hotline-pulse {
     0%, 100% {
         text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+        transform: scale(1);
     }
     50% {
-        text-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 18px rgba(0, 210, 198, 0.35);
+        transform: scale(1.03);
     }
 }
 
@@ -1809,6 +1814,15 @@ img {
     animation-delay: 0.5s;
 }
 
+/* 案例/项目详情页中部 CTA 电话 */
+.cta-phones a {
+    animation: hotline-pulse 2.4s ease-in-out infinite;
+}
+
+.cta-phones a:nth-of-type(2) {
+    animation-delay: 0.5s;
+}
+
 /* 侧边悬浮电话图标：轻微摆动 */
 .side-tool.tel-tool span {
     display: inline-block;
@@ -1820,6 +1834,7 @@ img {
 @media (prefers-reduced-motion: reduce) {
     .top-bar .hotline-num,
     .footer-hotline a,
+    .cta-phones a,
     .side-tool.tel-tool span {
         animation: none !important;
     }
@@ -2031,6 +2046,11 @@ img {
         align-items: center;
     }
 
+    .footer-brand p {
+        text-align: center;
+        max-width: 100%;
+    }
+
     .footer-links,
     .footer-qrcode-col {
         text-align: center;
@@ -2038,6 +2058,8 @@ img {
 
     .footer-logo {
         margin: 0 auto 18px;
+        margin-left: auto;
+        margin-right: auto;
         display: block;
         height: 44px;
         width: auto;
@@ -2089,6 +2111,9 @@ img {
         height: 110px;
         max-width: none;
         margin-bottom: 10px;
+        padding: 5px;
+        border: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
     }
 
     .slider-dots {
