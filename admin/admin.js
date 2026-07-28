@@ -3305,7 +3305,7 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
             const originalPreview = aboutImagePreview.innerHTML;
             aboutImagePreview.innerHTML = '<span style="color:#999;">上传中...</span>';
             try {
-                const uploadResult = await openImageCropper({ file, aspectRatio: 16/9 });
+                const uploadResult = await openImageCropper({ file, aspectRatio: 420/320 });
                 const url = uploadResult?.url || uploadResult;
                 if (!url) throw new Error('上传未返回图片地址');
                 updateAboutImagePreview(url);
