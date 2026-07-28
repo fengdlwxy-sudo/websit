@@ -1,9 +1,26 @@
-# Deploy huichengyimin website to GitHub Pages via GitHub token
-# This script is called by pages-deploy.bat
+﻿# Deploy huichengyimin website to GitHub Pages via GitHub token
+# Called by pages-deploy.bat
+#
+# 设计原则（根治"部署后内容丢失"）：
+#   1) 内容（data/ 与 assets/images/uploads/）由后台实时写入 GitHub，部署时一律以远程为准还原，
+#      绝不拿本地可能过期的文件去覆盖远程真实内容。
+#   2) 只把本地"代码改动"（HTML/CSS/JS 等）叠加进去，做成一个干净提交强推，
+#      避免把历史上可能含令牌的提交重新推上去被 GitHub 拦截。
+#   3) token 首次输入后缓存在本地 .deploy-token（已 gitignore），后续一键部署。
 
-$repoOwner = "fengdlwxy-sudo"
-$repoName  = "websit"
-$branch    = "main"
+# 全局兜底：任何未捕获的错误都打印并保持窗口，避免"黑框一闪而过"看不清原因
+trap {
+    Write-Host ""
+    Write-Host "[FATAL] 脚本意外出错：" -ForegroundColor Red
+    Write-Host $_.Exception.Message -ForegroundColor Red
+    Write-Host "（按任意键关闭）" -ForegroundColor DarkGray
+    $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit 1
+}
+
+$repoOwner  = "fengdlwxy-sudo"
+$repoName   = "websit"
+$branch     = "main"
 $remoteName = "websit"
 
 function Stop-WithPause($msg) {
@@ -13,168 +30,100 @@ function Stop-WithPause($msg) {
     exit 1
 }
 
-# 1. Check Git
+# 1. 检查 git
 $git = Get-Command git -ErrorAction SilentlyContinue
 if (-not $git) {
-    Stop-WithPause "Git is not installed or not in PATH.`nPlease install Git for Windows from: https://git-scm.com/download/win`nThen re-run this script."
+    Stop-WithPause "Git 未安装或不在 PATH。请先安装 Git for Windows: https://git-scm.com/download/win"
 }
 
-# 2. Move to project root
-$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+# 2. 切到项目根目录（deploy/ 的上级）
+$scriptDir   = Split-Path -Parent $MyInvocation.MyCommand.Definition
 $projectRoot = Resolve-Path "$scriptDir\.."
 Set-Location $projectRoot
 
-# 3. Read GitHub token securely
-Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Deploy huichengyimin to GitHub Pages" -ForegroundColor Cyan
-Write-Host "================================================" -ForegroundColor Cyan
-Write-Host ""
-Write-Host "Please paste your GitHub Personal Access Token (ghp_...)." -ForegroundColor Yellow
-Write-Host "(The token will NOT be shown on screen for security.)" -ForegroundColor DarkGray
-$secureToken = Read-Host -Prompt "GitHub token" -AsSecureString
-if (-not $secureToken -or $secureToken.Length -eq 0) {
-    Stop-WithPause "No token entered. Please re-run and paste your token."
+# 3. 读取 / 缓存 token（本地 .deploy-token，已 gitignore）
+$tokenFile = Join-Path $projectRoot ".deploy-token"
+if (Test-Path $tokenFile) {
+    $token = (Get-Content $tokenFile -Raw).Trim()
+    Write-Host "使用本地缓存的 GitHub token。" -ForegroundColor DarkGray
+} else {
+    Write-Host "================================================" -ForegroundColor Cyan
+    Write-Host "  Deploy huichengyimin to GitHub Pages" -ForegroundColor Cyan
+    Write-Host "================================================" -ForegroundColor Cyan
+    Write-Host "首次运行：请粘贴你的 GitHub Personal Access Token (ghp_...)。" -ForegroundColor Yellow
+    Write-Host "(会保存在本地 .deploy-token，已 gitignore，以后无需再输入)" -ForegroundColor DarkGray
+    $secureToken = Read-Host -Prompt "GitHub token" -AsSecureString
+    $bstr  = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
+    $token = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($bstr)
+    [System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($bstr)
+    if (-not $token) { Stop-WithPause "未输入 token，请重新运行并粘贴。" }
+    Set-Content -Path $tokenFile -Value $token -NoNewline
+    Write-Host "Token 已本地保存，后续运行不再需要输入。" -ForegroundColor Green
 }
 
-$tokenBSTR = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureToken)
-$token = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($tokenBSTR)
-[System.Runtime.InteropServices.Marshal]::ZeroFreeBSTR($tokenBSTR)
+# 让其它 git 操作也顺滑（凭据缓存）
+git config --global credential.helper store 2>$null
 
-# 4. Cleanup unfinished merge
-Write-Host ""
-Write-Host "Cleaning up any unfinished merge..."
+# 4. 清理可能残留的合并状态
 git merge --abort 2>$null
-# ignore error if not currently merging
 
-# 5. Prepare a single clean commit
-#    GitHub secret scanning may block pushes that contain a GitHub PAT in any
-#    commit. We reset local history to the current remote tip and commit all
-#    current files as one clean snapshot so that old (possibly bad) commits are
-#    no longer part of the push.
+# 5. 拉取远程最新状态
 Write-Host "Fetching remote state..."
 git fetch $remoteName $branch
-if ($LASTEXITCODE -ne 0) {
-    Stop-WithPause "Could not fetch from $remoteName/$branch. Check your network and token."
-}
+if ($LASTEXITCODE -ne 0) { Stop-WithPause "无法 fetch $remoteName/$branch，检查网络与 token。" }
 
-Write-Host ""
-Write-Host "WARNING: This will overwrite the remote Git history on $remoteName/$branch" -ForegroundColor Yellow
-Write-Host "with a single clean commit containing your current files. This is needed" -ForegroundColor Yellow
-Write-Host "because GitHub blocked a previous push that contained a personal access token." -ForegroundColor Yellow
-$confirm = Read-Host "Type 'yes' to continue"
-if ($confirm -ne 'yes') {
-    Stop-WithPause "Deployment cancelled by user."
-}
-
-Write-Host "Resetting local history to match remote (your file changes are preserved)..."
+# 6. 把本地历史重置到远程 tip，做成单干净提交（避免重推含令牌的旧提交）
+Write-Host "Resetting local history to remote tip (single clean commit)..."
 git reset --soft "$remoteName/$branch"
-if ($LASTEXITCODE -ne 0) {
-    Stop-WithPause "Could not reset to $remoteName/$branch."
-}
+if ($LASTEXITCODE -ne 0) { Stop-WithPause "无法 reset 到 $remoteName/$branch。" }
 
-# 合并远程 data/ 与本地 data/（本地优先，远程补充本地缺失的项）。
-# 后台发文/编辑直接写 GitHub，本地磁盘的 data 可能是旧的；但本地若已恢复/更新过，
-# 也不应被远程旧版覆盖。采用「本地优先 + 远程补缺失」的并集合并，避免任何一方内容丢失。
-# 使用 node 脚本处理 JSON，避免 PowerShell ConvertFrom-Json/哈希表行为导致数据丢失。
-Write-Host "Merging live data files from remote (local-first union, never lose content)..."
+# 7. 关键：把远程的真实内容原样还原，绝不拿本地过期文件覆盖
+Write-Host "Restoring live content from remote (data + uploads)..."
+git checkout "$remoteName/$branch" -- data 2>$null
+git checkout "$remoteName/$branch" -- assets/images/uploads 2>$null
 
-$dataDir = Join-Path $projectRoot "data"
-$remoteDataDir = Join-Path ([System.IO.Path]::GetTempPath()) ("hcym-remote-data-" + [Guid]::NewGuid().ToString())
-if (Test-Path $remoteDataDir) { Remove-Item -Recurse -Force $remoteDataDir }
-New-Item -ItemType Directory -Force -Path $remoteDataDir | Out-Null
-
-try {
-    if (Test-Path $dataDir) {
-        Get-ChildItem $dataDir -Filter *.json | ForEach-Object {
-            $rel = "data/" + $_.Name
-            $refSpec = "$remoteName/$branch" + ':' + $rel
-            $remoteRaw = git show $refSpec 2>$null
-            if ($LASTEXITCODE -ne 0 -or -not $remoteRaw) {
-                Write-Host "  (no remote $rel, keep local)" -ForegroundColor DarkGray
-                return
-            }
-            $remoteFile = Join-Path $remoteDataDir $_.Name
-            Set-Content -Path $remoteFile -Value $remoteRaw -Encoding UTF8
-        }
-    }
-
-    $nodeExe = "C:/Users/ken/.workbuddy/binaries/node/versions/22.22.2/node.exe"
-    $mergeScript = Join-Path $projectRoot "deploy/merge-data.js"
-    & $nodeExe $mergeScript $dataDir $remoteDataDir
-    if ($LASTEXITCODE -ne 0) {
-        Stop-WithPause "Data merge failed. Check the output above."
-    }
-} finally {
-    if (Test-Path $remoteDataDir) { Remove-Item -Recurse -Force $remoteDataDir }
-}
-
-# 同步远程 uploads 中本地缺失的图片（本地优先，绝不删除本地已有图片，只补回后台新上传的）。
-# 防止部署强推把远程后台刚上传的图片冲掉；同时本地已恢复的图片会随 add -A 一并推送。
-Write-Host "Restoring any remote-only uploaded images (local-first)..."
-$upLines = git ls-tree -r "$remoteName/$branch" -- assets/images/uploads 2>$null
-if ($upLines) {
-    $upLines | ForEach-Object {
-        if ($_ -match '^\S+\s+blob\s+(\S+)\s+(.+)$') {
-            $rp = $Matches[2].Trim()
-            $localFile = Join-Path $projectRoot $rp
-            if (-not (Test-Path $localFile)) {
-                $dir = Split-Path $localFile
-                if (-not (Test-Path $dir)) { New-Item -ItemType Directory -Force -Path $dir | Out-Null }
-                git checkout -f "$remoteName/$branch" -- $rp 2>$null
-                if ($?) { Write-Host "  [OK] restored image $rp" -ForegroundColor Green }
-            }
-        }
-    }
-}
-
-Write-Host "Committing all current files as a single clean snapshot..."
+# 8. 只叠加本地代码改动
+Write-Host "Staging code changes + keeping live content..."
 git add -A
-git commit -m "deploy: update website" --no-edit
-# commit returns non-zero when nothing to commit, which is fine
-
-# 6. Push using token embedded URL (avoids Windows credential popup)
-$pushUrl = "https://$token@github.com/$repoOwner/$repoName.git"
-
-Write-Host "Pushing to GitHub..."
-$originalUrl = git remote get-url $remoteName 2>$null
-if ($LASTEXITCODE -ne 0) {
-    Stop-WithPause "Could not find git remote '$remoteName'. Please check .git/config"
+$status = git status --porcelain
+if (-not $status) {
+    Write-Host "[OK] 没有需要部署的改动，无需推送。" -ForegroundColor Green
+    Write-Host "Press any key..."; $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")
+    exit 0
 }
+
+git commit -m "deploy: update website - $(Get-Date -Format 'yyyy-MM-dd HH:mm')" --no-edit
+
+# 9. 用内嵌 token 的 URL 推送（避免 Windows 凭据弹窗），推完还原
+$pushUrl = "https://$token@github.com/$repoOwner/$repoName.git"
+$originalUrl = git remote get-url $remoteName 2>$null
+if ($LASTEXITCODE -ne 0) { Stop-WithPause "找不到 git remote '$remoteName'，请检查 .git/config" }
 
 git remote set-url $remoteName $pushUrl
-if ($LASTEXITCODE -ne 0) {
-    Stop-WithPause "Could not set temporary push URL."
-}
-
 try {
     git push -f -u $remoteName $branch
     $pushOk = $LASTEXITCODE -eq 0
 } finally {
-    # Always restore original URL, even on error
     git remote set-url $remoteName $originalUrl | Out-Null
 }
 
-# Clear token from memory
+# 清掉内存里的 token
 $token = $null
-$secureToken = $null
 [GC]::Collect()
 
 if (-not $pushOk) {
     Write-Host ""
-    Write-Host "Common causes:" -ForegroundColor Yellow
-    Write-Host "  - Token copied incorrectly (missing characters or extra spaces)" -ForegroundColor Yellow
-    Write-Host "  - Token does not have 'repo' and 'workflow' scopes" -ForegroundColor Yellow
-    Write-Host "  - Token was revoked or expired" -ForegroundColor Yellow
-    Write-Host "  - Windows credential manager has an old password cached" -ForegroundColor Yellow
-    Write-Host ""
-    Write-Host "To fix, regenerate your token at: https://github.com/settings/tokens" -ForegroundColor Yellow
-    Write-Host "Required scopes: repo + workflow" -ForegroundColor Yellow
+    Write-Host "推送失败，常见原因：" -ForegroundColor Yellow
+    Write-Host "  - token 复制不完整（缺字符或多了空格）" -ForegroundColor Yellow
+    Write-Host "  - token 没有 repo 权限或已过期/被撤销" -ForegroundColor Yellow
+    Write-Host "  - Windows 凭据管理器缓存了旧密码" -ForegroundColor Yellow
+    Write-Host "重新生成 token: https://github.com/settings/tokens (需要 repo 权限)" -ForegroundColor Yellow
     Stop-WithPause "Push failed."
 }
 
 Write-Host ""
-Write-Host "[OK] Push succeeded to $remoteName/$branch." -ForegroundColor Green
-Write-Host "Wait 1-2 minutes, then open: https://www.huichengyimin.com/admin" -ForegroundColor Green
+Write-Host "[OK] 推送成功 -> $remoteName/$branch" -ForegroundColor Green
+Write-Host "等 1-2 分钟，然后 Ctrl+F5 打开 https://www.huichengyimin.com/admin" -ForegroundColor Green
 Write-Host ""
 Write-Host "Press any key to continue..."
 $null = $Host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

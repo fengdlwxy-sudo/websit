@@ -13,8 +13,11 @@ server.pid
 .workbuddy/memory/
 
 # 用户上传的图片：必须入库！否则部署强推会把远程 uploads 目录清空，导致前台文章图片 404。
-# pages-deploy.ps1 已在推送前把远程新增图片补回本地（本地优先），避免任何一方图片丢失。
+# pages-deploy.ps1 已在推送前把远程 data/ 与 uploads 原样还原，绝不拿本地过期文件覆盖。
 assets/images/uploads/.gitkeep
+
+# 本地缓存的部署 token（明文，仅本机使用，绝不入库）
+.deploy-token
 
 # 系统 / 编辑器临时文件
 .DS_Store
