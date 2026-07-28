@@ -108,7 +108,8 @@ async function ghVerifyToken(token) {
 // 读取某个数据文件，不存在则返回默认值
 async function ghReadData(key) {
     const file = DATA_FILES[key];
-    const path = `/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data/${file}?ref=${encodeURIComponent(ghConfig.branch)}`;
+    // 加 cache buster 避免 GitHub Contents API 返回缓存的旧数据
+    const path = `/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data/${file}?ref=${encodeURIComponent(ghConfig.branch)}&_cb=${Date.now()}`;
     const res = await ghRaw('GET', path);
     if (res.status === 404) return JSON.parse(JSON.stringify(DATA_DEFAULTS[key]));
     if (!res.ok) throw new Error('读取 ' + file + ' 失败：GitHub ' + res.status);
