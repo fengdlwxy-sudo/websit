@@ -1903,6 +1903,24 @@ img {
         text-align: center;
     }
 
+    .top-bar-right {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 6px 10px;
+        width: 100%;
+    }
+
+    .hotline-label {
+        width: 100%;
+        margin-right: 0;
+        font-size: 12px;
+        opacity: 0.85;
+    }
+
+    .hotline-num {
+        font-size: 13px;
+    }
+
     .section {
         padding: 50px 0;
     }
@@ -1941,10 +1959,43 @@ img {
     }
 
     .footer-grid {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
+        gap: 30px;
+        text-align: center;
     }
+
+    .footer-brand,
+    .footer-links,
+    .footer-qrcode-col {
+        text-align: center;
+    }
+
+    .footer-logo {
+        margin: 0 auto;
+        display: block;
+    }
+
+    .footer-hotline {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 4px 8px;
+    }
+
+    .footer-hotline p {
+        width: 100%;
+        margin-bottom: 6px;
+    }
+
+    .footer-links ul {
+        display: inline-block;
+        text-align: center;
+    }
+
     .footer-qrcode {
+        margin: 0 auto;
         max-width: 320px;
+        justify-content: center;
     }
 
     .slider-dots {

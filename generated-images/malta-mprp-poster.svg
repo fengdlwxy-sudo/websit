@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="2010" viewBox="0 0 1080 2010">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F0FDFC"/>
+      <stop offset="60%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A8A5"/>
+      <stop offset="100%" stop-color="#008B8B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="2010" fill="url(#bgGrad)"/>
+
+  <rect width="1080" height="340" fill="url(#headerGrad)"/>
+  <text x="210" y="108" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="46" font-weight="700" fill="#FFFFFF">汇程移民</text>
+  <text x="212" y="142" font-family="Arial, sans-serif" font-size="18" letter-spacing="3" fill="#FFFFFF" opacity="0.9">HUICHENG IMMIGRATION</text>
+  <text x="540" y="248" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle">马耳他永久居留 MPRP</text>
+  <text x="540" y="296" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="26" fill="rgba(255,255,255,0.92)" text-anchor="middle">投资永居 · 一步拿欧盟永居</text>
+
+  <rect x="40" y="380" width="1000" height="150" rx="18" fill="#E6FAF9"/><rect x="198" y="398" width="220" height="52" rx="26" fill="#FFFFFF"/>
+      <circle cx="220" cy="424" r="5" fill="#00A8A5"/>
+      <text x="236" y="432" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#0E7490">5年一更新居留卡</text><rect x="430" y="398" width="220" height="52" rx="26" fill="#FFFFFF"/>
+      <circle cx="452" cy="424" r="5" fill="#00A8A5"/>
+      <text x="468" y="432" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#0E7490">终身持有永居权益</text><rect x="662" y="398" width="220" height="52" rx="26" fill="#FFFFFF"/>
+      <circle cx="684" cy="424" r="5" fill="#00A8A5"/>
+      <text x="700" y="432" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#0E7490">每年仅登陆14天</text><rect x="314" y="462" width="220" height="52" rx="26" fill="#FFFFFF"/>
+      <circle cx="336" cy="488" r="5" fill="#00A8A5"/>
+      <text x="352" y="496" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#0E7490">全家四代同申</text><rect x="546" y="462" width="220" height="52" rx="26" fill="#FFFFFF"/>
+      <circle cx="568" cy="488" r="5" fill="#00A8A5"/>
+      <text x="584" y="496" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#0E7490">无高额居住要求</text>
+  
+    <g>
+      <rect x="40" y="560" width="1000" height="630" rx="22" fill="#FFFFFF" stroke="#E6EDF2" stroke-width="1.5"/>
+      <rect x="40" y="560" width="8" height="630" rx="4" fill="#00A8A5"/>
+      <rect x="84" y="588" width="6" height="34" rx="3" fill="#00A8A5"/>
+      <text x="106" y="616" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="34" font-weight="700" fill="#0F2E3D">主申请人基础硬性条件</text>
+      <circle cx="100" cy="676" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="687" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">年满18周岁，非欧盟 / 欧洲经济区 / 瑞士公民；受限制裁国家申请者</text><text x="134" y="731" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">无法递交申请</text><circle cx="100" cy="784" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="795" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">无任何刑事犯罪记录，可通过马耳他政府严苛背景尽职调查</text><circle cx="100" cy="848" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="859" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">资产达标二选一：</text><circle cx="152" cy="906" r="12" fill="#00A8A5"/>
+          <polyline points="146,906 150,911 159,900" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="174" y="916" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="25" fill="#475569">全家总资产≥50万欧元，其中流动资产不少于15万欧元</text><circle cx="152" cy="946" r="12" fill="#00A8A5"/>
+          <polyline points="146,946 150,951 159,940" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/><text x="174" y="956" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="25" fill="#475569">个人年收入≥10万欧元，资产来源全程可追溯、合规可核验</text><circle cx="100" cy="1008" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="1019" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">购置覆盖申根区全境的商业医疗保险，保额不低于3万欧元</text><circle cx="100" cy="1072" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="1083" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">语言宽松：基础英语 A2 水平即可；持有全日制英语授课本科及以上学</text><text x="134" y="1127" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">历，可直接免语言考核</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="1218" width="1000" height="362" rx="22" fill="#FFFFFF" stroke="#E6EDF2" stroke-width="1.5"/>
+      <rect x="40" y="1218" width="8" height="362" rx="4" fill="#00A8A5"/>
+      <rect x="84" y="1246" width="6" height="34" rx="3" fill="#00A8A5"/>
+      <text x="106" y="1274" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="34" font-weight="700" fill="#0F2E3D">可一同随行的附属申请人（四代移民）</text>
+      <circle cx="100" cy="1334" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="1345" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">合法配偶，无犯罪记录</text><circle cx="100" cy="1398" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="1409" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">29 周岁以下未婚、经济依附主申的子女（未成年子女无条件随同）</text><circle cx="100" cy="1462" r="13" fill="none" stroke="#0E7490" stroke-width="3"/><text x="134" y="1473" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">主申请人及配偶双方父母、祖父母，提供经济赡养依附证明即可随同申</text><text x="134" y="1517" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="27" fill="#334155">请</text>
+    </g>
+  
+    <g transform="translate(0, 1610)">
+      <rect width="1080" height="400" fill="#FFFFFF"/>
+      <rect x="40" y="0" width="1000" height="2" fill="#E6EDF2"/>
+      <text x="60" y="90" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="34" font-weight="600" fill="#0F2E3D">马耳他永居规划 · 从一份评估开始</text>
+      <text x="60" y="142" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#64748B">一对一方案定制，匹配您的家庭身份目标</text>
+      <rect x="60" y="178" width="540" height="84" rx="42" fill="#00A8A5"/>
+      <text x="330" y="232" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF" text-anchor="middle">咨询热线：136-5185-2270</text>
+      <text x="60" y="320" font-family="Arial, sans-serif" font-size="24" fill="#94A3B8">官网：www.huichengyimin.com</text>
+      <rect x="700" y="50" width="260" height="260" rx="16" fill="#FFFFFF" stroke="#E6EDF2" stroke-width="1"/>
+      <text x="830" y="333" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="26" font-weight="600" fill="#0F2E3D" text-anchor="middle">扫码关注公众号</text>
+    </g>
+</svg>
