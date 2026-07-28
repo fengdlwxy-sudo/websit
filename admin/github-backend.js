@@ -202,6 +202,21 @@ async function collectionOp(key, method, id, bodyObj) {
         }
         items[idx] = merged;
         data.items = items;
+
+        // 文章被编辑时，如果它同时是精选/头条，同步更新 featured 中对应的展示字段，
+        // 避免前台精选区和文章列表区显示不同图片/标题/摘要。
+        if (key === 'articles' && Array.isArray(data.featured)) {
+            const fIdx = data.featured.findIndex(f => f && f.id === id);
+            if (fIdx !== -1) {
+                const syncFields = ['title', 'slug', 'category', 'summary', 'content', 'image', 'tags', 'date', 'createdAt'];
+                const updated = { ...data.featured[fIdx] };
+                syncFields.forEach(field => {
+                    if (field in merged) updated[field] = merged[field];
+                });
+                data.featured[fIdx] = updated;
+            }
+        }
+
         await ghWriteData(key, data, 'update ' + key + ' via admin');
         return { success: true, data: items[idx] };
     }
@@ -391,6 +406,19 @@ async function githubApiRequest(url, options = {}) {
         // 若前端一并传回完整 items（如批量更新 isFeatured），避免二次写文件导致 409
         if (body && Array.isArray(body.items)) {
             data.items = body.items;
+        }
+        // 同步回写 items：精选文章被编辑后，保证文章列表区看到的数据一致
+        if (Array.isArray(data.items)) {
+            data.featured.forEach(fItem => {
+                if (!fItem || !fItem.id) return;
+                const idx = data.items.findIndex(it => it.id === fItem.id);
+                if (idx !== -1) {
+                    const syncFields = ['title', 'slug', 'category', 'summary', 'content', 'image', 'tags', 'date', 'createdAt'];
+                    syncFields.forEach(field => {
+                        if (field in fItem) data.items[idx][field] = fItem[field];
+                    });
+                }
+            });
         }
         await ghWriteData('articles', data, 'update articles featured via admin');
         return { success: true, data: data.featured };

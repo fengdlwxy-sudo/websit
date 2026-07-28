@@ -3104,6 +3104,20 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
             // 清理 null 槽位后再发（最多 2 条）
             const payload = list.filter(Boolean).slice(0, 2);
             await apiRequest('/articles/featured', { method: 'PUT', body: JSON.stringify(payload) });
+            // 乐观更新：如果该头条对应 items 中的文章，同步更新内存，避免列表区与精选区不一致
+            if (Array.isArray(allData.articles && allData.articles.items)) {
+                payload.forEach(fItem => {
+                    if (!fItem || !fItem.id) return;
+                    const idx = allData.articles.items.findIndex(i => i.id === fItem.id);
+                    if (idx !== -1) {
+                        const syncFields = ['title', 'slug', 'category', 'summary', 'content', 'image', 'tags', 'date', 'createdAt'];
+                        syncFields.forEach(field => {
+                            if (field in fItem) allData.articles.items[idx][field] = fItem[field];
+                        });
+                    }
+                });
+            }
+            allData.articles.featured = payload;
             window._editingFeatured = null;
             window._editingFeaturedList = null;
         } else if (currentEditType === 'case') {
@@ -3237,6 +3251,18 @@ document.getElementById('modalSaveBtn').addEventListener('click', async () => {
             const idx = items.findIndex(i => i.id === saved.id);
             if (idx >= 0) items[idx] = saved;
             else items.unshift(saved);
+            // 如果该文章是精选/头条，同步更新内存中的 featured，避免精选区与列表区显示不一致
+            if (Array.isArray(allData.articles.featured)) {
+                const fIdx = allData.articles.featured.findIndex(f => f && f.id === saved.id);
+                if (fIdx !== -1) {
+                    const syncFields = ['title', 'slug', 'category', 'summary', 'content', 'image', 'tags', 'date', 'createdAt'];
+                    const updated = { ...allData.articles.featured[fIdx] };
+                    syncFields.forEach(field => {
+                        if (field in saved) updated[field] = saved[field];
+                    });
+                    allData.articles.featured[fIdx] = updated;
+                }
+            }
             pendingArticles[saved.id] = saved;
             renderArticles();
             updateDashboard();

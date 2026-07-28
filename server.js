@@ -662,6 +662,19 @@ app.put('/api/articles/featured', requireAuth, (req, res) => {
             isFeatured: true
         }));
         data.featured = next;
+        // 同步回写 items：精选文章被编辑后，保证文章列表区看到的数据一致
+        if (Array.isArray(data.items)) {
+            data.featured.forEach(fItem => {
+                if (!fItem || !fItem.id) return;
+                const idx = data.items.findIndex(it => it.id === fItem.id);
+                if (idx !== -1) {
+                    const syncFields = ['title', 'slug', 'category', 'summary', 'content', 'image', 'tags', 'date', 'createdAt'];
+                    syncFields.forEach(field => {
+                        if (field in fItem) data.items[idx][field] = fItem[field];
+                    });
+                }
+            });
+        }
         writeData('articles', data);
         res.json({ success: true, data: data.featured });
     } catch (error) {
@@ -675,6 +688,16 @@ app.put('/api/articles/:id', requireAuth, (req, res) => {
         const index = data.items.findIndex(item => item.id === req.params.id);
         if (index === -1) return res.status(404).json({ success: false, message: '文章不存在' });
         data.items[index] = { ...data.items[index], ...req.body, id: req.params.id, updatedAt: new Date().toISOString().split('T')[0] };
+        // 如果该文章同时是精选/头条，同步更新 featured 中的展示字段，避免前后台图片不一致
+        if (Array.isArray(data.featured)) {
+            const fIdx = data.featured.findIndex(f => f && f.id === req.params.id);
+            if (fIdx !== -1) {
+                const syncFields = ['title', 'slug', 'category', 'summary', 'content', 'image', 'tags', 'date', 'createdAt'];
+                syncFields.forEach(field => {
+                    if (field in req.body) data.featured[fIdx][field] = req.body[field];
+                });
+            }
+        }
         writeData('articles', data);
         res.json({ success: true, data: data.items[index] });
     } catch (error) {
