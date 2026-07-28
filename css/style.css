@@ -1438,7 +1438,7 @@ img {
     color: var(--primary);
 }
 
-/* 关注我们：双公众号二维码 */
+/* 关注我们：公众号二维码 */
 .footer-qrcode-col h4 {
     color: white;
     font-size: 16px;
@@ -1449,19 +1449,14 @@ img {
     display: flex;
     gap: 18px;
     align-items: flex-start;
+    justify-content: center;
 }
 .footer-qrcode-item {
-    flex: 1;
+    flex: 0 1 auto;
     text-align: center;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    padding: 14px 10px 12px;
-    transition: all 0.25s ease;
+    transition: transform 0.25s ease;
 }
 .footer-qrcode-item:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(0, 168, 181, 0.40);
     transform: translateY(-3px);
 }
 .footer-qrcode-img {
@@ -1471,17 +1466,17 @@ img {
     aspect-ratio: 1 / 1;
     object-fit: contain;
     background: #fff;
-    border-radius: 8px;
+    border-radius: 10px;
     padding: 6px;
     display: block;
-    margin: 0 auto 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    margin: 0 auto 10px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
 }
 .footer-qrcode-item-title {
     font-size: 13px;
     color: white;
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: 3px;
     line-height: 1.4;
 }
 .footer-qrcode-item-desc {
@@ -1767,6 +1762,70 @@ img {
 }
 
 /* ==================== 
+   全站电话号码微动画
+   ==================== */
+@keyframes hotline-pulse {
+    0%, 100% {
+        text-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    }
+    50% {
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.65);
+    }
+}
+
+@keyframes phone-icon-ring {
+    0%, 75%, 100% {
+        transform: rotate(0deg) scale(1);
+    }
+    80% {
+        transform: rotate(-14deg) scale(1.15);
+    }
+    85% {
+        transform: rotate(10deg) scale(1.15);
+    }
+    90% {
+        transform: rotate(-6deg) scale(1.1);
+    }
+    95% {
+        transform: rotate(3deg) scale(1.05);
+    }
+}
+
+/* 顶部热线号码：柔和白光脉冲 */
+.top-bar .hotline-num {
+    animation: hotline-pulse 2.2s ease-in-out infinite;
+}
+
+.top-bar .hotline-num:nth-of-type(2) {
+    animation-delay: 0.4s;
+}
+
+/* 页脚热线号码：柔和白光脉冲 */
+.footer-hotline a {
+    animation: hotline-pulse 2.4s ease-in-out infinite;
+}
+
+.footer-hotline a:nth-of-type(2) {
+    animation-delay: 0.5s;
+}
+
+/* 侧边悬浮电话图标：轻微摆动 */
+.side-tool.tel-tool span {
+    display: inline-block;
+    transform-origin: center bottom;
+    animation: phone-icon-ring 2.5s ease-in-out infinite;
+}
+
+/* 尊重用户关闭动画的偏好 */
+@media (prefers-reduced-motion: reduce) {
+    .top-bar .hotline-num,
+    .footer-hotline a,
+    .side-tool.tel-tool span {
+        animation: none !important;
+    }
+}
+
+/* ==================== 
    响应式设计
    ==================== */
 @media (max-width: 1200px) {
@@ -1967,6 +2026,9 @@ img {
     .footer-brand {
         grid-column: 1 / -1;
         text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 
     .footer-links,
@@ -1975,8 +2037,10 @@ img {
     }
 
     .footer-logo {
-        margin: 0 auto;
+        margin: 0 auto 18px;
         display: block;
+        height: 44px;
+        width: auto;
     }
 
     .footer-hotline {
@@ -2013,13 +2077,18 @@ img {
 
     .footer-qrcode {
         margin: 0 auto;
-        max-width: 160px;
         justify-content: center;
     }
 
+    .footer-qrcode-item {
+        padding: 0;
+    }
+
     .footer-qrcode-img {
-        width: 90px;
-        height: 90px;
+        width: 110px;
+        height: 110px;
+        max-width: none;
+        margin-bottom: 10px;
     }
 
     .slider-dots {

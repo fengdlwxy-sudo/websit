@@ -38,7 +38,7 @@ const projectsHtml = `<!DOCTYPE html>
     <title>移民项目 - 汇程移民</title>
     <meta name="description" content="汇程移民提供全球移民项目，涵盖投资移民、创业移民、技术移民。">
     <link rel="icon" href="assets/images/favicon.png">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2026072816">
     <style>
         .page-banner { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; padding: 80px 0 60px; text-align: center; }
         .page-banner-title { font-size: 40px; font-weight: 700; margin-bottom: 12px; }
@@ -199,7 +199,7 @@ const projectDetailHtml = `<!DOCTYPE html>
     <title id="pageTitle">项目详情 - 汇程移民</title>
     <meta name="description" content="汇程移民项目详情，了解移民条件、优势、办理流程。">
     <link rel="icon" href="assets/images/favicon.png">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=2026072816">
     <style>
         .breadcrumb-wrapper { background: var(--bg-light); padding: 15px 0; border-bottom: 1px solid var(--border); }
         .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-light); }
