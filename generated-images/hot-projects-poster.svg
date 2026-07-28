@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="3232" viewBox="0 0 1080 3232">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F0FDFC"/>
+      <stop offset="50%" stop-color="#F8FAFC"/>
+      <stop offset="100%" stop-color="#FFFFFF"/>
+    </linearGradient>
+    <linearGradient id="headerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00A8A5"/>
+      <stop offset="100%" stop-color="#008B8B"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="3232" fill="url(#bgGrad)"/>
+
+  <rect width="1080" height="320" fill="url(#headerGrad)"/>
+  
+  <text x="210" y="155" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="52" font-weight="700" fill="#FFFFFF">汇程移民</text>
+  <text x="212" y="195" font-family="Arial, sans-serif" font-size="20" letter-spacing="3" fill="#FFFFFF" opacity="0.9">HUICHENG IMMIGRATION</text>
+
+  <text x="540" y="250" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="56" font-weight="700" fill="#FFFFFF" text-anchor="middle">热门移民项目</text>
+  <text x="540" y="298" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="26" fill="rgba(255,255,255,0.9)" text-anchor="middle">全球优质身份规划方案 · 一对一专属定制</text>
+
+  
+    <g>
+      <rect x="40" y="360" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="360" width="8" height="280" rx="4" fill="#1E3A5F"/>
+      <circle cx="100" cy="500" r="42" fill="#1E3A5F" opacity="0.1"/>
+      <text x="100" y="514" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#1E3A5F" text-anchor="middle">1</text>
+      <text x="180" y="420" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">美国移民</text>
+      <rect x="180" y="572" width="160" height="42" rx="21" fill="#1E3A5F" opacity="0.12"/>
+      <text x="260" y="602" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#1E3A5F" text-anchor="middle">EB类</text>
+      <text x="180" y="470" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">圆梦美国，3年移美一步到位，优质教育、福</text><text x="180" y="516" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">利优厚，一人申请，全家受益</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="664" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="664" width="8" height="280" rx="4" fill="#0D7C66"/>
+      <circle cx="100" cy="804" r="42" fill="#0D7C66" opacity="0.1"/>
+      <text x="100" y="818" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#0D7C66" text-anchor="middle">2</text>
+      <text x="180" y="724" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">爱尔兰移民</text>
+      <rect x="180" y="876" width="160" height="42" rx="21" fill="#0D7C66" opacity="0.12"/>
+      <text x="260" y="906" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#0D7C66" text-anchor="middle">Stamp 4 永居</text>
+      <text x="180" y="774" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">6-8个月快速获批，先获批后投资，英国欧</text><text x="180" y="820" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">盟自由居住</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="968" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="968" width="8" height="280" rx="4" fill="#C41E3A"/>
+      <circle cx="100" cy="1108" r="42" fill="#C41E3A" opacity="0.1"/>
+      <text x="100" y="1122" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#C41E3A" text-anchor="middle">3</text>
+      <text x="180" y="1028" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">加拿大投资移民</text>
+      <rect x="180" y="1180" width="160" height="42" rx="21" fill="#C41E3A" opacity="0.12"/>
+      <text x="260" y="1210" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#C41E3A" text-anchor="middle">SUV</text>
+      <text x="180" y="1078" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">一步到位快速移民加拿大，不限投资额度，生</text><text x="180" y="1124" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">意类型自由选择</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="1272" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="1272" width="8" height="280" rx="4" fill="#2E5C8A"/>
+      <circle cx="100" cy="1412" r="42" fill="#2E5C8A" opacity="0.1"/>
+      <text x="100" y="1426" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#2E5C8A" text-anchor="middle">4</text>
+      <text x="180" y="1332" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">澳洲移民</text>
+      <rect x="180" y="1484" width="160" height="42" rx="21" fill="#2E5C8A" opacity="0.12"/>
+      <text x="260" y="1514" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#2E5C8A" text-anchor="middle">188/888</text>
+      <text x="180" y="1382" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">20万澳币起移民全球福利大国，创业移民+</text><text x="180" y="1428" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">投资移民 多种方式任选</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="1576" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="1576" width="8" height="280" rx="4" fill="#E85D75"/>
+      <circle cx="100" cy="1716" r="42" fill="#E85D75" opacity="0.1"/>
+      <text x="100" y="1730" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#E85D75" text-anchor="middle">5</text>
+      <text x="180" y="1636" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">希腊购房移民</text>
+      <rect x="180" y="1788" width="160" height="42" rx="21" fill="#E85D75" opacity="0.12"/>
+      <text x="260" y="1818" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#E85D75" text-anchor="middle">25万欧</text>
+      <text x="180" y="1686" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">一带一路东风至，25万欧，即移民又获利。</text><text x="180" y="1732" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">爱琴海畔做房东</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="1880" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="1880" width="8" height="280" rx="4" fill="#6B4C9A"/>
+      <circle cx="100" cy="2020" r="42" fill="#6B4C9A" opacity="0.1"/>
+      <text x="100" y="2034" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#6B4C9A" text-anchor="middle">6</text>
+      <text x="180" y="1940" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">格林纳达护照</text>
+      <rect x="180" y="2092" width="160" height="42" rx="21" fill="#6B4C9A" opacity="0.12"/>
+      <text x="260" y="2122" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#6B4C9A" text-anchor="middle">E2跳板</text>
+      <text x="180" y="1990" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">跳板美国，税筹任选，15万美元起投，全家</text><text x="180" y="2036" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">轻松定居美国</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="2184" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="2184" width="8" height="280" rx="4" fill="#C41E3A"/>
+      <circle cx="100" cy="2324" r="42" fill="#C41E3A" opacity="0.1"/>
+      <text x="100" y="2338" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#C41E3A" text-anchor="middle">7</text>
+      <text x="180" y="2244" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">葡萄牙购房移民</text>
+      <rect x="180" y="2396" width="160" height="42" rx="21" fill="#C41E3A" opacity="0.12"/>
+      <text x="260" y="2426" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#C41E3A" text-anchor="middle">黄金签证</text>
+      <text x="180" y="2294" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">6个月快速办理，一人办理全家获批 自由穿</text><text x="180" y="2340" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">行欧洲26国</text>
+    </g>
+  
+    <g>
+      <rect x="40" y="2488" width="1000" height="280" rx="20" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="40" y="2488" width="8" height="280" rx="4" fill="#1E3A5F"/>
+      <circle cx="100" cy="2628" r="42" fill="#1E3A5F" opacity="0.1"/>
+      <text x="100" y="2642" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="40" font-weight="700" fill="#1E3A5F" text-anchor="middle">8</text>
+      <text x="180" y="2548" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="38" font-weight="700" fill="#1E293B">英国移民</text>
+      <rect x="180" y="2700" width="160" height="42" rx="21" fill="#1E3A5F" opacity="0.12"/>
+      <text x="260" y="2730" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="22" font-weight="600" fill="#1E3A5F" text-anchor="middle">创新签证</text>
+      <text x="180" y="2598" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">最低5万英镑起，高性价比移民英国，工作、</text><text x="180" y="2644" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#475569">教育、身份三不误</text>
+    </g>
+  
+
+  
+    <g transform="translate(0, 2832)">
+      <rect width="1080" height="400" fill="#FFFFFF"/>
+      <rect x="40" y="0" width="1000" height="2" fill="#E2E8F0"/>
+
+      <!-- 左侧文字与热线 -->
+      <text x="60" y="90" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="34" font-weight="600" fill="#1E293B">专业移民经验护航，助您身份规划更轻松</text>
+      <text x="60" y="142" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="28" fill="#64748B">一对一定制，契合您的专属移民方案</text>
+
+      <rect x="60" y="178" width="540" height="84" rx="42" fill="#00A8A5"/>
+      <text x="330" y="232" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="34" font-weight="700" fill="#FFFFFF" text-anchor="middle">咨询热线：136-5185-2270</text>
+
+      <text x="60" y="320" font-family="Arial, sans-serif" font-size="24" fill="#94A3B8">官网：www.huichengyimin.com</text>
+
+      <!-- 右侧公众号二维码白卡（图片稍后 composite 叠加） -->
+      <rect x="700" y="50" width="260" height="260" rx="16" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+      <text x="830" y="333" font-family="Noto Sans SC, Microsoft YaHei, SimHei, sans-serif" font-size="26" font-weight="600" fill="#1E293B" text-anchor="middle">扫码关注公众号</text>
+    </g>
+  
+</svg>

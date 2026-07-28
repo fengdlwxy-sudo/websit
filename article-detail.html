@@ -274,6 +274,45 @@
             box-shadow: 0 6px 20px rgba(0,0,0,0.2);
         }
 
+        /* 底部电话按钮动画 */
+        .article-cta .cta-phone {
+            position: relative;
+            z-index: 1;
+        }
+        .article-cta .cta-phone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            box-shadow: 0 0 0 0 rgba(255,255,255,0.55);
+            animation: cta-pulse 2s ease-out infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .cta-phone-icon {
+            display: inline-block;
+            transform-origin: center bottom;
+            animation: phone-ring 2.5s ease-in-out infinite;
+        }
+        @keyframes cta-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,255,255,0.55); }
+            70% { box-shadow: 0 0 0 12px rgba(255,255,255,0); }
+            100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+        }
+        @keyframes phone-ring {
+            0%, 75%, 100% { transform: rotate(0deg) scale(1); }
+            80% { transform: rotate(-12deg) scale(1.15); }
+            85% { transform: rotate(10deg) scale(1.15); }
+            90% { transform: rotate(-6deg) scale(1.1); }
+            95% { transform: rotate(3deg) scale(1.05); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .article-cta .cta-phone::before,
+            .cta-phone-icon {
+                animation: none !important;
+            }
+        }
+
         /* 右侧：侧边栏 */
         .article-sidebar {
             position: sticky;
@@ -653,7 +692,7 @@
                     <div class="article-cta">
                         <h3>需要专业咨询？</h3>
                         <p>如果您对海外移民有任何疑问，欢迎联系汇程移民专业顾问团队，我们将为您提供一对一的专属咨询服务。</p>
-                        <a href="tel:136-5185-2270" class="cta-phone">&#x1F4DE; 136-5185-2270</a>
+                        <a href="tel:136-5185-2270" class="cta-phone"><span class="cta-phone-icon">&#x1F4DE;</span> 136-5185-2270</a>
                     </div>
                 </div>
                 <!-- 右侧边栏 -->
