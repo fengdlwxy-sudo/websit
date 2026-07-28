@@ -1959,12 +1959,16 @@ img {
     }
 
     .footer-grid {
-        grid-template-columns: 1fr;
-        gap: 30px;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px 16px;
         text-align: center;
     }
 
-    .footer-brand,
+    .footer-brand {
+        grid-column: 1 / -1;
+        text-align: center;
+    }
+
     .footer-links,
     .footer-qrcode-col {
         text-align: center;
@@ -1987,15 +1991,35 @@ img {
         margin-bottom: 6px;
     }
 
+    .footer-links h4,
+    .footer-qrcode-col h4 {
+        margin-bottom: 12px;
+        font-size: 15px;
+    }
+
     .footer-links ul {
-        display: inline-block;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px 12px;
         text-align: center;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0;
     }
 
     .footer-qrcode {
         margin: 0 auto;
-        max-width: 320px;
+        max-width: 160px;
         justify-content: center;
+    }
+
+    .footer-qrcode-img {
+        width: 90px;
+        height: 90px;
     }
 
     .slider-dots {
