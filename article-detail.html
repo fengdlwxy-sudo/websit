@@ -13,6 +13,16 @@
     <link rel="stylesheet" href="css/style.css">
     <style>
         /* ==================== 
+           基础 - 防止移动端溢出
+           ==================== */
+        html, body {
+            overflow-x: hidden;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* ==================== 
            面包屑
            ==================== */
         .breadcrumb-wrapper {
@@ -55,9 +65,10 @@
         }
         .article-layout {
             display: grid;
-            grid-template-columns: 1fr 320px;
+            grid-template-columns: minmax(0, 1fr) 320px;
             gap: 50px;
             align-items: start;
+            max-width: 100%;
         }
 
         /* 左侧：文章内容 */
@@ -66,6 +77,10 @@
             border-radius: var(--radius-lg);
             box-shadow: var(--shadow);
             padding: 40px;
+            max-width: 100%;
+            min-width: 0;
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
         .article-header {
             margin-bottom: 30px;
@@ -130,6 +145,16 @@
             font-size: 16px;
             line-height: 1.9;
             color: var(--text);
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+        .article-body h2,
+        .article-body h3,
+        .article-body h4,
+        .article-body li,
+        .article-body p {
+            overflow-wrap: break-word;
+            word-break: break-word;
         }
         .article-body h2 {
             font-size: 24px;
@@ -151,9 +176,21 @@
         .article-body ul,
         .article-body ol {
             margin: 12px 0 18px 24px;
+            padding-left: 0;
         }
         .article-body li {
             margin-bottom: 8px;
+        }
+        .article-body table,
+        .article-body pre,
+        .article-body iframe,
+        .article-body video {
+            max-width: 100%;
+            height: auto;
+        }
+        .article-body pre {
+            white-space: pre-wrap;
+            word-break: break-word;
         }
         .article-body strong {
             color: var(--primary-dark);
@@ -259,6 +296,8 @@
         .article-cta .cta-phone {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
             gap: 8px;
             padding: 12px 28px;
             background: white;
@@ -268,6 +307,9 @@
             border-radius: 6px;
             text-decoration: none;
             transition: var(--transition);
+            white-space: normal;
+            max-width: 100%;
+            word-break: break-word;
         }
         .article-cta .cta-phone:hover {
             transform: translateY(-2px);
@@ -396,6 +438,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 8px;
             color: white;
             font-size: 15px;
@@ -407,6 +450,9 @@
             border-radius: 8px;
             transition: all 0.2s;
             letter-spacing: 0.3px;
+            white-space: normal;
+            max-width: 100%;
+            word-break: break-word;
         }
         .sc-phones a:hover {
             background: rgba(255,255,255,0.30);
@@ -555,14 +601,18 @@
            ==================== */
         @media (max-width: 992px) {
             .article-layout {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 gap: 30px;
             }
             .article-sidebar {
                 position: static;
+                max-width: 100%;
+                min-width: 0;
             }
             .article-main {
                 padding: 25px;
+                max-width: 100%;
+                min-width: 0;
             }
             .article-title {
                 font-size: 24px;
@@ -580,6 +630,11 @@
             }
             .article-main {
                 padding: 20px;
+                border-radius: var(--radius);
+            }
+            .article-cover {
+                height: 200px;
+                border-radius: var(--radius);
             }
             .article-title {
                 font-size: 20px;
@@ -589,24 +644,42 @@
                 line-height: 1.7;
             }
             .article-body h2 {
-                font-size: 20px;
+                font-size: 18px;
             }
             .article-body h3 {
-                font-size: 17px;
+                font-size: 16px;
+            }
+            .article-body ul,
+            .article-body ol {
+                margin-left: 18px;
             }
             .article-cta {
                 padding: 20px;
+                border-radius: var(--radius);
             }
             .article-cta h3 {
                 font-size: 17px;
             }
             .article-cta .cta-phone {
-                font-size: 16px;
-                padding: 10px 20px;
+                font-size: 15px;
+                padding: 10px 16px;
+                width: 100%;
+                max-width: 100%;
             }
             .article-meta {
                 gap: 10px;
                 font-size: 12px;
+            }
+            .sc-phones a {
+                font-size: 14px;
+                padding: 10px 8px;
+            }
+            .sc-qrcode-img {
+                width: 110px;
+                height: 110px;
+            }
+            .breadcrumb .current {
+                max-width: 140px;
             }
         }
     </style>
