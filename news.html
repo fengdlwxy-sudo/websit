@@ -724,7 +724,7 @@
                 container.innerHTML =
                     '<a href="article-detail.html?id=' + escapeHtml(article.id) + '" class="featured-card">' +
                         '<div class="featured-img" style="' + (resolvedImage ? 'background: url(\'' + resolvedImage + '\') center/cover' : 'background: ' + grad) + ';">' +
-                            '<span>' + icon + '</span>' +
+                            (resolvedImage ? '' : '<span>' + icon + '</span>') +
                             '<div class="featured-img-badge">\u{1F31F} 精选文章</div>' +
                         '</div>' +
                         '<div class="featured-info">' +
@@ -756,7 +756,7 @@
                     return (
                         '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="article-card">' +
                             '<div class="article-card-img" style="' + (itemImage ? 'background: url(\'' + itemImage + '\') center/cover' : 'background: ' + grad) + ';">' +
-                                '<span>' + icon + '</span>' +
+                                (itemImage ? '' : '<span>' + icon + '</span>') +
                             '</div>' +
                             '<div class="article-card-body">' +
                                 '<span class="cat-badge">' + escapeHtml(label) + '</span>' +
