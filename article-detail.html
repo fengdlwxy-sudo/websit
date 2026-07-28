@@ -308,7 +308,9 @@
         }
         @media (prefers-reduced-motion: reduce) {
             .article-cta .cta-phone::before,
-            .cta-phone-icon {
+            .cta-phone-icon,
+            .sc-phones a::before,
+            .sc-phones .sc-icon {
                 animation: none !important;
             }
         }
@@ -412,6 +414,27 @@
         }
         .sc-phones .sc-icon {
             font-size: 15px;
+            display: inline-block;
+            transform-origin: center bottom;
+            animation: phone-ring 2.5s ease-in-out infinite;
+        }
+        .sc-phones a {
+            position: relative;
+            z-index: 1;
+        }
+        .sc-phones a::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            box-shadow: 0 0 0 0 rgba(255,255,255,0.55);
+            animation: cta-pulse 2s ease-out infinite;
+            z-index: -1;
+            pointer-events: none;
+        }
+        .sc-phones a:nth-child(2)::before,
+        .sc-phones a:nth-child(2) .sc-icon {
+            animation-delay: 0.6s;
         }
         .sc-divider {
             display: flex;
