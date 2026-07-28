@@ -81,6 +81,14 @@
             min-width: 0;
             overflow-wrap: break-word;
             word-break: break-word;
+            /* 兜底：裁切正文内任何超出卡片宽度的内容，避免手机端横向溢出 */
+            overflow-x: hidden;
+        }
+        /* 公众号编辑器常带出固定像素宽度/不换行元素，统一限制为自适应 */
+        .article-body * {
+            max-width: 100% !important;
+            overflow-wrap: break-word !important;
+            word-break: break-word !important;
         }
         .article-header {
             margin-bottom: 30px;
