@@ -1,9 +1,9 @@
 ﻿{
-    "items":  {
-                  "id":  "mrygakjn-m9z557",
-                  "username":  "ken",
-                  "password":  "ken6363",
-                  "role":  "admin",
-                  "createdAt":  "2026-07-24"
-              }
+    "items": {
+        "id": "mrygakjn-m9z557",
+        "username": "ken",
+        "password": "",
+        "role": "admin",
+        "createdAt": "2026-07-24"
+    }
 }
