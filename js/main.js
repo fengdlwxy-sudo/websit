@@ -865,17 +865,14 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // ==================== 
-    // 表单提交（写入 GitHub Issues，供后台查看）
+    // 表单提交（直发站长邮箱，通过 Formspree，前端不存储任何密钥/客户数据）
     // ====================
-    // 重要：此处需要配置一个 GitHub Fine-grained PAT，仅授予对当前仓库的 Issues 读写权限。
-    // 生成地址：https://github.com/settings/tokens
-    // 权限选择：Repository access -> Only select repositories -> fengdlwxy-sudo/websit
-    //          Repository permissions -> Issues -> Read and Write
-    // 令牌采用反转存储，避免被 GitHub secret scanning 识别并拦截推送
-    const FORM_SUBMIT_TOKEN_REVERSED = '232p10Kb1GXHnnc85NqXFbsLI7FrRQir0cKk_phg';
-    const FORM_SUBMIT_TOKEN = FORM_SUBMIT_TOKEN_REVERSED.split('').reverse().join('');
-    const FORM_REPO_OWNER = 'fengdlwxy-sudo';
-    const FORM_REPO_NAME = 'websit';
+    // 接入步骤：
+    //   1. 打开 https://formspree.io 注册（免费），新建表单，绑定邮箱 fengdlinfo@126.com
+    //   2. 复制你的表单 Endpoint ID，替换下方 FORMSPREE_ID（形如 xxxxxxxx）
+    //   3. 客户提交后，Formspree 会把姓名/电话直接发到上述邮箱，不经过公开仓库、不进代码
+    // 说明：FORMSPREE_ID 只是“收件箱地址”，不是密钥；泄露也不会暴露历史客户数据
+    const FORMSPREE_ID = 'xykrvgpq'; // 你的 Formspree 表单 ID（客户信息直发 fengdlinfo@126.com）
 
     const contactForm = document.getElementById('contactForm');
     if (contactForm) {
@@ -897,44 +894,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.textContent = '提交中...';
             }
 
-            const maskedPhone = phone.replace(/(\d{3})\d{4}(\d{4})/, '$1****$2');
-            const title = `[客户咨询] ${name} - ${maskedPhone} - 意向：${country || '未选择'}`;
-            const body = `## 客户咨询信息
-
-- 姓名：${name}
-- 电话：${phone}
-- 意向国家：${country || '未选择'}
-- 提交时间：${new Date().toLocaleString('zh-CN', { hour12: false })}
-- 来源页面：${location.href}
-- 用户标识：${navigator.userAgent}
-
----
-*此数据由网站前台表单自动提交，可在后台「客户咨询」菜单查看。*`;
-
             let submitted = false;
             let failReason = '';
-            if (!FORM_SUBMIT_TOKEN || FORM_SUBMIT_TOKEN.length <= 20) {
-                failReason = '表单未配置提交令牌（FORM_SUBMIT_TOKEN 缺失或太短）。';
+            if (!FORMSPREE_ID || FORMSPREE_ID === 'YOUR_FORMSPREE_ID') {
+                failReason = '表单未配置 Formspree ID（请在 js/main.js 中填入 FORMSPREE_ID）。';
             } else {
                 try {
-                    const res = await fetch(`https://api.github.com/repos/${FORM_REPO_OWNER}/${FORM_REPO_NAME}/issues`, {
+                    const res = await fetch('https://formspree.io/f/' + FORMSPREE_ID, {
                         method: 'POST',
-                        headers: {
-                            'Accept': 'application/vnd.github+json',
-                            'Authorization': 'Bearer ' + FORM_SUBMIT_TOKEN,
-                            'Content-Type': 'application/json',
-                            'X-GitHub-Api-Version': '2022-11-28'
-                        },
-                        body: JSON.stringify({ title, body })
+                        headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            name: name,
+                            phone: phone,
+                            country: country || '未选择',
+                            _subject: '[汇程移民-客户咨询] ' + name + ' - ' + phone,
+                            gotcha: '' // 蜜罐字段（注意：Formspree 标准名是 gotcha，不带下划线）
+                        })
                     });
                     submitted = res.ok;
                     if (!res.ok) {
                         const txt = await res.text();
-                        failReason = 'GitHub 返回 ' + res.status + '：' + txt.slice(0, 300);
+                        failReason = 'Formspree 返回 ' + res.status + '：' + txt.slice(0, 200);
                         console.error('客户咨询提交失败：', res.status, txt);
                     }
                 } catch (err) {
-                    failReason = '网络/跨域错误：' + err.message;
+                    failReason = '网络错误：' + err.message;
                     console.error('客户咨询提交异常：', err);
                 }
             }
@@ -948,14 +932,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 showModal('提交成功', '您的定制方案申请已收到！汇程移民顾问将尽快致电您，请保持电话畅通。');
                 contactForm.reset();
             } else {
-                // 提交失败：明确告诉用户，并给出排查方向（站长在控制台可见详细原因）
-                console.warn('【站长提示】前台表单未成功写入 GitHub Issues。原因：' + failReason);
-                console.warn('【排查】请确认 js/main.js 中的 FORM_SUBMIT_TOKEN 对应的令牌具备 repo（或 public_repo）权限，Fine-grained 令牌需授予本仓库 Issues: Read and Write。');
-                showModal('提交未成功', '您的申请暂时未能保存到后台（错误已记录）。请稍后重试，或直接拨打顾问电话联系我们。站长可打开浏览器控制台(F12)查看具体原因。');
+                console.warn('【站长提示】前台表单未成功提交到 Formspree。原因：' + failReason);
+                showModal('提交未成功', '您的申请暂时未能发送（错误已记录）。请稍后重试，或直接拨打顾问电话联系我们。');
             }
         });
     }
-
     // ==================== 
     // 平滑滚动（处理锚点链接）
     // ====================
