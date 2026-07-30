@@ -692,6 +692,61 @@
         }
     </style>
 
+
+<script>
+function seoSet(sel, attr, key, val, isLink) {
+  var el = document.querySelector(sel);
+  if (!el) { el = document.createElement(isLink ? 'link' : 'meta'); el.setAttribute(attr, key); document.head.appendChild(el); }
+  el.setAttribute(isLink ? 'href' : 'content', val);
+}
+function seoInjectDetail(item, opts) {
+  try {
+    opts = opts || {};
+    var base = window.location.origin;
+    var url = window.location.href.split('#')[0];
+    var title = (item && item.title) ? item.title : '汇程移民';
+    var fullTitle = title + ' - 汇程移民';
+    if (document.getElementById('pageTitle')) document.getElementById('pageTitle').textContent = fullTitle;
+    if (document.title !== fullTitle) document.title = fullTitle;
+    var summary = (item && (item.summary || item.content)) ? (item.summary || item.content) : title;
+    var desc = String(summary).replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim().slice(0, 180);
+    var img = (item && (item.image || item.cover || item.thumbnail)) ? (item.image || item.cover || item.thumbnail) : '';
+    img = img ? (img.indexOf('http') === 0 ? img : base + '/' + img.replace(/^\//, '')) : base + '/assets/images/favicon.png';
+    var datePub = (item && (item.createdAt || item.date || item.publishDate)) ? (item.createdAt || item.date || item.publishDate) : '';
+    var dateMod = (item && item.updatedAt) ? item.updatedAt : datePub;
+    seoSet('meta[name="description"]', 'name', 'description', desc, false);
+    seoSet('link[rel="canonical"]', 'rel', 'canonical', url, true);
+    seoSet('meta[property="og:type"]', 'property', 'og:type', 'article', false);
+    seoSet('meta[property="og:title"]', 'property', 'og:title', fullTitle, false);
+    seoSet('meta[property="og:description"]', 'property', 'og:description', desc, false);
+    seoSet('meta[property="og:url"]', 'property', 'og:url', url, false);
+    seoSet('meta[property="og:image"]', 'property', 'og:image', img, false);
+    seoSet('meta[property="og:site_name"]', 'property', 'og:site_name', '汇程移民', false);
+    seoSet('meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image', false);
+    seoSet('meta[name="twitter:title"]', 'name', 'twitter:title', fullTitle, false);
+    seoSet('meta[name="twitter:description"]', 'name', 'twitter:description', desc, false);
+    seoSet('meta[name="twitter:image"]', 'name', 'twitter:image', img, false);
+    var ld = {
+      "@context": "https://schema.org",
+      "@type": opts.type === 'product' ? "Product" : "Article",
+      "headline": title,
+      "description": desc,
+      "image": img,
+      "author": {"@type": "Organization", "name": "汇程移民"},
+      "publisher": {"@type": "Organization", "name": "汇程移民", "logo": {"@type": "ImageObject", "url": base + "/assets/images/favicon.png"}},
+      "mainEntityOfPage": {"@type": "WebPage", "@id": url}
+    };
+    if (datePub) ld.datePublished = datePub;
+    if (dateMod) ld.dateModified = dateMod;
+    if (opts.type === 'product') { ld.name = title; ld.brand = {"@type": "Brand", "name": "汇程移民"}; }
+    var lj = document.getElementById('seo-jsonld');
+    if (lj && lj.parentNode) lj.parentNode.removeChild(lj);
+    lj = document.createElement('script'); lj.type = 'application/ld+json'; lj.id = 'seo-jsonld';
+    lj.textContent = JSON.stringify(ld); document.head.appendChild(lj);
+  } catch (e) { console.warn('SEO inject error', e); }
+}
+</script>
+
 </head>
 <body>
     <!-- 顶部联系栏 -->
