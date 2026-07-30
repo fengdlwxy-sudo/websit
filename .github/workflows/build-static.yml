@@ -1,0 +1,44 @@
+name: Build Static Pages
+
+# 当后台发文章/项目/案例（data/** 变更）推送到 main 时，
+# 自动把内容烘焙成独立静态 HTML 并刷新 sitemap，再提交回 main。
+# 该提交会再次触发 deploy.yml，由 VM 拉取并部署新静态页。
+on:
+  push:
+    paths:
+      - 'data/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate static pages & sitemap
+        run: node generate-static-pages.js
+
+      - name: Commit generated pages
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add articles/ projects/ cases/ sitemap.xml
+          if git diff --cached --quiet; then
+            echo "无变化，跳过提交"
+          else
+            git commit -m "chore: 自动重建静态页（来自 data 变更）"
+            git push
+            echo "已提交并推送生成的静态页"
+          fi

@@ -472,16 +472,17 @@ ${urls.map(u => `  <url>
 fs.writeFileSync('sitemap.xml', sitemap, 'utf8');
 console.log(`sitemap.xml 已更新（共 ${urls.length} 条 URL）`);
 
-// 同步刷新 Baidu 推送队列
+// 同步刷新 Baidu 推送队列（仅当本地存在 baidu_push 目录时；CI/Action 环境跳过，避免向仓库外写入报错）
 const BAIDU_PUSH_DIR = path.join('..', 'baidu_push');
-const urlsTxtPath = path.join(BAIDU_PUSH_DIR, 'urls.txt');
-if (fs.existsSync(urlsTxtPath)) {
-  fs.writeFileSync(urlsTxtPath, urls.map(u => SITE_URL + u.loc).join('\n') + '\n', 'utf8');
+if (fs.existsSync(BAIDU_PUSH_DIR)) {
+  const allUrls = urls.map(u => SITE_URL + u.loc).join('\n') + '\n';
+  fs.writeFileSync(path.join(BAIDU_PUSH_DIR, 'urls.txt'), allUrls, 'utf8');
+  if (!fs.existsSync(path.join(BAIDU_PUSH_DIR, 'remaining.txt'))) {
+    fs.writeFileSync(path.join(BAIDU_PUSH_DIR, 'remaining.txt'), allUrls, 'utf8');
+  }
   console.log(`已同步 urls.txt（${urls.length} 条）`);
 } else {
-  fs.writeFileSync(urlsTxtPath, urls.map(u => SITE_URL + u.loc).join('\n') + '\n', 'utf8');
-  fs.writeFileSync(path.join(BAIDU_PUSH_DIR, 'remaining.txt'), urls.map(u => SITE_URL + u.loc).join('\n') + '\n', 'utf8');
-  console.log(`已创建 urls.txt / remaining.txt（${urls.length} 条）`);
+  console.log('跳过 baidu_push 同步（baidu_push 目录不存在，可能运行于 CI 环境）');
 }
 
 console.log('全部完成。');
