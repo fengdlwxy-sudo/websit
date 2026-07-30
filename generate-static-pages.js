@@ -75,6 +75,14 @@ const UMENG_SCRIPT = `<!-- 友盟/UMeng 站点统计 -->
 })();
 </script>`;
 
+// 百度统计 (Tongji) - 全站访问流量分析
+const BAIDU_TONGJI_SCRIPT = `<!-- 百度统计 -->
+<script src="/js/baidu-tongji.js?v=1" defer></script>`;
+
+// 全站右侧悬浮联系面板 (电话 + 微信 + 立即咨询)
+const CONTACT_FLOAT_SCRIPT = `<!-- 右侧悬浮联系面板 -->
+<script src="/js/contact-float.js?v=1" defer></script>`;
+
 function escapeHtml(str) {
   return String(str == null ? '' : str)
     .replace(/&/g, '&amp;')
@@ -169,6 +177,8 @@ ${headerHtml}
 <main class="page-content">${bodyHtml}</main>
 ${footerHtml}
 ${UMENG_SCRIPT}
+${BAIDU_TONGJI_SCRIPT}
+${CONTACT_FLOAT_SCRIPT}
 </body>
 </html>`;
 }
