@@ -504,16 +504,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const defaultArticles = {
         featured: {
-            id: 'a-001', title: '高考，是孩子尤为重要的一条路，但不是唯一',
-            category: 'education', summary: '当下中国家庭的教育选择，正在从「孤注一掷」走向「多元布局」。', createdAt: '2026-07-15'
+            id: 'ms2y7rdz-vfsue4', title: '欧盟下达最后通牒！加勒比五国或关停投资入籍计划！',
+            category: 'policy', summary: '欧盟持续施压，加勒比五国护照项目面临变局。', createdAt: '2026-07-22'
         },
         items: [
-            { id: 'a-002', title: '除了高考，孩子还有别的出路吗？', category: 'education', createdAt: '2026-07-15' },
-            { id: 'a-003', title: '这个国家出手了！31页通函严堵漏洞！', category: 'policy', createdAt: '2026-07-15' },
-            { id: 'a-004', title: '「外国人限购令」，黄了！', category: 'news', createdAt: '2026-07-15' },
-            { id: 'a-005', title: '这三种定义都分不清，还想办理海外身份？', category: 'news', createdAt: '2026-07-15' },
-            { id: 'a-006', title: '全球最大跨境财富管理中心易主！', category: 'invest', createdAt: '2026-07-15' },
-            { id: 'a-007', title: '澄清！美国I-485新政策的真正意图其实是…', category: 'policy', createdAt: '2026-07-10' }
+            { id: 'ms0f1qdv-4gqohg', title: '加拿大正式公布2026-2028移民配额计划！', category: 'policy', createdAt: '2026-07-22' },
+            { id: 'mrx4jynt-9kpo48', title: '移民热点速递', category: 'news', createdAt: '2026-07-20' },
+            { id: 'mrx50gl2-armia0', title: '海外置业新趋势', category: 'property', createdAt: '2026-07-20' },
+            { id: 'mrx58wv9-4al3nq', title: '教育规划指南', category: 'education', createdAt: '2026-07-19' },
+            { id: 'mrx5lqts-m9keh3', title: '生活资讯', category: 'life', createdAt: '2026-07-19' },
+            { id: 'mrx630bj-2m4t0o', title: '海外投资观察', category: 'invest', createdAt: '2026-07-18' }
         ]
     };
 
