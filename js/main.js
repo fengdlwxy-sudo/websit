@@ -273,7 +273,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!container || !cases || !cases.items) return;
 
         container.innerHTML = cases.items.map(item => `
-            <a href="case-detail.html?id=${item.id}" class="case-card">
+            <a href="cases/${item.id}.html" class="case-card">
                 <div class="case-img" style="${item.image ? `background: url('${resolveAssetPath(item.image)}') center/cover;` : `background: ${item.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)'};`}">
                     ${item.image ? '' : `<span>${item.icon || '📌'}</span>`}
                     <div class="case-read-more">查看详情 ›</div>
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? `<img src="${p.image}" alt="" style="width:20px;height:14px;object-fit:cover;border-radius:2px;vertical-align:middle;"> `
                     : '';
                 return `
-                <a href="project-detail.html?id=${p.id}" class="project-card">
+                <a href="projects/${p.id}.html" class="project-card">
                     <div class="project-img" style="${bgStyle}">
                         <span class="project-country">${flagIcon}${countryLabel}</span>
                     </div>
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const featured2 = featuredArr[1];
 
         const secondaryHtml = featured2 ? `
-            <a href="${escapeHtml(featured2.link || ('article-detail.html?id=' + (featured2.id || '')))}" class="news-feature-card-secondary">
+            <a href="${escapeHtml(featured2.link || ('articles/' + (featured2.id || '') + '.html'))}" class="news-feature-card-secondary">
                 <div class="news-feature-icon-block" style="background: ${escapeHtml(featured2.gradient || 'linear-gradient(135deg, #E85D75 0%, #F39C12 100%)')};">
                     <span>${escapeHtml(featured2.icon || '📘')}</span>
                 </div>
@@ -555,7 +555,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const primaryHtml = featured1 ? `
             <div class="news-feature-primary">
-                <a href="${escapeHtml(featured1.link || ('article-detail.html?id=' + (featured1.id || '')))}" class="news-feature-card news-feature-card-primary">
+                <a href="${escapeHtml(featured1.link || ('articles/' + (featured1.id || '') + '.html'))}" class="news-feature-card news-feature-card-primary">
                     <div class="news-feature-img" style="${featured1.image ? `background: url('${escapeHtml(resolveFeaturedImage(featured1.image))}') center/cover;` : `background: ${escapeHtml(featured1.gradient || 'linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)')};`}">
                         ${featured1.image ? '' : `<span>${escapeHtml(featured1.icon || '🎓')}</span>`}
                         <span class="news-feature-tag">${escapeHtml(articleCategoryMap[featured1.category] || '头条')}</span>
@@ -576,7 +576,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const listHtml = `
             <div class="news-list">
                 ${listItems.map(item => `
-                    <a href="article-detail.html?id=${escapeHtml(item.id)}" class="news-item">
+                    <a href="articles/${escapeHtml(item.id)}.html" class="news-item">
                         <span class="news-tag ${(item.createdAt || extractDateFromImageUrl(item.image)) && (item.createdAt || extractDateFromImageUrl(item.image)).startsWith('2026-07-1') ? 'new' : ''}">${escapeHtml(articleCategoryMap[item.category] || '文章')}</span>
                         <h4>${escapeHtml(item.title)}</h4>
                         <span class="news-date">${escapeHtml(item.createdAt || extractDateFromImageUrl(item.image) || '')}</span>

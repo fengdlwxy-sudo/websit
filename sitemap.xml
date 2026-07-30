@@ -3,293 +3,305 @@
   <url>
     <loc>https://www.huichengyimin.com/</loc>
     <lastmod>2026-07-30</lastmod>
-    <changefreq>daily</changefreq>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://www.huichengyimin.com/news.html</loc>
     <lastmod>2026-07-30</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
   </url>
   <url>
     <loc>https://www.huichengyimin.com/projects.html</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms2y7rdz-vfsue4.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms5mji4n-k4mfkc</loc>
-    <lastmod>2026-07-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms5j8pyu-zc6muy</loc>
-    <lastmod>2026-07-29</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms4ahw0n-26x3k8</loc>
-    <lastmod>2026-07-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms48u1tq-noc3n3</loc>
-    <lastmod>2026-07-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms471boa-t3es2p</loc>
-    <lastmod>2026-07-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms45b8pv-z0fpo0</loc>
-    <lastmod>2026-07-28</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms2y7rdz-vfsue4</loc>
-    <lastmod>2026-07-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms2rwox2-sr8qi3</loc>
-    <lastmod>2026-07-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms2psvtb-gmj9bt</loc>
-    <lastmod>2026-07-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms2odjpn-zkipcy</loc>
-    <lastmod>2026-07-27</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=ms0f1qdv-4gqohg</loc>
+    <loc>https://www.huichengyimin.com/articles/ms0f1qdv-4gqohg.html</loc>
     <lastmod>2026-07-25</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mryj5iqu-93dmko</loc>
+    <loc>https://www.huichengyimin.com/articles/ms5mji4n-k4mfkc.html</loc>
+    <lastmod>2026-07-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms5j8pyu-zc6muy.html</loc>
+    <lastmod>2026-07-29</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms4ahw0n-26x3k8.html</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms48u1tq-noc3n3.html</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms471boa-t3es2p.html</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms45b8pv-z0fpo0.html</loc>
+    <lastmod>2026-07-28</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms2y7rdz-vfsue4.html</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mryi0py9-94i8br</loc>
-    <lastmod>2026-07-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mryhc1yw-xs1j4e</loc>
+    <loc>https://www.huichengyimin.com/articles/ms2rwox2-sr8qi3.html</loc>
     <lastmod>2026-07-27</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mryh69v0-5btbtx</loc>
+    <loc>https://www.huichengyimin.com/articles/ms2psvtb-gmj9bt.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms2odjpn-zkipcy.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/ms0f1qdv-4gqohg.html</loc>
+    <lastmod>2026-07-25</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/mryj5iqu-93dmko.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/mryi0py9-94i8br.html</loc>
     <lastmod>2026-07-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mrx630bj-2m4t0o</loc>
+    <loc>https://www.huichengyimin.com/articles/mryhc1yw-xs1j4e.html</loc>
+    <lastmod>2026-07-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/mryh69v0-5btbtx.html</loc>
+    <lastmod>2026-07-30</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.huichengyimin.com/articles/mrx630bj-2m4t0o.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mrx5lqts-m9keh3</loc>
+    <loc>https://www.huichengyimin.com/articles/mrx5lqts-m9keh3.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mrx58wv9-4al3nq</loc>
+    <loc>https://www.huichengyimin.com/articles/mrx58wv9-4al3nq.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mrx50gl2-armia0</loc>
+    <loc>https://www.huichengyimin.com/articles/mrx50gl2-armia0.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mrx4jynt-9kpo48</loc>
+    <loc>https://www.huichengyimin.com/articles/mrx4jynt-9kpo48.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=mrvpth7m-rtwlee</loc>
+    <loc>https://www.huichengyimin.com/articles/mrvpth7m-rtwlee.html</loc>
     <lastmod>2026-07-22</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-002</loc>
+    <loc>https://www.huichengyimin.com/articles/a-002.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-003</loc>
+    <loc>https://www.huichengyimin.com/articles/a-003.html</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-004</loc>
+    <loc>https://www.huichengyimin.com/articles/a-004.html</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-005</loc>
+    <loc>https://www.huichengyimin.com/articles/a-005.html</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-006</loc>
+    <loc>https://www.huichengyimin.com/articles/a-006.html</loc>
     <lastmod>2026-07-15</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-007</loc>
+    <loc>https://www.huichengyimin.com/articles/a-007.html</loc>
     <lastmod>2026-07-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/article-detail.html?id=a-008</loc>
+    <loc>https://www.huichengyimin.com/articles/a-008.html</loc>
     <lastmod>2026-07-08</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-gr-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-gr-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-us-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-us-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-us-002</loc>
+    <loc>https://www.huichengyimin.com/projects/p-us-002.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-sg-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-sg-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-sg-002</loc>
+    <loc>https://www.huichengyimin.com/projects/p-sg-002.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-jp-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-jp-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-nz-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-nz-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-hk-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-hk-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-pt-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-pt-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-mt-001</loc>
+    <loc>https://www.huichengyimin.com/projects/p-mt-001.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-us-003</loc>
+    <loc>https://www.huichengyimin.com/projects/p-us-003.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/project-detail.html?id=p-hk-002</loc>
+    <loc>https://www.huichengyimin.com/projects/p-hk-002.html</loc>
     <lastmod>2026-07-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/case-detail.html?id=case-1</loc>
+    <loc>https://www.huichengyimin.com/cases/case-1.html</loc>
     <lastmod>2026-07-09</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/case-detail.html?id=case-2</loc>
+    <loc>https://www.huichengyimin.com/cases/case-2.html</loc>
     <lastmod>2026-04-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/case-detail.html?id=case-3</loc>
+    <loc>https://www.huichengyimin.com/cases/case-3.html</loc>
     <lastmod>2025-11-27</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/case-detail.html?id=case-4</loc>
+    <loc>https://www.huichengyimin.com/cases/case-4.html</loc>
     <lastmod>2025-11-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/case-detail.html?id=case-5</loc>
+    <loc>https://www.huichengyimin.com/cases/case-5.html</loc>
     <lastmod>2025-09-17</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://www.huichengyimin.com/case-detail.html?id=case-6</loc>
+    <loc>https://www.huichengyimin.com/cases/case-6.html</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

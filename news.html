@@ -745,7 +745,7 @@
 
                 var resolvedImage = window.hcResolveAssetPath ? window.hcResolveAssetPath(article.image) : article.image;
                 container.innerHTML =
-                    '<a href="article-detail.html?id=' + escapeHtml(article.id) + '" class="featured-card">' +
+                    '<a href="articles/' + escapeHtml(article.id) + '.html" class="featured-card">' +
                         '<div class="featured-img" style="' + (resolvedImage ? 'background: url(\'' + resolvedImage + '\') center/cover' : 'background: ' + grad) + ';">' +
                             (resolvedImage ? '' : '<span>' + icon + '</span>') +
                             '<div class="featured-img-badge">\u{1F31F} 精选文章</div>' +
@@ -777,7 +777,7 @@
                     var label = CATEGORY_LABELS[cat] || cat;
                     var itemImage = window.hcResolveAssetPath ? window.hcResolveAssetPath(item.image) : item.image;
                     return (
-                        '<a href="article-detail.html?id=' + escapeHtml(item.id) + '" class="article-card">' +
+                        '<a href="articles/' + escapeHtml(item.id) + '.html" class="article-card">' +
                             '<div class="article-card-img" style="' + (itemImage ? 'background: url(\'' + itemImage + '\') center/cover' : 'background: ' + grad) + ';">' +
                                 (itemImage ? '' : '<span>' + icon + '</span>') +
                             '</div>' +
@@ -1014,5 +1014,6 @@
             }
         })();
     </script>
+<!-- 友盟/UMeng 站点统计 --><script type="text/javascript">(function(){var _u="https://s9.cnzz.com/";var _d=document,_g=_d.createElement("script"),_s=_d.getElementsByTagName("script")[0];_g.type="text/javascript";_g.async=true;_g.src=_u+"z.js?id=1281492695";_s.parentNode.insertBefore(_g,_s);})();</script>
 </body>
 </html>

@@ -407,7 +407,7 @@ function seoInjectDetail(item, opts) {
 
             document.getElementById('otherCases').innerHTML = cases.map(c => `
                 <div class="sidebar-case">
-                    <a href="case-detail.html?id=${c.id}">${escapeHtml(c.title)}</a>
+                    <a href="cases/${c.id}.html">${escapeHtml(c.title)}</a>
                     <div class="case-date">${c.date || ''}</div>
                 </div>
             `).join('');
@@ -415,5 +415,25 @@ function seoInjectDetail(item, opts) {
 
         document.addEventListener('DOMContentLoaded', loadCase);
     </script>
+<!-- 友盟/UMeng 站点统计 --><script type="text/javascript">(function(){var _u="https://s9.cnzz.com/";var _d=document,_g=_d.createElement("script"),_s=_d.getElementsByTagName("script")[0];_g.type="text/javascript";_g.async=true;_g.src=_u+"z.js?id=1281492695";_s.parentNode.insertBefore(_g,_s);})();</script>
+<script>
+/* SEO: 动态详情页以预渲染静态页为主版本 */
+(function(){
+  function applyStaticCanonical(){
+    var path=window.location.pathname;
+    var id=new URLSearchParams(window.location.search).get('id');
+    if(!id) return;
+    var dir=path.indexOf('article-detail')>=0?'articles':(path.indexOf('project-detail')>=0?'projects':(path.indexOf('case-detail')>=0?'cases':null));
+    if(!dir) return;
+    var u='https://www.huichengyimin.com/'+dir+'/'+encodeURIComponent(id)+'.html';
+    var l=document.querySelector('link[rel="canonical"]'); if(!l){l=document.createElement('link');l.rel='canonical';document.head.appendChild(l);} l.href=u;
+    var o=document.querySelector('meta[property="og:url"]'); if(o)o.content=u;
+  }
+  if(document.readyState!=='loading') applyStaticCanonical();
+  else document.addEventListener('DOMContentLoaded',applyStaticCanonical);
+  window.addEventListener('load',applyStaticCanonical);
+  setTimeout(applyStaticCanonical,500);
+})();
+</script>
 </body>
 </html>
