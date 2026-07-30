@@ -137,6 +137,7 @@ function wrapPage({ title, description, canonical, ogType, jsonLd, bodyHtml, bre
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>${escapeHtml(title)}</title>
+<base href="/">
 <meta name="description" content="${escapeHtml(description)}">
 <link rel="canonical" href="${canonical}">
 <meta property="og:type" content="${ogType}">
