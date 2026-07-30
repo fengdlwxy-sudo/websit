@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 强制浏览器不缓存 HTML，避免下拉菜单更新后仍显示旧内容 -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>成功案例 - 汇程移民</title>
+    <meta name="description" content="汇程移民真实客户成功案例，涵盖投资移民、创业移民、技术移民，见证专业身份规划实力。">
+    <link rel="canonical" href="https://www.huichengyimin.com/cases.html">
+    <meta property="og:title" content="成功案例 - 汇程移民">
+    <meta property="og:description" content="汇程移民真实客户成功案例，涵盖投资移民、创业移民、技术移民。">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.huichengyimin.com/cases.html">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link rel="stylesheet" href="css/style.css?v=2026072817">
+    <style>
+        .page-banner { background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%); color: white; padding: 80px 0 60px; text-align: center; }
+        .page-banner-title { font-size: 40px; font-weight: 700; margin-bottom: 12px; }
+        .page-banner-subtitle { font-size: 16px; opacity: 0.85; }
+        .cases-section { padding: 50px 0 70px; }
+        .cases-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
+        .case-card { background: white; border-radius: var(--radius-lg); overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.06); transition: all .3s; border: 1px solid var(--border); cursor: pointer; }
+        .case-card:hover { transform: translateY(-5px); box-shadow: 0 12px 30px rgba(0,0,0,0.12); }
+        .case-card-image { height: 180px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); background-size: cover; background-position: center; position: relative; }
+        .case-card-badge { position: absolute; top: 12px; left: 12px; padding: 4px 12px; background: var(--accent); color: white; border-radius: 20px; font-size: 12px; }
+        .case-card-body { padding: 22px; }
+        .case-card-title { font-size: 18px; font-weight: 600; color: var(--text); margin-bottom: 10px; line-height: 1.4; }
+        .case-card-summary { font-size: 14px; color: var(--text-light); line-height: 1.6; margin-bottom: 18px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .case-card-btn { display: inline-block; padding: 10px 22px; background: var(--primary); color: white; border-radius: var(--radius); text-decoration: none; font-size: 14px; transition: background .2s; }
+        .case-card-btn:hover { background: var(--primary-dark); }
+        .loading, .empty, .error { text-align: center; padding: 60px 20px; color: var(--text-light); }
+        @media (max-width: 992px) { .cases-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 576px) { .cases-grid { grid-template-columns: 1fr; } .page-banner-title { font-size: 30px; } }
+    </style>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "成功案例 - 汇程移民",
+      "url": "https://www.huichengyimin.com/cases.html"
+    }
+    </script>
+</head>
+<body>
+    <!-- 顶部联系栏 -->
+    <div class="top-bar">
+        <div class="container">
+            <div class="top-bar-left">
+                <span>欢迎访问汇程移民官方网站！</span>
+            </div>
+            <div class="top-bar-right">
+                <span class="hotline-label">免费咨询热线</span>
+                <a href="tel:136-5185-2270" class="hotline-num">136-5185-2270</a>
+                <span class="hotline-sep">|</span>
+                <a href="tel:199-0172-6016" class="hotline-num">199-0172-6016</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主导航 -->
+    <header class="main-header" id="mainHeader">
+        <div class="container header-inner">
+            <a href="/" class="logo">
+                <img src="assets/images/logo-full-color.png" alt="汇程移民" class="logo-img">
+            </a>
+            <nav class="main-nav" id="mainNav">
+                <ul class="nav-list">
+                    <li><a href="#home" class="active">首页</a></li>
+                    <li class="has-dropdown">
+                        <a href="#projects">移民项目</a>
+                        <div class="dropdown">
+                            <a href="projects.html?category=investment">投资移民</a>
+                            <a href="projects.html?category=business">创业移民</a>
+                            <a href="projects.html?category=skilled">技术移民</a>
+                            <a href="projects.html?countryId=gr">购房移民</a>
+                        </div>
+                    </li>
+                    <li class="has-dropdown">
+                        <a href="#countries">移民国家</a>
+                        <div class="dropdown">
+                            <a href="projects.html?countryId=gr">希腊</a>
+                            <a href="projects.html?countryId=us">美国</a>
+                            <a href="projects.html?countryId=sg">新加坡</a>
+                            <a href="projects.html?countryId=jp">日本</a>
+                            <a href="projects.html?countryId=nz">新西兰</a>
+                            <a href="projects.html?countryId=hk">中国香港</a>
+                            <a href="projects.html?countryId=pt">葡萄牙</a>
+                            <a href="projects.html?countryId=mt">马耳他</a>
+                        </div>
+                    </li>
+                    <li><a href="#services">服务业务</a></li>
+                    <li><a href="#news">移民攻略</a></li>
+                    <li><a href="#cases">成功案例</a></li>
+                    <li><a href="#about">关于我们</a></li>
+                </ul>
+            </nav>
+            <a href="#contact" class="btn btn-header">免费评估</a>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="打开菜单">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <section class="page-banner">
+        <div class="container">
+            <h1 class="page-banner-title">成功案例</h1>
+            <p class="page-banner-subtitle">真实客户案例，见证汇程移民的专业与实力</p>
+        </div>
+    </section>
+
+    <section class="cases-section">
+        <div class="container">
+            <div id="casesLoading" class="loading">正在加载案例...</div>
+            <div id="caseListGrid" class="cases-grid" style="display:none;"></div>
+            <div id="casesEmpty" class="empty" style="display:none;">暂无相关案例</div>
+        </div>
+    </section>
+
+<!-- 页脚 -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <img src="assets/images/logo-full-white.png" alt="汇程移民" class="footer-logo">
+                    <p>汇程移民，您值得信赖的全球身份规划专家。专业提供投资移民、技术移民、创业移民、海外房产、资产配置等一站式服务。</p>
+                    <div class="footer-hotline">
+                        <p>免费咨询热线</p>
+                        <a href="tel:136-5185-2270">136-5185-2270</a>
+                        <span>|</span>
+                        <a href="tel:199-0172-6016">199-0172-6016</a>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <h4>移民项目</h4>
+                    <ul>
+                        <li><a href="#">投资移民</a></li>
+                        <li><a href="#">创业移民</a></li>
+                        <li><a href="#">技术移民</a></li>
+                        <li><a href="#">购房移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>热门国家</h4>
+                    <ul>
+                        <li><a href="#">希腊移民</a></li>
+                        <li><a href="#">美国移民</a></li>
+                        <li><a href="#">新加坡移民</a></li>
+                        <li><a href="#">日本移民</a></li>
+                    </ul>
+                </div>
+                <div class="footer-links">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司简介</a></li>
+                        <li><a href="#">荣誉证书</a></li>
+                        <li><a href="#">专家团队</a></li>
+                        <li><a href="#">联系我们</a></li>
+                    </ul>
+                </div>
+                <div class="footer-qrcode-col">
+                    <h4>关注我们</h4>
+                    <div class="footer-qrcode">
+                        <div class="footer-qrcode-item">
+                            <img src="assets/images/qrcode/wechat-qr1.jpg" class="footer-qrcode-img" alt="扫码关注汇程移民公众号">
+                            <div class="footer-qrcode-item-title">扫码关注</div>
+                            <div class="footer-qrcode-item-desc">汇程移民</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 汇程移民 版权所有 | 本站信息仅供参考，具体政策以官方公布为准</p>
+                <a href="./admin/index.html" class="admin-entry">Enter the backend</a>
+            </div>
+        </div>
+    </footer>
+<!-- 侧边悬浮工具 -->
+    <div class="side-tools">
+        <a href="tel:136-5185-2270" class="side-tool tel-tool" title="电话咨询">
+            <span>📞</span>
+            <div class="side-tool-tip">
+                <p>免费咨询热线</p>
+                <strong>136-5185-2270</strong>
+            </div>
+        </a>
+        <a href="#contact" class="side-tool" title="在线咨询">
+            <span>💬</span>
+        </a>
+        <a href="#contact" class="side-tool" title="免费评估">
+            <span>📝</span>
+        </a>
+        <button class="side-tool back-to-top" id="backToTop" title="返回顶部">
+            <span>⬆️</span>
+        </button>
+    </div>
+
+    <!-- 弹窗 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <h3 id="modalTitle">温馨提示</h3>
+            <p id="modalText">感谢您的关注，我们的移民顾问将尽快与您联系！</p>
+            <button class="btn btn-primary" id="modalConfirm">确定</button>
+        </div>
+    </div>
+
+    <script src="js/main.js?v=2"></script>
+    <script>
+        function getParam(name) {
+            return new URLSearchParams(window.location.search).get(name) || '';
+        }
+
+        async function loadCasesStatically() {
+            try {
+                const data = await window.hcLoadStaticData();
+                return data && data.cases ? data.cases.items || [] : null;
+            } catch (e) {
+                console.error('静态案例数据加载失败:', e);
+                return null;
+            }
+        }
+
+        async function loadCases() {
+            const grid = document.getElementById('caseListGrid');
+            const loading = document.getElementById('casesLoading');
+            const empty = document.getElementById('casesEmpty');
+
+            let cases = [];
+            try {
+                const res = await fetch('/api/cases');
+                const result = await res.json();
+                cases = result.data || [];
+            } catch (err) {
+                console.warn('API 案例列表加载失败，尝试静态数据:', err);
+                cases = await loadCasesStatically() || [];
+            }
+
+            loading.style.display = 'none';
+            if (cases.length === 0) {
+                empty.style.display = 'block';
+                return;
+            }
+
+            grid.innerHTML = cases.map(c => {
+                const imagePath = window.hcResolveAssetPath ? window.hcResolveAssetPath(c.image) : c.image;
+                const bgStyle = imagePath ? `style="background-image: url('${imagePath}')"` : '';
+                return `
+                <a class="case-card" href="case-detail.html?id=${encodeURIComponent(c.id)}">
+                    <div class="case-card-image" ${bgStyle}>
+                        <span class="case-card-badge">成功案例</span>
+                    </div>
+                    <div class="case-card-body">
+                        <h3 class="case-card-title">${c.title || ''}</h3>
+                        <p class="case-card-summary">${c.summary || ''}</p>
+                        <span class="case-card-btn">查看详情</span>
+                    </div>
+                </a>`;
+            }).join('');
+            grid.style.display = 'grid';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadCases();
+        });
+    </script>
+</body>
+</html>

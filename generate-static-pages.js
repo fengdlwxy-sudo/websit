@@ -44,8 +44,8 @@ function extractBetween(start, end) {
   return indexHtml.substring(s, e);
 }
 
-// 顶部联系栏 + 主导航
-const sharedHeader = extractBetween('<!-- 顶部联系栏 -->', '<!-- 页脚 -->');
+// 顶部联系栏 + 主导航（仅导航，不含首页正文区块，避免详情页内重复渲染整页首页）
+const sharedHeader = extractBetween('<!-- 顶部联系栏 -->', '<!-- Banner区域 -->');
 // 页脚 + 侧边悬浮工具
 const sharedFooter = extractBetween('<!-- 页脚 -->', '</body>');
 
