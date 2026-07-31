@@ -17,24 +17,6 @@
       "icon": "",
       "gradient": "linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)",
       "date": "2026-07-27"
-    },
-    {
-      "id": "ms0f1qdv-4gqohg",
-      "title": "加拿大正式公布2026-2028移民配额计划！",
-      "slug": "",
-      "category": "",
-      "summary": "加拿大《2026–2028年移民水平计划》（Immigration Levels Plan）于2025年底正式公布，核心基调为“总量控制、结构优化、质量优先”。未来三年，加拿大永久居民（PR）配额保持稳定，而临时居民（学签、工签）配额大幅缩减。",
-      "content": "<div><br></div><div><div><br></div><div>未来三年加拿大PR目标保持一致：&nbsp;</div><div><br></div><div>2026 38万人&nbsp;</div><div><br></div><div>&nbsp;2027 38万人</div><div><br></div><div>2028 38万人</div><div><br></div><div>&nbsp;也就是说： 加拿大依然需要大量新移民。</div></div><div><br></div>",
-      "image": "/assets/images/uploads/1784986783948-14appe.jpg",
-      "tags": [],
-      "status": "published",
-      "isFeatured": true,
-      "createdAt": "2026-07-25",
-      "updatedAt": "",
-      "link": "article-detail.html?id=ms0f1qdv-4gqohg",
-      "icon": "",
-      "gradient": "linear-gradient(135deg, #007A8A 0%, #00A8B5 100%)",
-      "date": "2026-07-25"
     }
   ],
   "items": [
@@ -146,7 +128,8 @@
       "tags": [],
       "status": "published",
       "wordCount": 300,
-      "isFeatured": true
+      "isFeatured": true,
+      "date": "2026-07-27"
     },
     {
       "id": "ms2rwox2-sr8qi3",
