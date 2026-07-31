@@ -9,8 +9,8 @@ server.pid
 # 环境变量（含密码等敏感信息）
 .env
 
-# WorkBuddy 工作日志可能包含调试过程中的临时令牌/敏感信息，不提交
-.workbuddy/memory/
+# WorkBuddy 工作目录(含调试临时令牌/敏感信息/内部记忆)，绝不入库
+.workbuddy/
 
 # 用户上传的图片：必须入库！否则部署强推会把远程 uploads 目录清空，导致前台文章图片 404。
 # pages-deploy.ps1 已在推送前把远程 data/ 与 uploads 原样还原，绝不拿本地过期文件覆盖。
