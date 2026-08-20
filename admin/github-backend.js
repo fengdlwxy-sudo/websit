@@ -114,47 +114,164 @@ async function ghReadData(key) {
     if (res.status === 404) return JSON.parse(JSON.stringify(DATA_DEFAULTS[key]));
     if (!res.ok) throw new Error('读取 ' + file + ' 失败：GitHub ' + res.status);
     const json = await res.json();
-    try {
-        return JSON.parse(base64ToUtf8(json.content));
-    } catch (e) {
+
+    // 优先用 Contents API 直接返回的 content（文件 <1MB 时）
+    if (json && json.content) {
+        try {
+            return JSON.parse(base64ToUtf8(json.content));
+        } catch (e) {
+            throw new Error('解析 ' + file + ' 失败：' + e.message);
+        }
+    }
+
+    // 文件 >=1MB：GitHub Contents API 不返回 content（返回 content:null），
+    // 旧逻辑会因解析失败而回退成空数组，再用“追加 1 条”把整库覆盖成 1 条 —— 这就是丢文章的元凶。
+    // 这里改用 Git Blobs API 按 blob sha 读取原文，支持任意大小且兼容私有库。
+    let blobSha = (json && json.sha) ? json.sha : null;
+    if (!blobSha) blobSha = await ghFindBlobSha('data/' + file);
+    if (!blobSha) {
+        // 连 blob 都定位不到（极少见）：回退默认，但绝不用空数组去覆盖线上真实数据
         return JSON.parse(JSON.stringify(DATA_DEFAULTS[key]));
+    }
+    const text = await ghGetBlobContent(blobSha);
+    if (text === null) throw new Error('读取 ' + file + ' 内容失败（GitHub 限流或网络异常），请稍后重试');
+    try {
+        return JSON.parse(text);
+    } catch (e) {
+        throw new Error('解析 ' + file + ' 失败：' + e.message);
     }
 }
 
-// 写入某个数据文件（自动处理 sha，遇 409 冲突最多重试 3 次）
+// 按 blob sha 读取文件原文（GitHub Git Blobs API，支持 >1MB）
+async function ghGetBlobContent(sha) {
+    const res = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/blobs/${sha}`);
+    if (!res.ok) return null;
+    const json = await res.json();
+    if (!json.content) return null;
+    try { return base64ToUtf8(json.content); } catch (e) { return null; }
+}
+
+// 当 Contents API 未返回 sha 时，从分支最新提交的文件树里定位 blob sha
+async function ghFindBlobSha(repoPath) {
+    try {
+        const refRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/refs/heads/${encodeURIComponent(ghConfig.branch)}`);
+        if (!refRes.ok) return null;
+        const latestSha = (await refRes.json()).object.sha;
+        const commitRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/commits/${latestSha}`);
+        if (!commitRes.ok) return null;
+        const treeSha = (await commitRes.json()).tree.sha;
+        const treeRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/trees/${treeSha}?recursive=1`);
+        if (!treeRes.ok) return null;
+        const entry = (await treeRes.json()).tree.find(e => e.path === repoPath);
+        return entry ? entry.sha : null;
+    } catch (e) { return null; }
+}
+
+// 写入某个数据文件。
+// 旧实现用 Contents API（PUT /contents/...），对 >1MB 文件会被 GitHub 直接拒绝或静默失败，
+// 一旦 articles.json 超过 1MB 就无法保存、且读不到时还会触发上面的“空数组覆盖”连锁 bug。
+// 现改用 Git Data API（blob -> tree -> commit -> ref）做原子提交：支持任意大小（上限约 100MB），
+// 且天然以最新提交为父节点，无需处理 409，并发冲突时整段重试即可。
 async function ghWriteData(key, data, message, attempt = 0) {
     const file = DATA_FILES[key];
-    const path = `/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data/${file}`;
-    // 先取 sha，加 cache buster 避免 GitHub 返回缓存的旧 sha
-    const getRes = await ghRaw('GET', path + '?ref=' + encodeURIComponent(ghConfig.branch) + '&_cb=' + Date.now());
-    let sha = null;
-    if (getRes.status !== 404) {
-        if (!getRes.ok) {
-            const t = await getRes.text();
-            throw new Error('读取 ' + file + ' 版本失败：GitHub ' + getRes.status + ' ' + t.slice(0, 120));
-        }
-        const j = await getRes.json();
-        sha = j.sha;
+    const repoPath = 'data/' + file;
+    const content = JSON.stringify(data, null, 2);
+
+    let latestCommitSha, baseTreeSha;
+    try {
+        const refRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/refs/heads/${encodeURIComponent(ghConfig.branch)}`);
+        if (!refRes.ok) throw new Error('读取分支引用失败：GitHub ' + refRes.status);
+        latestCommitSha = (await refRes.json()).object.sha;
+        const commitRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/commits/${latestCommitSha}`);
+        if (!commitRes.ok) throw new Error('读取提交失败：GitHub ' + commitRes.status);
+        baseTreeSha = (await commitRes.json()).tree.sha;
+    } catch (e) {
+        if (attempt < 3) { await sleep(600 * (attempt + 1)); return ghWriteData(key, data, message, attempt + 1); }
+        throw e;
     }
-    const body = {
+
+    // 安全护栏：阻止“条目数骤降”的整库覆盖（例如 35 条被写成 1 条）
+    const guard = await ghCountGuard(key, baseTreeSha, data);
+    if (!guard.ok) throw new Error(guard.reason);
+
+    const blobRes = await ghRaw('POST', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/blobs`, {
+        content,
+        encoding: 'utf-8'
+    });
+    if (!blobRes.ok) {
+        const t = await blobRes.text();
+        throw new Error('创建数据块失败：GitHub ' + blobRes.status + ' ' + t.slice(0, 160));
+    }
+    const blobSha = (await blobRes.json()).sha;
+
+    const treeRes = await ghRaw('POST', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/trees`, {
+        base_tree: baseTreeSha,
+        tree: [{ path: repoPath, mode: '100644', type: 'blob', sha: blobSha }]
+    });
+    if (!treeRes.ok) {
+        const t = await treeRes.text();
+        throw new Error('创建文件树失败：GitHub ' + treeRes.status + ' ' + t.slice(0, 160));
+    }
+    const newTreeSha = (await treeRes.json()).sha;
+
+    const newCommitRes = await ghRaw('POST', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/commits`, {
         message: message || ('update ' + file),
-        content: utf8ToBase64(JSON.stringify(data, null, 2)),
-        branch: ghConfig.branch
-    };
-    if (sha) body.sha = sha;
-    const putRes = await ghRaw('PUT', path, body);
-    if (putRes.status === 409 && attempt < 3) {
-        // 并发冲突：指数退避后重新读取 sha 再写
-        const delay = 800 * Math.pow(2, attempt);
-        await new Promise(r => setTimeout(r, delay));
-        return ghWriteData(key, data, message, attempt + 1);
+        tree: newTreeSha,
+        parents: [latestCommitSha]
+    });
+    if (!newCommitRes.ok) {
+        const t = await newCommitRes.text();
+        throw new Error('创建提交失败：GitHub ' + newCommitRes.status + ' ' + t.slice(0, 160));
     }
-    if (!putRes.ok) {
-        const t = await putRes.text();
-        throw new Error('写入 ' + file + ' 失败：GitHub ' + putRes.status + ' ' + t.slice(0, 120));
+    const newCommitSha = (await newCommitRes.json()).sha;
+
+    const updateRefRes = await ghRaw('PATCH', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/refs/heads/${encodeURIComponent(ghConfig.branch)}`, {
+        sha: newCommitSha,
+        force: false
+    });
+    if (!updateRefRes.ok) {
+        // 并发/落后导致引用更新失败：整段重试（最多 3 次）
+        if (attempt < 3) { await sleep(600 * (attempt + 1)); return ghWriteData(key, data, message, attempt + 1); }
+        const t = await updateRefRes.text();
+        throw new Error('更新分支引用失败（可能与其他修改冲突）：GitHub ' + updateRefRes.status + ' ' + t.slice(0, 160));
     }
-    return putRes.json();
+    return await updateRefRes.json();
 }
+
+// 护栏：写入前比对线上当前同文件的 items 条数。
+// 合法操作只会产生 +1（新增）、=0（编辑）、-1（单条删除）；
+// 若新条数 <= 现条数 - 2，判定为“疑似整库被空数据覆盖”，直接拦截，杜绝静默丢数据。
+async function ghCountGuard(key, baseTreeSha, newData) {
+    const newItems = Array.isArray(newData.items) ? newData.items : null;
+    if (newItems === null) return { ok: true }; // 非集合类（如 config）无需保护
+    const repoPath = 'data/' + DATA_FILES[key];
+    try {
+        const treeRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/trees/${baseTreeSha}?recursive=1`);
+        if (!treeRes.ok) return { ok: true };
+        const entry = (await treeRes.json()).tree.find(e => e.path === repoPath);
+        if (!entry) return { ok: true }; // 文件尚不存在（首次创建）
+        const blobRes = await ghRaw('GET', `/repos/${ghConfig.owner}/${ghConfig.repo}/git/blobs/${entry.sha}`);
+        if (!blobRes.ok) return { ok: true };
+        const blob = await blobRes.json();
+        let existingItems = 0;
+        if (blob.content) {
+            const parsed = JSON.parse(base64ToUtf8(blob.content));
+            existingItems = Array.isArray(parsed.items) ? parsed.items.length : 0;
+        }
+        const newCount = newItems.length;
+        if (existingItems >= 2 && newCount <= existingItems - 2) {
+            return {
+                ok: false,
+                reason: `安全拦截：${DATA_FILES[key]} 条目数将从 ${existingItems} 骤降到 ${newCount}，疑似整库被空数据覆盖，已阻止本次写入。请刷新页面后重试；若仍报错请联系技术支持。`
+            };
+        }
+        return { ok: true };
+    } catch (e) {
+        return { ok: true }; // 护栏自身异常时不阻断正常写入
+    }
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 // 解析 GitHub Issue 为客户咨询对象
 function parseLeadIssue(issue) {
